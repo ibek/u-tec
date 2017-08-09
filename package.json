@@ -1,0 +1,31 @@
+{
+  "name": "holocom",
+  "version": "1.0.0",
+  "description": "Star Citizen - Holocom",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rimraf build",
+    "start": "webpack-dev-server --port 8000 --inline --hot --content-base build/",
+    "build": "npm run clean && webpack -p",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ivo Bek",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ibek/holocom.git"
+  },
+  "devDependencies": {
+    "html-webpack-plugin": "^2.28.0",
+    "json-loader": "^0.5.4",
+    "rimraf": "^2.6.1",
+    "ts-loader": "^2.0.0",
+    "typescript": "^2.1.5",
+    "webpack": "^3.5.2",
+    "webpack-dev-server": "^2.3.0"
+  },
+  "dependencies": {
+    "three": "^0.86.0",
+    "three-orbit-controls": "^82.1.0"
+  }
+}
