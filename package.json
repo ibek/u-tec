@@ -2,7 +2,7 @@
   "name": "holocom",
   "version": "1.0.0",
   "description": "Star Citizen - Holocom",
-  "main": "index.js",
+  "main": "main.ts",
   "scripts": {
     "clean": "rimraf build",
     "start": "webpack-dev-server --port 8000 --inline --hot --content-base build/",
