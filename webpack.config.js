@@ -1,17 +1,23 @@
 var path = require('path');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 
 var HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
-    template: "./src/main/resources/index.html",
+    template: "./src/index.html",
     filename: './index.html',
     inject: 'body'
 
     }
 )
 
+var CopyWebpackPluginConfig = new CopyWebpackPlugin([
+    { from: 'src/ships', to: 'ships' },
+    { from: 'src/resources', to: 'resources' }
+])
+
 module.exports = {
-    entry : "./src/main/ts/main.ts",
+    entry : "./src/Main.ts",
     output : {
         filename : "bundle.js",
         path: path.resolve(__dirname, 'build')
@@ -25,8 +31,9 @@ module.exports = {
             test: /\.tsx?$/,
             loader: 'ts-loader'
         }]
+        
     },
-    plugins : [HtmlWebpackPluginConfig]
+    plugins : [HtmlWebpackPluginConfig, CopyWebpackPluginConfig]
 
 
 

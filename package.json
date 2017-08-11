@@ -16,16 +16,22 @@
     "url": "https://github.com/ibek/holocom.git"
   },
   "devDependencies": {
+    "copy-webpack-plugin": "^4.0.1",
+    "html-loader": "^0.5.1",
     "html-webpack-plugin": "^2.28.0",
     "json-loader": "^0.5.4",
     "rimraf": "^2.6.1",
     "ts-loader": "^2.0.0",
     "typescript": "^2.1.5",
+    "uglify-js": "git://github.com/mishoo/UglifyJS2#harmony-v2.8.22",
+    "uglifyjs-webpack-plugin": "^0.4.6",
     "webpack": "^3.5.2",
     "webpack-dev-server": "^2.3.0"
   },
   "dependencies": {
+    "@types/three": "^0.84.19",
     "three": "^0.86.0",
-    "three-orbit-controls": "^82.1.0"
+    "three-gltf2-loader": "^1.1.0",
+    "three-orbitcontrols-ts": "^0.1.2"
   }
 }

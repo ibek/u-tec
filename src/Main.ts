@@ -2,26 +2,28 @@ declare var require: any
 
 import {Scene, PerspectiveCamera, WebGLRenderer,
          BoxGeometry, Mesh, MeshBasicMaterial,
-          MeshPhongMaterial, AmbientLight, PointLight,
-           Color, JSONLoader, SkinnedMesh,ObjectLoader } from 'three';
-import * as THREE from 'three';
+          MeshPhongMaterial, AmbientLight, DirectionalLight,
+           Color, JSONLoader, SkinnedMesh,ObjectLoader, Vector3 } from 'three';
+import { OrbitControls } from 'three-orbitcontrols-ts';
+import {Ship} from './Ship';
 
-THREE.OrbitControls = require('three-orbit-controls')(THREE);
+const SCREEN_WIDTH = window.innerWidth - 4;
+const SCREEN_HEIGHT = window.innerHeight - 4;
 
 class Main {
     scene:Scene = new Scene();
-    camera:PerspectiveCamera = new PerspectiveCamera(35, window.innerWidth/window.innerHeight, 0.1, 1000);
+    camera:PerspectiveCamera = new PerspectiveCamera(35, SCREEN_WIDTH/SCREEN_HEIGHT, 0.1, 2000);
     renderer : WebGLRenderer = new WebGLRenderer({antialias:true});
 
-    pointLight : PointLight;
-    controls : THREE.OrbitControls;
+    directionalLight : DirectionalLight;
+    controls : OrbitControls;
     
     constructor() {
 
         var container = document.createElement( 'div' );
         document.body.appendChild( container );
         this.renderer.setPixelRatio(window.devicePixelRatio);
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
         this.renderer.domElement.style.position = "relative";
         this.renderer.setClearColor(0xEEEEEE);
         container.appendChild( this.renderer.domElement );
@@ -30,7 +32,7 @@ class Main {
         this.configureControls();
 
         this.configurePointLight();
-        this.scene.add(this.pointLight);
+        this.scene.add(this.directionalLight);
         this.scene.add(new AmbientLight(new Color(0.7,0.7,0.7).getHex()));
 
     }
@@ -44,20 +46,21 @@ class Main {
     }
 
     configurePointLight() {
-        this.pointLight = new PointLight();
-        this.pointLight.position.set(5,700,5);
-        this.pointLight.intensity = 0.8;
+        this.directionalLight = new DirectionalLight(0xffeedd);
+        this.directionalLight.position.set(0, 1000, 0);
+        this.directionalLight.lookAt(new Vector3(0,0,0));
     }
 
     configureCamera() {
         this.camera.position.x = -500;
         this.camera.position.y = 500;
         this.camera.position.z = -500;
-        this.camera.lookAt(0,0,0);
+        this.camera.lookAt(new Vector3(0,0,0));
     }
 
     configureControls() {
-        this.controls = new THREE.OrbitControls( this.camera );
+        this.controls = new OrbitControls( this.camera );
+        this.controls.enableZoom = true;
         this.controls.maxPolarAngle = Math.PI / 2.0;
         this.controls.minDistance = 10;
         this.controls.maxDistance = 1000;
@@ -71,7 +74,9 @@ class Main {
     }
 
     start() {
-        this.addCube();
+        //this.addCube();
+        var ship = new Ship("ships/hornetq.gltf");
+        ship.addModelTo(this.scene, new Vector3(0, 0, 0), 30);
         this.render();
     }
 }
