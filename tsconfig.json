@@ -2,7 +2,11 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "es5",
-        "lib": ["es2016","dom"]
+        "lib": [
+            "es2016",
+            "dom"
+        ],
+        "experimentalDecorators": true
     },
     "exclude": [
         "node_modules"

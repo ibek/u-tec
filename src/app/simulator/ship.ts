@@ -3,7 +3,7 @@ declare var require: any
 import { Mesh, Vector3, TextureLoader, MeshLambertMaterial, Object3D } from 'three';
 
 import * as THREE from 'three';
-import { GLTF2Loader } from './util/GLTF2Loader';
+import { GLTF2Loader } from '../util/GLTF2Loader';
 //import { CTMLoader } from './util/CTMLoader';
 
 export class Ship {
