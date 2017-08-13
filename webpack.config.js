@@ -2,6 +2,8 @@ var path = require('path');
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
+const { CheckerPlugin } = require('awesome-typescript-loader')
 
 var CopyWebpackPluginConfig = new CopyWebpackPlugin([
     { from: 'src/assets', to: 'assets' }
@@ -24,11 +26,11 @@ module.exports = {
     },
     devtool: "source-map",
     resolve: {
-        extensions: [".webpack.config.js", "web.js", ".ts", ".tsx", ".js", ".jsx", ".d.ts"]
+        extensions: [".ts", ".tsx", ".js", ".jsx"]
     },
     module: {
         rules: [{
-            test: /\.ts$/,
+            test: /\.tsx?$/,
             loaders: [
                 {
                     loader: 'awesome-typescript-loader',
@@ -41,8 +43,20 @@ module.exports = {
             loader: 'html-loader'
         },
         {
-            test: /\.(png|jpe?g|gif|svg|woff|woff2|ttf|eot|ico|css)$/,
+            test: /\.(png|jpe?g|gif|svg|woff|woff2|ttf|eot|ico|gltf|bin)$/,
             loader: 'raw-loader'
+        },
+        {
+            test: /\.css$/,
+            loaders: ['to-string-loader', 'css-loader']
+        },
+        {
+            test: /\.scss$/,
+            use: ExtractTextPlugin.extract({
+                fallback: 'style-loader',
+                //resolve-url-loader may be chained before sass-loader if necessary
+                use: ['css-loader', 'sass-loader']
+            })
         }]
 
     },
@@ -53,12 +67,13 @@ module.exports = {
         template: 'src/index.html'
     }), new webpack.optimize.CommonsChunkPlugin({
         name: ['app', 'vendor', 'polyfills']
-    }), CopyWebpackPluginConfig, new webpack.LoaderOptionsPlugin({
+    }), new webpack.LoaderOptionsPlugin({
         htmlLoader: {
             minimize: false // workaround for ng2
         }
-    })]
-
-
+    }), CopyWebpackPluginConfig,
+    new ExtractTextPlugin('style.css'),
+    new CheckerPlugin() // workaround for webpack#3460
+    ]
 
 };

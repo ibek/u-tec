@@ -1,0 +1,20 @@
+<md-card class="ship-card">
+    <img md-card-image src="{{image}}" class="ship-thumbnail">
+    <md-card-header>
+        <md-card-title>F7C Hornet</md-card-title>
+        <button md-icon-button [mdMenuTriggerFor]="configMenu">
+            <md-icon>more_vert</md-icon>
+        </button>
+        <md-menu #configMenu>
+            <button md-menu-item>
+            <md-icon>mode_edit</md-icon>
+            <span>Edit</span>
+            </button>
+
+            <button md-menu-item>
+            <md-icon>delete</md-icon>
+            <span>Delete</span>
+            </button>
+        </md-menu>
+    </md-card-header>
+</md-card>

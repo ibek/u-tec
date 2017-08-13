@@ -5,9 +5,15 @@ import '@angular/core';
 import '@angular/common';
 import '@angular/http';
 import '@angular/router';
+import "@angular/material";
+import "@angular/material/prebuilt-themes/deeppurple-amber.css";
+import "@angular/animations";
+import "@angular/animations/browser";
+import "@angular/platform-browser/animations";
 
 // RxJS
 import 'rxjs';
 
-// Other vendors for example jQuery, Lodash or Bootstrap
-// You can import js, ts, css, sass, ...
+// ThreeJS
+
+import 'three';
