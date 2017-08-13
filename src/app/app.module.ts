@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { MaterialModule } from '@angular/material';
 import { HttpModule } from '@angular/http';
 import { FormsModule } from '@angular/forms';
+import { FlexLayoutModule } from "@angular/flex-layout";
 
 import { AppComponent } from './app.component';
 import { WizardComponent } from './wizard/wizard.component';
@@ -18,7 +19,8 @@ import 'hammerjs';
     MaterialModule,
     FormsModule,
     HttpModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    FlexLayoutModule
   ],
   declarations: [
     AppComponent,

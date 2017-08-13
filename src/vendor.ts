@@ -10,6 +10,7 @@ import "@angular/material/prebuilt-themes/deeppurple-amber.css";
 import "@angular/animations";
 import "@angular/animations/browser";
 import "@angular/platform-browser/animations";
+import "@angular/flex-layout";
 
 // RxJS
 import 'rxjs';

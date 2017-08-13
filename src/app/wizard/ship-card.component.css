@@ -2,3 +2,15 @@
     width: 200px;
     height: 200px;
 }
+
+.ship-menu {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+.ship-amount {
+    width: 0px;
+    bottom: 0px;
+    left: 10px;
+}

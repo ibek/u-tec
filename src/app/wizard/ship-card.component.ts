@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'ship-card',
@@ -7,5 +7,6 @@ import { Component } from '@angular/core';
 })
 export class ShipCardComponent {
     image = "assets/ships/thumbnails/F7CHornet.png";
+    @Input() amount = 1;
   
 }

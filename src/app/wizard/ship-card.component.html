@@ -1,8 +1,7 @@
-<md-card class="ship-card">
-    <img md-card-image src="{{image}}" class="ship-thumbnail">
+<md-card>
     <md-card-header>
         <md-card-title>F7C Hornet</md-card-title>
-        <button md-icon-button [mdMenuTriggerFor]="configMenu">
+        <button md-icon-button [mdMenuTriggerFor]="configMenu" class="ship-menu">
             <md-icon>more_vert</md-icon>
         </button>
         <md-menu #configMenu>
@@ -17,4 +16,17 @@
             </button>
         </md-menu>
     </md-card-header>
+    <img md-card-image src="{{image}}" class="ship-thumbnail">
+    <md-card-footer class="ship-amount">
+        <div style="display: inline-block; width: 200px;">
+        <md-slider
+        max="5"
+        min="1"
+        step="1"
+        [(ngModel)]="amount"
+        thumb-label="1">
+    </md-slider>
+    <button md-mini-fab color="none" style="right: -5px;">{{amount}}</button>
+    </div>
+    </md-card-footer>
 </md-card>
