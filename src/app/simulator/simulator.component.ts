@@ -8,7 +8,8 @@ import {
     Color, JSONLoader, SkinnedMesh, ObjectLoader, Vector3
 } from 'three';
 import { OrbitControls } from 'three-orbitcontrols-ts';
-import { Ship } from './ship';
+import { Ship3d } from './ship3d';
+import {ShipService} from '../ship.service';
 
 const SCREEN_WIDTH = window.innerWidth - 4;
 const SCREEN_HEIGHT = window.innerHeight - 4;
@@ -27,7 +28,7 @@ export class SimulatorComponent implements OnInit {
     directionalLight: DirectionalLight;
     controls: OrbitControls;
 
-    constructor() {
+    constructor(private shipService: ShipService) {
 
     }
 
@@ -87,7 +88,7 @@ export class SimulatorComponent implements OnInit {
 
     start() {
         //this.addCube();
-        var ship = new Ship("assets/ships/hornetq.gltf");
+        var ship = new Ship3d("assets/ships/hornetq.gltf");
         ship.addModelTo(this.scene, new Vector3(0, 0, 0), 30);
         this.render();
     }

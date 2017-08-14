@@ -5,11 +5,17 @@ import { MaterialModule } from '@angular/material';
 import { HttpModule } from '@angular/http';
 import { FormsModule } from '@angular/forms';
 import { FlexLayoutModule } from "@angular/flex-layout";
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 import { AppComponent } from './app.component';
-import { WizardComponent } from './wizard/wizard.component';
-import { ShipCardComponent } from './wizard/ship-card.component';
+import { InventoryComponent } from './inventory/inventory.component';
+import { ShipCardComponent } from './inventory/ship-card.component';
+import { AddShipComponent } from './inventory/add-ship.component';
 import { SimulatorComponent } from './simulator/simulator.component';
+
+import { ShipService } from './ship.service';
+
+import { AppRoutingModule } from './app-routing.module';
 
 import 'hammerjs';
 
@@ -20,14 +26,20 @@ import 'hammerjs';
     FormsModule,
     HttpModule,
     BrowserAnimationsModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    AppRoutingModule
   ],
   declarations: [
     AppComponent,
-    WizardComponent,
+    InventoryComponent,
     ShipCardComponent,
+    AddShipComponent,
     SimulatorComponent
   ],
+  providers: [{
+    provide: LocationStrategy,
+    useClass: HashLocationStrategy
+  }, ShipService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

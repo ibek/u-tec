@@ -1,21 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import { ObservableMedia } from '@angular/flex-layout';
 import { Observable } from "rxjs/Observable";
+import {Router, ActivatedRoute} from '@angular/router';
+
+import {Ship} from '../ship';
+import {ShipService} from '../ship.service';
 
 @Component({
-    selector: 'wizard',
-    templateUrl: './wizard.component.html',
-    styleUrls: ['./wizard.component.css']
+    selector: 'inventory',
+    templateUrl: './inventory.component.html',
+    styleUrls: ['./inventory.component.css']
 })
-export class WizardComponent implements OnInit {
-    ships = [{ "name": "F7C Hornet" }, { "name": "F7C Hornet" }, { "name": "F7C Hornet" }, { "name": "F7C Hornet" }, { "name": "F7C Hornet" }, { "name": "F7C Hornet" }, { "name": "F7C Hornet" }];
+export class InventoryComponent implements OnInit {
+    ships:Ship[] = [];
     public cols: Observable<number>;
 
-    constructor(private observableMedia: ObservableMedia) {
+    constructor(private shipService: ShipService, private observableMedia: ObservableMedia, private route: ActivatedRoute, private router: Router) {
 
     }
 
     ngOnInit() {
+        this.shipService.getShips().then(ships => this.ships = ships);
+
         // set cols
         if (this.observableMedia.isActive("xs")) {
             this.cols = Observable.of(2);
@@ -45,5 +51,21 @@ export class WizardComponent implements OnInit {
                         return this.cols = Observable.of(7);
                 }
             });
+    }
+
+    filterSize(array, size: string) {
+        return array.filter(x => x.size == size);
+    }
+
+    addS() {
+        this.router.navigate(["inventory/add-ship/S"], this.shipService.getNavigationExtras());
+    }
+
+    addM() {
+        this.router.navigate(["inventory/add-ship/M"], this.shipService.getNavigationExtras());
+    }
+
+    addL() {
+        this.router.navigate(["inventory/add-ship/L"], this.shipService.getNavigationExtras());
     }
 }

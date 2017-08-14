@@ -2,14 +2,15 @@
   <md-toolbar>
     <span>Holocom - Fleet Strategy Simulator</span>
     <span class="spacer"></span>
-    <!-- routerLink="/simulator" routerLinkActive="active" -->
-    <button md-raised-button>
+    <button md-raised-button color="primary" routerLink="/inventory" routerLinkActive="inventoryActive">
+      <i class="material-icons">view_list</i>
+      Inventory
+    </button>
+    <button md-raised-button color="primary" routerLink="/simulator" routerLinkActive="simulatorActive">
       Simulate
       <i class="material-icons">play_circle_outline</i>
     </button>
   </md-toolbar>
 
-  <!-- Router <router-outlet></router-outlet> -->
-  <wizard>
-  </wizard>
+  <router-outlet></router-outlet>
 </main>

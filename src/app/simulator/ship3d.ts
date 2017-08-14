@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { GLTF2Loader } from '../util/GLTF2Loader';
 //import { CTMLoader } from './util/CTMLoader';
 
-export class Ship {
+export class Ship3d {
     model: any;
     first: boolean = true;
     loading: boolean = true;
