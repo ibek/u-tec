@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
 
 import { Ship } from '../ship';
+import { ShipData } from '../ship-data';
 import { ShipService } from '../ship.service';
 
 @Component({
@@ -10,7 +11,7 @@ import { ShipService } from '../ship.service';
   styleUrls: ['./ship-card.component.css']
 })
 export class ShipCardComponent {
-  @Input() ship: Ship;
+  @Input() ship: ShipData;
 
   constructor(private shipService: ShipService, private router: Router) {
 

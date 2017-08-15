@@ -13,6 +13,7 @@ import { ShipCardComponent } from './inventory/ship-card.component';
 import { AddShipComponent } from './inventory/add-ship.component';
 import { SimulatorComponent } from './simulator/simulator.component';
 
+import { SceneService } from './scene.service';
 import { ShipService } from './ship.service';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -39,7 +40,7 @@ import 'hammerjs';
   providers: [{
     provide: LocationStrategy,
     useClass: HashLocationStrategy
-  }, ShipService],
+  }, SceneService, ShipService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

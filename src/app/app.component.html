@@ -2,11 +2,11 @@
   <md-toolbar>
     <span>Holocom - Fleet Strategy Simulator</span>
     <span class="spacer"></span>
-    <button md-raised-button color="primary" routerLink="/inventory" routerLinkActive="inventoryActive">
+    <button md-raised-button color="primary" routerLink="/inventory" routerLinkActive="inventoryActive" (click)="inventory()" skipLocationChange>
       <i class="material-icons">view_list</i>
       Inventory
     </button>
-    <button md-raised-button color="primary" routerLink="/simulator" routerLinkActive="simulatorActive">
+    <button md-raised-button color="primary" routerLink="/simulator" routerLinkActive="simulatorActive" (click)="simulator()" skipLocationChange>
       Simulate
       <i class="material-icons">play_circle_outline</i>
     </button>

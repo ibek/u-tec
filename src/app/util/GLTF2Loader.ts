@@ -1445,7 +1445,7 @@ class Utility {
 
     static createDefaultMaterial(): any {
         return new THREE.MeshPhongMaterial({
-            color: 0x00000, side: THREE.DoubleSide
+            color: 0x000000, side: THREE.DoubleSide
         });
         //var textureLoader = new THREE.TextureLoader();
         //return new THREE.MeshLambertMaterial({ color: 0x444444, side: THREE.DoubleSide, combine: THREE.MixOperation, reflectivity: 0.6 });
@@ -2735,7 +2735,7 @@ class GLTFParser {
                     && scene.extensions[EXTENSIONS.KHR_LIGHTS].light !== undefined) {
 
                     var lights = extensions[EXTENSIONS.KHR_LIGHTS].lights;
-                    _scene.add(lights[scene.extensions[EXTENSIONS.KHR_LIGHTS].light]);
+                    //_scene.add(lights[scene.extensions[EXTENSIONS.KHR_LIGHTS].light]);
 
                 }
 

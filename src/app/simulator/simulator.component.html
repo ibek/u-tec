@@ -1,2 +1,7 @@
-<div #container>
+<div class="container" #container>
+    <section class="loader" [hidden]="loaded">
+        <h3>Loading ...</h3>
+        <md-progress-bar color="primary" mode="determinate" [value]="loadingProgress">
+        </md-progress-bar>
+    </section>
 </div>

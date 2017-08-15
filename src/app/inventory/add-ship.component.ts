@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, NavigationExtras } from '@angular/router';
 
 import { Ship } from '../ship';
+import { ShipData } from '../ship-data';
 import { ShipService } from '../ship.service';
 
 @Component({
@@ -35,11 +36,9 @@ export class AddShipComponent implements OnInit {
   }
 
   addShip(): void {
-    var newShip = new Ship();
-    newShip.type = this.selectedModel.type;
-    newShip.image = this.selectedModel.image;
+    var newShip = new ShipData();
+    newShip.origin = this.selectedModel;
     newShip.amount = 1;
-    newShip.size = this.selectedModel.size;
     let added = this.shipService.addShip(newShip);
     if (added) {
       this.router.navigate(["inventory"], this.shipService.getNavigationExtras());

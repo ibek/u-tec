@@ -4,6 +4,7 @@ import { Observable } from "rxjs/Observable";
 import {Router, ActivatedRoute} from '@angular/router';
 
 import {Ship} from '../ship';
+import {ShipData} from '../ship-data';
 import {ShipService} from '../ship.service';
 
 @Component({
@@ -12,7 +13,7 @@ import {ShipService} from '../ship.service';
     styleUrls: ['./inventory.component.css']
 })
 export class InventoryComponent implements OnInit {
-    ships:Ship[] = [];
+    ships:ShipData[] = [];
     public cols: Observable<number>;
 
     constructor(private shipService: ShipService, private observableMedia: ObservableMedia, private route: ActivatedRoute, private router: Router) {
@@ -54,7 +55,7 @@ export class InventoryComponent implements OnInit {
     }
 
     filterSize(array, size: string) {
-        return array.filter(x => x.size == size);
+        return array.filter(x => x.origin.size == size);
     }
 
     addS() {
