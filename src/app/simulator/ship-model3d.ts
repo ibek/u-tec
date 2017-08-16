@@ -12,6 +12,8 @@ export class ShipModel3D {
     model: any;
     first: boolean = true;
 
+    objects = [];
+
     constructor(public data: ShipData) {
 
     }
@@ -40,15 +42,23 @@ export class ShipModel3D {
     }
 
     addShipsToScene(scene) {
-        this.addShipTo(scene, new Vector3(this.data.positionX, this.data.positionY, this.data.positionZ), 0.003);
-        this.addShipTo(scene, new Vector3(this.data.positionX + 30, this.data.positionY + 10, this.data.positionZ - 10), 0.003);
-        this.addShipTo(scene, new Vector3(this.data.positionX - 30, this.data.positionY + 10, this.data.positionZ + 20), 0.003);
+        this.addShipTo(scene, new Vector3(this.data.positionX, this.data.positionY + 1, this.data.positionZ), 0.003);
+        this.addShipTo(scene, new Vector3(this.data.positionX + 30, this.data.positionY + 1, this.data.positionZ - 20), 0.003);
+        this.addShipTo(scene, new Vector3(this.data.positionX - 30, this.data.positionY + 1, this.data.positionZ + 20), 0.003);
     }
 
     addShipTo(scene, position: Vector3, scale: number) {
         var scope = this;
-        var material = new THREE.MeshPhongMaterial({
-            color: 0x000000, side: THREE.DoubleSide
+        /**var material = new THREE.MeshPhongMaterial({
+            color: 0xaa0000, side: THREE.DoubleSide
+        });*/
+        var material = new THREE.MeshStandardMaterial({
+            color: 0x00aa00,
+            metalness: 1.0,
+            roughness: 0.6,
+            transparent: true,
+            opacity: 0.4,
+            shading: THREE.SmoothShading, side: THREE.DoubleSide
         });
         let i = scene.getObjectByName(this.data.origin.type);
         if (i == undefined) {
@@ -56,6 +66,8 @@ export class ShipModel3D {
             object.scale.set(scale, scale, scale);
             object.rotation.z = Math.PI;
             object.children[0].geometry.computeBoundingSphere();
+            object.children[0].material = material;
+            this.objects.push(object.children[0]);
             scene.add(scope.model);
         } else {
             var obj = scope.model.children[0].clone(false);
@@ -63,6 +75,7 @@ export class ShipModel3D {
             obj.position.set(position.x, position.y, position.z);
             obj.scale.set(scale, scale, scale);
             obj.add(mesh);
+            this.objects.push(obj);
             scope.model.add(obj);
         }
         console.log(scene);

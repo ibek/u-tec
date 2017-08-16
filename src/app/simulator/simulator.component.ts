@@ -1,6 +1,6 @@
 declare var require: any
 
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
 import {
     Scene, PerspectiveCamera, WebGLRenderer,
     BoxGeometry, Mesh, MeshBasicMaterial,
@@ -13,9 +13,7 @@ import { ShipModel3D } from './ship-model3d';
 import { SceneService } from '../scene.service';
 import { ShipService } from '../ship.service';
 import { ShipData } from '../ship-data';
-
-const SCREEN_WIDTH = window.innerWidth - 4;
-const SCREEN_HEIGHT = window.innerHeight - 4;
+import { ObjectControls } from '../util/ObjectControls';
 
 @Component({
     selector: 'simulator',
@@ -28,12 +26,28 @@ export class SimulatorComponent implements OnInit {
     loadingProgress: number = 0;
     loaded: boolean = false;
 
+    screenWidth = window.innerWidth - 15;
+    screenHeight = window.innerHeight - 85;
+
     scene: Scene = new Scene();
-    camera: PerspectiveCamera = new PerspectiveCamera(35, SCREEN_WIDTH / SCREEN_HEIGHT, 0.1, 2000);
+    camera: PerspectiveCamera = new PerspectiveCamera(60, this.screenWidth / this.screenHeight, 10, 500);
     renderer: WebGLRenderer = new WebGLRenderer({ antialias: true });
 
+    gridScene: Scene = new Scene();
+    gridCamera: PerspectiveCamera = new PerspectiveCamera(60, this.screenWidth / this.screenHeight, 0.1, 300);
+    grid: Mesh;
+    bgScene: Scene = new THREE.Scene();
+    bgCam: THREE.Camera = new THREE.Camera();
+
+    controls: ObjectControls;
+
     directionalLight: DirectionalLight;
-    controls: OrbitControls;
+
+    objects:any = [];
+
+    // remember these initial values
+    tanFOV = Math.tan(((Math.PI / 180) * this.camera.fov / 2));
+    windowHeight = window.innerHeight;
 
     constructor(private sceneService: SceneService, private shipService: ShipService) {
 
@@ -41,71 +55,96 @@ export class SimulatorComponent implements OnInit {
 
     ngOnInit(): void {
         this.renderer.setPixelRatio(window.devicePixelRatio);
-        this.renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+        this.renderer.setSize(this.screenWidth, this.screenHeight);
         this.renderer.domElement.style.position = "relative";
         this.renderer.setClearColor(0xEEEEEE);
 
         this.configureCamera();
-        this.configureControls();
 
-        this.configurePointLight();
+        this.configureLight();
         this.scene.add(this.directionalLight);
         this.scene.add(new AmbientLight(new Color(0.7, 0.7, 0.7).getHex()));
+        this.gridScene.add(new AmbientLight(new Color(1.0, 1.0, 1.0).getHex()));
+
+        this.addBackground();
+        this.addGrid();
+        this.configureControls();
 
         this.start();
     }
 
-    addPlane() {
-        var texture, material, plane;
+    addBackground() {
+        var texture: THREE.Texture = THREE.ImageUtils.loadTexture("assets/images/background.png");
+        var bg = new THREE.Mesh(
+            new THREE.PlaneGeometry(2, 2, 0),
+            new THREE.MeshBasicMaterial({ map: texture })
+        );
+        bg.material.depthTest = false;
+        bg.material.depthWrite = false;
 
-        texture = THREE.ImageUtils.loadTexture("assets/images/graph.png");
+        this.bgScene.add(this.bgCam);
+        this.bgScene.add(bg);
+    }
 
-        // assuming you want the texture to repeat in both directions:
+    addGrid() {
+        var texture, material;
+
+        texture = THREE.ImageUtils.loadTexture("assets/images/grid.png");
+
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
 
-        // how many times to repeat in each direction; the default is (1,1),
-        //   which is probably why your example wasn't working
-        texture.repeat.set(5, 5);
+        texture.repeat.set(30, 30);
 
-        material = new THREE.MeshLambertMaterial({ map: texture });
-        plane = new THREE.Mesh(new THREE.PlaneGeometry(100, 120), material);
-        plane.material.side = THREE.DoubleSide;
-        //plane.position.x = 100;
+        material = new THREE.MeshLambertMaterial({ map: texture, transparent: true, opacity: 1.0 });
+        this.grid = new THREE.Mesh(new THREE.PlaneGeometry(180, 120), material);
+        this.grid.material.side = THREE.DoubleSide;
+        this.grid.rotation.x = Math.PI / 2;
+        this.grid.position.y = -1;
+        this.grid.position.z = 0;
 
-        // rotation.z is rotation around the z-axis, measured in radians (rather than degrees)
-        // Math.PI = 180 degrees, Math.PI / 2 = 90 degrees, etc.
-        plane.rotation.x = Math.PI / 2;
-        plane.position.y = -1;
-        plane.position.z = 0;
-
-        this.scene.add(plane);
+        this.gridScene.add(this.grid);
     }
 
-    configurePointLight() {
+    configureLight() {
         this.directionalLight = new DirectionalLight(0xffeedd);
-        this.directionalLight.position.set(0, 1000, 0);
+        this.directionalLight.position.set(0, 5000, 0);
         this.directionalLight.lookAt(new Vector3(0, 0, 0));
     }
 
     configureCamera() {
-        this.camera.position.x = -50;
-        this.camera.position.y = 50;
-        this.camera.position.z = -50;
+        this.camera.position.x = 0;
+        this.camera.position.y = 110;
+        this.camera.position.z = -80;
         this.camera.lookAt(new Vector3(0, 0, 0));
+        this.gridCamera.position.x = 0;
+        this.gridCamera.position.y = 110;
+        this.gridCamera.position.z = -80;
+        this.gridCamera.lookAt(new Vector3(0, 0, 0));
     }
 
     configureControls() {
-        this.controls = new OrbitControls(this.camera);
-        this.controls.enableZoom = true;
-        this.controls.maxPolarAngle = Math.PI / 2.0;
-        this.controls.minDistance = 10;
-        this.controls.maxDistance = 1000;
+        this.controls = new ObjectControls(this.camera, this.renderer.domElement, this.objects, this.grid, this.scene);
+        this.controls.fixed.y = 1;
+        this.controls.move = function () {
+            this.container.style.cursor = 'move';
+        }
+        this.controls.mouseup = function () {
+            this.container.style.cursor = 'auto';
+        }
+        this.controls.onclick = function () {
+
+        }
+        this.controls.activate();
     }
 
     render() {
         requestAnimationFrame(() => this.render());
         this.controls.update();
+        this.renderer.autoClear = false;
+        this.renderer.clear();
+        this.renderer.render(this.bgScene, this.bgCam);
+        this.renderer.render(this.gridScene, this.gridCamera);
         this.renderer.render(this.scene, this.camera);
     }
 
@@ -120,8 +159,8 @@ export class SimulatorComponent implements OnInit {
                 this.container.nativeElement.appendChild(this.renderer.domElement);
                 this.sceneService.shipModels3d.forEach((model: ShipModel3D, type: string) => {
                     model.addShipsToScene(scope.scene);
+                    model.objects.forEach(o => scope.objects.push(o));
                 });
-                this.addPlane();
                 this.render();
             } else {
                 setTimeout(() => {
@@ -130,5 +169,20 @@ export class SimulatorComponent implements OnInit {
             }
         });
 
+    }
+
+    @HostListener('window:resize', ['$event'])
+    onResize(event) {
+        this.screenWidth = window.innerWidth - 5;
+        this.screenHeight = window.innerHeight - 40;
+        this.camera.aspect = this.screenWidth / this.screenHeight;
+
+        // adjust the FOV
+        this.camera.fov = (360 / Math.PI) * Math.atan(this.tanFOV * (this.screenHeight / this.windowHeight));
+
+        this.camera.updateProjectionMatrix();
+        this.camera.lookAt(this.scene.position);
+
+        this.renderer.setSize(this.screenWidth, this.screenHeight);
     }
 }

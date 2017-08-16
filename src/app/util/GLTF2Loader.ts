@@ -2735,7 +2735,7 @@ class GLTFParser {
                     && scene.extensions[EXTENSIONS.KHR_LIGHTS].light !== undefined) {
 
                     var lights = extensions[EXTENSIONS.KHR_LIGHTS].lights;
-                    //_scene.add(lights[scene.extensions[EXTENSIONS.KHR_LIGHTS].light]);
+                    _scene.add(lights[scene.extensions[EXTENSIONS.KHR_LIGHTS].light]);
 
                 }
 
