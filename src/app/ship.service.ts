@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { NavigationExtras, ActivatedRoute } from '@angular/router';
+import { Vector3 } from 'three';
 
 import { Ship } from './ship';
-import { ShipData } from './ship-data';
+import { ShipData, ShipDataInstance } from './ship-data';
 import { SceneService } from './scene.service';
 
 @Injectable()
@@ -52,9 +53,10 @@ export class ShipService {
                 let ships: string = queryParams['ships'];
                 if (ships) {
                     let shipsArray: string[] = ships.split(',');
-                    for (let i = 0; i + 1 < shipsArray.length; i += 2) {
+                    for (let i = 0; i + 2 < shipsArray.length; i += 3) {
                         let type = shipsArray[i];
                         let amount = shipsArray[i + 1];
+                        let instances = shipsArray[i + 2];
                         let model = this.models[type];
                         var data = new ShipData();
                         data.origin.type = type;
@@ -62,6 +64,16 @@ export class ShipService {
                         data.amount = Number(amount);
                         data.origin.size = model.size;
                         data.origin.model = model.model;
+                        let instancesArray: string[] = instances.split(';');
+                        for (let j = 0; j < instancesArray.length; j++) {
+                            let positions: string[] = instancesArray[j].split(':');
+                            if (positions.length !== 2) {
+                                break;
+                            }
+                            var sdi = new ShipDataInstance();
+                            sdi.position = new Vector3(Number(positions[0]), 1, Number(positions[1]));
+                            data.add(sdi);
+                        }
                         this.addShip(data);
                     }
                 }
@@ -73,7 +85,11 @@ export class ShipService {
     getNavigationExtras(): NavigationExtras {
         var shipsParam = "";
         for (var s of this.ships) {
-            shipsParam += s.origin.type + "," + String(s.amount) + ",";
+            var instances = "";
+            s.instances.forEach(i => {
+                instances += i.position.x + ":" + i.position.z + ";"
+            });
+            shipsParam += s.origin.type + "," + String(s.amount) + "," + instances + ",";
         };
         let navigationExtras: NavigationExtras = {
             queryParams: { 'ships': shipsParam },

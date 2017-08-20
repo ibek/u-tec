@@ -1,9 +1,17 @@
 import { Ship } from './ship';
+import { Vector3 } from 'three';
 
 export class ShipData {
     origin: Ship = new Ship();
-    amount: number;
-    positionX: number = 0;
-    positionY: number = 0;
-    positionZ: number = 0;
+    amount: number = 0;
+    instances: ShipDataInstance[] = [];
+
+    add(instance: ShipDataInstance) {
+        this.instances.push(instance);
+    }
+}
+
+export class ShipDataInstance {
+    position: Vector3;
+    // crew ...
 }

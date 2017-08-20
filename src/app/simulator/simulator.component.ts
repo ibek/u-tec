@@ -8,6 +8,9 @@ import {
     Color, JSONLoader, SkinnedMesh, ObjectLoader, Vector3
 } from 'three';
 import * as THREE from 'three';
+
+import {Router} from '@angular/router';
+
 import { OrbitControls } from 'three-orbitcontrols-ts';
 import { ShipModel3D } from './ship-model3d';
 import { SceneService } from '../scene.service';
@@ -49,7 +52,7 @@ export class SimulatorComponent implements OnInit {
     tanFOV = Math.tan(((Math.PI / 180) * this.camera.fov / 2));
     windowHeight = window.innerHeight;
 
-    constructor(private sceneService: SceneService, private shipService: ShipService) {
+    constructor(private sceneService: SceneService, private shipService: ShipService, private router: Router) {
 
     }
 
@@ -126,11 +129,13 @@ export class SimulatorComponent implements OnInit {
     configureControls() {
         this.controls = new ObjectControls(this.camera, this.renderer.domElement, this.objects, this.grid, this.scene);
         this.controls.fixed.y = 1;
+        var scope = this;
         this.controls.move = function () {
             this.container.style.cursor = 'move';
         }
         this.controls.mouseup = function () {
             this.container.style.cursor = 'auto';
+            scope.router.navigate(["simulator"], scope.shipService.getNavigationExtras());
         }
         this.controls.onclick = function () {
 
@@ -157,7 +162,9 @@ export class SimulatorComponent implements OnInit {
             if (this.loadingProgress == 100) {
                 this.loaded = true;
                 this.container.nativeElement.appendChild(this.renderer.domElement);
+                ShipModel3D.init();
                 this.sceneService.shipModels3d.forEach((model: ShipModel3D, type: string) => {
+                    model.init();
                     model.addShipsToScene(scope.scene);
                     model.objects.forEach(o => scope.objects.push(o));
                 });
