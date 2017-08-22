@@ -1,6 +1,6 @@
 <md-card>
     <md-card-header>
-        <md-card-title>{{ship.origin.type}}</md-card-title>
+        <md-card-title class="ship-title">{{ship.origin.type}}</md-card-title>
         <button md-icon-button [mdMenuTriggerFor]="configMenu" class="ship-menu">
             <md-icon>more_vert</md-icon>
         </button>
@@ -11,7 +11,7 @@
             </button>
         </md-menu>
     </md-card-header>
-    <img md-card-image src="{{ship.origin.image}}" class="ship-thumbnail">
+    <img md-card-image src="{{shipService.getImage(ship.origin)}}" class="ship-thumbnail">
     <md-card-footer class="ship-amount">
         <div style="display: inline-block; width: 200px;">
         <md-slider

@@ -11,16 +11,77 @@ export class ShipService {
 
     ships: ShipData[] = [];
     models: Map<string, Ship> = new Map();
-    modelsArray: Ship[] = [{ "type": "F7C Hornet", "image": "assets/ships/thumbnails/F7CHornet.png", "size": "S", "model": "assets/ships/hornetq.gltf" },
-    { "type": "Freelancer", "image": "assets/ships/thumbnails/Freelancer.png", "size": "S", "model": "none" },
-    { "type": "Caterpillar", "image": "assets/ships/thumbnails/Caterpillar.png", "size": "M", "model": "none" },
-    { "type": "Starfarer", "image": "assets/ships/thumbnails/Starfarer.png", "size": "M", "model": "none" },
-    { "type": "890 Jump", "image": "assets/ships/thumbnails/890 Jump.png", "size": "L", "model": "none" }];
+    modelsArray: Ship[] = [
+        {
+            "type": "F7C Hornet",
+            "size": "S",
+            "scale": 0.003,
+            "maxcrew": 1,
+            "cargo": 13
+        },
+        {
+            "type": "Caterpillar",
+            "size": "M",
+            "scale": 0.0025,
+            "maxcrew": 5,
+            "cargo": 512
+        },
+        {
+            "type": "Reclaimer",
+            "size": "L",
+            "scale": 0.003,
+            "maxcrew": 5,
+            "cargo": 6555
+        },
+        {
+            "type": "Aurora LN",
+            "size": "S",
+            "scale": 0.003,
+            "maxcrew": 1,
+            "cargo": 13
+        },
+        {
+            "type": "Sabre",
+            "size": "S",
+            "scale": 0.003,
+            "maxcrew": 1,
+            "cargo": 0
+        },
+        {
+            "type": "Avenger Stalker",
+            "size": "S",
+            "scale": 0.03,
+            "maxcrew": 1,
+            "cargo": 4
+        },
+        {
+            "type": "Herald",
+            "size": "S",
+            "scale": 0.003,
+            "maxcrew": 2,
+            "cargo": 0
+        },
+        {
+            "type": "Constellation Andromeda",
+            "size": "M",
+            "scale": 0.003,
+            "maxcrew": 5,
+            "cargo": 134
+        }
+    ];
 
     constructor(private sceneService: SceneService, private route: ActivatedRoute) {
         for (var model of this.modelsArray) {
             this.models[model.type] = model;
         };
+    }
+
+    getImage(ship: Ship): string {
+        return "assets/ships/thumbnails/" + ship.type + ".png";
+    }
+
+    getModel3d(ship: Ship): string {
+        return "assets/ships/" + ship.type + ".gltf";
     }
 
     addShip(data: ShipData): boolean {
@@ -35,7 +96,7 @@ export class ShipService {
             return false;
         } else {
             this.ships.push(data);
-            this.sceneService.addShipModelFor(data);
+            this.sceneService.addShipModelFor(this.getModel3d(data.origin), data);
             return true;
         }
     }
@@ -60,10 +121,8 @@ export class ShipService {
                         let model = this.models[type];
                         var data = new ShipData();
                         data.origin.type = type;
-                        data.origin.image = model.image;
+                        data.origin = model;
                         data.amount = Number(amount);
-                        data.origin.size = model.size;
-                        data.origin.model = model.model;
                         let instancesArray: string[] = instances.split(';');
                         for (let j = 0; j < instancesArray.length; j++) {
                             let positions: string[] = instancesArray[j].split(':');

@@ -130,7 +130,7 @@ export class ObjectControls {
             this.onclick();
 
         }
-        else {
+        else if (event.ctrlKey) {
             this.setFocusNull();
             this.moveScene = true;
             this.x = event.offsetX == undefined ? event.layerX : event.offsetX;
@@ -207,12 +207,11 @@ export class ObjectControls {
         this.moveScene = false;
 
         if (this.focused) {
-            console.log(this.focused.parent.userData);
             var userData = this.focused.parent.userData;
-            var x = Math.round( this.focused.parent.position.x * 10 ) / 10;
+            var x = Math.round(this.focused.parent.position.x * 10) / 10;
             this.focused.parent.position.x = x;
             userData.shipData.instances[userData.id].position.x = x;
-            var z = Math.round( this.focused.parent.position.z * 10 ) / 10;
+            var z = Math.round(this.focused.parent.position.z * 10) / 10;
             this.focused.parent.position.z = z;
             userData.shipData.instances[userData.id].position.z = z;
             this.mouseup();

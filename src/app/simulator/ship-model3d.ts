@@ -48,10 +48,10 @@ export class ShipModel3D {
         return this.model !== undefined;
     }
 
-    load() {
+    load(modelPath:string) {
         var loader = new GLTF2Loader();
         var scope = this;
-        loader.load(this.data.origin.model, function (data) {
+        loader.load(modelPath, function (data) {
             console.log(data.scene);
             scope.model = data.scene;
             scope.model.children[0].name = scope.data.origin.type;
@@ -71,7 +71,7 @@ export class ShipModel3D {
 
         for (var i = 0; i < this.data.amount; i++) {
             var instance = this.data.instances[i];
-            this.addShipTo(scene, i, instance.position, 0.003);
+            this.addShipTo(scene, i, instance.position, this.data.origin.scale);
         }
     }
 
@@ -81,11 +81,11 @@ export class ShipModel3D {
             color: 0xaa0000, side: THREE.DoubleSide
         });*/
         var material = new THREE.MeshStandardMaterial({
-            color: 0x00aa00,
+            color: 0x33bb33,
             metalness: 1.0,
-            roughness: 0.6,
-            transparent: true,
-            opacity: 0.4,
+            roughness: 0.8,
+            transparent: false,
+            opacity: 1.0,
             shading: THREE.SmoothShading, side: THREE.DoubleSide
         });
         let i = scene.getObjectByName(this.data.origin.type);
@@ -98,6 +98,9 @@ export class ShipModel3D {
             object.children[0].material = material;
             object.userData.id = id;
             object.userData.shipData = this.data;
+            if (object.children.length > 0) {
+                //object.children.splice(1,object.children.length-1);
+            }
             this.objects.push(object.children[0]);
             scene.add(scope.model);
         } else {

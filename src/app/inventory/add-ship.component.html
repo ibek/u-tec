@@ -19,7 +19,7 @@
                 </div>
             </md-hint>
         </form>
-        <img md-card-image src="{{selectedModel.image}}" class="ship-thumbnail" *ngIf="selectedModel">
+        <img md-card-image src="{{shipService.getImage(selectedModel)}}" class="ship-thumbnail" *ngIf="selectedModel">
     </md-card-content>
 
     <md-card-footer class="ship-actions">

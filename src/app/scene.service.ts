@@ -13,11 +13,11 @@ export class SceneService {
 
     }
 
-    addShipModelFor(shipData: ShipData) {
+    addShipModelFor(modelPath:string, shipData: ShipData) {
         if (!this.shipModels3d.has(shipData.origin.type)) {
             var model = new ShipModel3D(shipData);
             this.shipModels3d.set(shipData.origin.type, model);
-            model.load();
+            model.load(modelPath);
         }
     }
 

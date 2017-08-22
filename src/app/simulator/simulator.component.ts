@@ -9,7 +9,7 @@ import {
 } from 'three';
 import * as THREE from 'three';
 
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
 
 import { OrbitControls } from 'three-orbitcontrols-ts';
 import { ShipModel3D } from './ship-model3d';
@@ -46,7 +46,7 @@ export class SimulatorComponent implements OnInit {
 
     directionalLight: DirectionalLight;
 
-    objects:any = [];
+    objects: any = [];
 
     // remember these initial values
     tanFOV = Math.tan(((Math.PI / 180) * this.camera.fov / 2));
@@ -71,6 +71,7 @@ export class SimulatorComponent implements OnInit {
 
         this.addBackground();
         this.addGrid();
+        this.addPointer();
         this.configureControls();
 
         this.start();
@@ -107,6 +108,16 @@ export class SimulatorComponent implements OnInit {
         this.grid.position.z = 0;
 
         this.gridScene.add(this.grid);
+    }
+
+    addPointer() {
+        var geometry = new THREE.Geometry();
+        geometry.vertices.push(new Vector3(0, 0, 0));
+        geometry.vertices.push(new Vector3(-3, 10, 0));
+        geometry.vertices.push(new Vector3(-12, 10, 0));
+
+        var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({transparent: true, opacity: 0.8, linewidth: 3}));
+        this.scene.add(line);
     }
 
     configureLight() {
