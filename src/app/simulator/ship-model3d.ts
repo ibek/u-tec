@@ -81,12 +81,12 @@ export class ShipModel3D {
             color: 0xaa0000, side: THREE.DoubleSide
         });*/
         var material = new THREE.MeshStandardMaterial({
-            color: 0x33bb33,
+            color: 0x22dd22,
             metalness: 1.0,
-            roughness: 0.8,
-            transparent: false,
-            opacity: 1.0,
-            shading: THREE.SmoothShading, side: THREE.DoubleSide
+            roughness: 0.7,
+            transparent: true,
+            opacity: 0.4,
+            side: THREE.DoubleSide
         });
         let i = scene.getObjectByName(this.data.origin.type);
         if (i == undefined) {
@@ -95,6 +95,9 @@ export class ShipModel3D {
             object.position.set(position.x, position.y, position.z);
             object.rotation.z = Math.PI;
             object.children[0].geometry.computeBoundingSphere();
+            if (this.data.origin.size == 'L') {
+                material.opacity = 0.6;
+            }
             object.children[0].material = material;
             object.userData.id = id;
             object.userData.shipData = this.data;

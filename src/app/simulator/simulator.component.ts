@@ -57,6 +57,8 @@ export class SimulatorComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        window.onerror = function() { debugger; } // DEBUG
+
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(this.screenWidth, this.screenHeight);
         this.renderer.domElement.style.position = "relative";
@@ -71,7 +73,6 @@ export class SimulatorComponent implements OnInit {
 
         this.addBackground();
         this.addGrid();
-        this.addPointer();
         this.configureControls();
 
         this.start();
@@ -110,16 +111,6 @@ export class SimulatorComponent implements OnInit {
         this.gridScene.add(this.grid);
     }
 
-    addPointer() {
-        var geometry = new THREE.Geometry();
-        geometry.vertices.push(new Vector3(0, 0, 0));
-        geometry.vertices.push(new Vector3(-3, 10, 0));
-        geometry.vertices.push(new Vector3(-12, 10, 0));
-
-        var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({transparent: true, opacity: 0.8, linewidth: 3}));
-        this.scene.add(line);
-    }
-
     configureLight() {
         this.directionalLight = new DirectionalLight(0xffeedd);
         this.directionalLight.position.set(0, 5000, 0);
@@ -138,7 +129,7 @@ export class SimulatorComponent implements OnInit {
     }
 
     configureControls() {
-        this.controls = new ObjectControls(this.camera, this.renderer.domElement, this.objects, this.grid, this.scene);
+        this.controls = new ObjectControls(this.camera, this.renderer.domElement, this.container, this.objects, this.grid, this.scene);
         this.controls.fixed.y = 1;
         var scope = this;
         this.controls.move = function () {
@@ -162,6 +153,7 @@ export class SimulatorComponent implements OnInit {
         this.renderer.render(this.bgScene, this.bgCam);
         this.renderer.render(this.gridScene, this.gridCamera);
         this.renderer.render(this.scene, this.camera);
+        this.controls.updateAfter(this.screenWidth, this.screenHeight);
     }
 
     start() {

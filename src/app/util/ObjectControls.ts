@@ -1,5 +1,6 @@
 
 import * as THREE from 'three';
+import {Pointer} from './Pointer';
 
 export class ObjectControls {
     fixed = new THREE.Vector3(0, 0, 0);
@@ -28,7 +29,10 @@ export class ObjectControls {
     lz = 0.0;
     moveMax = 100;
 
-    constructor(private camera, private container, private objects, private projectionMap, private scene) {
+    selected = null;
+    pointer:Pointer = new Pointer(this.camera);
+
+    constructor(private camera, private container, private htmlContainer, private objects, private projectionMap, private scene) {
 
     }
 
@@ -50,8 +54,20 @@ export class ObjectControls {
         this.onContainerMouseMove();
     }
 
+    updateAfter(screenWidth, screenHeight) {
+        if (this.selected) {
+            this.pointer.update(this.selected.parent.position.clone(), screenWidth, screenHeight);
+        }
+    }
+
     move = function () { this.container.style.cursor = 'move' }
-    mouseover = function () { this.container.style.cursor = 'pointer' }
+    mouseover = function () {
+        if (this.selected) {
+            this.container.style.cursor = 'move';
+        } else {
+            this.container.style.cursor = 'pointer';
+        }
+    }
     mouseout = function () { this.container.style.cursor = 'auto' }
     mouseup = function () { this.container.style.cursor = 'auto' }
     onclick = function () { }
@@ -71,6 +87,11 @@ export class ObjectControls {
         else {
             this.focused = object; this.focusedpart = null;
             this.previous.copy(this.focused.parent.position);
+        }
+        // selection
+        if (this.focused !== this.selected) {
+            this.focused = null;
+            this.selected = null;
         }
     }
 
@@ -122,13 +143,15 @@ export class ObjectControls {
     }
 
     private onContainerMouseDown = (event) => {
-        var raycaster = this._rayGet();
-        this._intersects = raycaster.intersectObjects(this.objects, true);
+        if (this.selected) {
+            var raycaster = this._rayGet();
+            this._intersects = raycaster.intersectObjects(this.objects, true);
 
-        if (this._intersects.length > 0) {
-            this.setFocus(this._intersects[0].object);
-            this.onclick();
+            if (this._intersects.length > 0) {
+                this.setFocus(this._intersects[0].object);
+                this.onclick();
 
+            }
         }
         else if (event.ctrlKey) {
             this.setFocusNull();
@@ -217,6 +240,17 @@ export class ObjectControls {
             this.mouseup();
             this._DisplaceFocused = null;
             this.focused = null;
+        } else { // selection
+            var raycaster = this._rayGet();
+            this._intersects = raycaster.intersectObjects(this.objects, true);
+
+            if (this._intersects.length > 0) {
+                this.selected = this._intersects[0].object;
+                this.pointer.show(this.htmlContainer, this.scene, this.selected.parent.userData.shipData);
+            } else if (this.selected) {
+                this.pointer.hide(this.htmlContainer, this.scene);
+                this.selected = null;
+            }
         }
     }
 
