@@ -80,8 +80,12 @@ export class ShipModel3D {
         /**var material = new THREE.MeshPhongMaterial({
             color: 0xaa0000, side: THREE.DoubleSide
         });*/
+        // 0x22dd22 green
+        // 0x00ffff cyan
+        // 0xdddd22 gold
+        // 0xdd2222 red
         var material = new THREE.MeshStandardMaterial({
-            color: 0x22dd22,
+            color: 0x00ffff,
             metalness: 1.0,
             roughness: 0.7,
             transparent: true,

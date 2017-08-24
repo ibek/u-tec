@@ -67,6 +67,20 @@ export class ShipService {
             "scale": 0.003,
             "maxcrew": 5,
             "cargo": 134
+        },
+        {
+            "type": "Prospector",
+            "size": "S",
+            "scale": 0.003,
+            "maxcrew": 1,
+            "cargo": 128
+        },
+        {
+            "type": "Gladius",
+            "size": "S",
+            "scale": 0.003,
+            "maxcrew": 1,
+            "cargo": 0
         }
     ];
 

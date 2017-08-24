@@ -20,14 +20,14 @@ export class Pointer {
 
     show(container, scene: Scene, shipData: ShipData) {
         this.title.setLabel(shipData.origin.type);
-        container.nativeElement.appendChild(this.title.htmlElement);
+        this.title.htmlElement.style.display = 'block';
         scene.add(this.line);
         this.visible = true;
     }
 
     hide(container, scene: Scene) {
         this.visible = false;
-        container.nativeElement.removeChild(this.title.htmlElement);
+        this.title.htmlElement.style.display = 'none';
         scene.remove(this.line);
     }
 

@@ -112,8 +112,8 @@ export class SimulatorComponent implements OnInit {
     }
 
     configureLight() {
-        this.directionalLight = new DirectionalLight(0xffeedd);
-        this.directionalLight.position.set(0, 5000, 0);
+        this.directionalLight = new DirectionalLight(0xffffff);
+        this.directionalLight.position.set(0, 1000, 0);
         this.directionalLight.lookAt(new Vector3(0, 0, 0));
     }
 

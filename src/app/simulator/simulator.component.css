@@ -5,3 +5,16 @@
 .loader {
     padding: 20px;
 }
+
+#text-label {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    width: auto;
+    white-space: nowrap;
+    min-height: 40px;
+}
+
+#text-label:hover {
+    background-color: #aaa;
+}
