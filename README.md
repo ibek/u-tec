@@ -1,5 +1,4 @@
-# Star Citizen - Holocom
-Fleet Strategy Simulator
+# UEE Tactical Communications Interface
 
 ```sh
 npm install

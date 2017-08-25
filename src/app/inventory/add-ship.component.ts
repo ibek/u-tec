@@ -21,7 +21,7 @@ export class AddShipComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.shipService.getModels().then(models => this.models = models);
+    this.shipService.getModels().then(models => this.models = models.sort((a, b) => a.type > b.type ? 1 : -1));
 
     this.route.params
       .subscribe(params => this.size = params['size']);
