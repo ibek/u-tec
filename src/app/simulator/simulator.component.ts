@@ -1,6 +1,7 @@
 declare var require: any
 
-import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
+import { Component, AfterViewInit, HostListener, ViewChild, ElementRef } from '@angular/core';
+import { MdSidenav } from '@angular/material';
 import {
     Scene, PerspectiveCamera, WebGLRenderer,
     BoxGeometry, Mesh, MeshBasicMaterial,
@@ -23,13 +24,14 @@ import { ObjectControls } from '../util/ObjectControls';
     templateUrl: './simulator.component.html',
     styleUrls: ['./simulator.component.css']
 })
-export class SimulatorComponent implements OnInit {
+export class SimulatorComponent implements AfterViewInit {
     @ViewChild('container') container;
+    @ViewChild('shipInfo') shipInfoBar: MdSidenav;
 
     loadingProgress: number = 0;
     loaded: boolean = false;
 
-    screenWidth = window.innerWidth - 15;
+    screenWidth = window.innerWidth - 20;
     screenHeight = window.innerHeight - 85;
 
     scene: Scene = new Scene();
@@ -52,12 +54,14 @@ export class SimulatorComponent implements OnInit {
     tanFOV = Math.tan(((Math.PI / 180) * this.camera.fov / 2));
     windowHeight = window.innerHeight;
 
+    shipData: ShipData; // info for selected ship
+
     constructor(private sceneService: SceneService, private shipService: ShipService, private router: Router) {
 
     }
 
-    ngOnInit(): void {
-        window.onerror = function() { debugger; } // DEBUG
+    ngAfterViewInit(): void {
+        window.onerror = function () { debugger; } // DEBUG
 
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(this.screenWidth, this.screenHeight);
@@ -145,6 +149,7 @@ export class SimulatorComponent implements OnInit {
         this.controls.activate();
     }
 
+    getImageData: any;
     render() {
         requestAnimationFrame(() => this.render());
         this.controls.update();
@@ -179,6 +184,52 @@ export class SimulatorComponent implements OnInit {
             }
         });
 
+    }
+
+    showInfo() {
+        this.shipData = this.controls.selected.parent.userData.shipData.origin;
+        this.shipInfoBar.toggle();
+    }
+
+    onCloseShipInfo() {
+        this.controls.hideSelected();
+    }
+
+    saveImage() {
+        this.controls.hideSelected();
+        this.render();
+        var imgData = this.renderer.domElement.toDataURL();
+        var a: any = document.createElement("a");
+        a.href = imgData.replace('image/png', 'image/octet-stream');
+        a.download = "tactical-plan.png";
+        a.click();
+    }
+
+    toggleFullscreen() {
+        var document: any = window.document;
+        var elem = document.documentElement;
+        if (!document.fullscreenElement && !document.mozFullScreenElement &&
+            !document.webkitFullscreenElement && !document.msFullscreenElement) {
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
+            } else if (elem.mozRequestFullScreen) {
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen((<any>Element).ALLOW_KEYBOARD_INPUT);
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+        }
     }
 
     @HostListener('window:resize', ['$event'])

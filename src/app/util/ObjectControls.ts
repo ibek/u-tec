@@ -1,6 +1,6 @@
 
 import * as THREE from 'three';
-import {Pointer} from './Pointer';
+import { Pointer } from './Pointer';
 
 export class ObjectControls {
     fixed = new THREE.Vector3(0, 0, 0);
@@ -30,7 +30,7 @@ export class ObjectControls {
     moveMax = 100;
 
     selected = null;
-    pointer:Pointer = new Pointer(this.camera);
+    pointer: Pointer = new Pointer(this.camera);
 
     constructor(private camera, private container, private htmlContainer, private objects, private projectionMap, private scene) {
 
@@ -248,10 +248,14 @@ export class ObjectControls {
                 this.selected = this._intersects[0].object;
                 this.pointer.show(this.htmlContainer, this.scene, this.selected.parent.userData.shipData);
             } else if (this.selected) {
-                this.pointer.hide(this.htmlContainer, this.scene);
-                this.selected = null;
+                this.hideSelected();
             }
         }
+    }
+
+    hideSelected() {
+        this.pointer.hide(this.htmlContainer, this.scene);
+        this.selected = null;
     }
 
     private onDocumentMouseWheel = (event) => {

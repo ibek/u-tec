@@ -13,7 +13,7 @@ export class Pointer {
         geometry.vertices.push(new Vector3(-3, 10, 0));
         geometry.vertices.push(new Vector3(-12, 10, 0));
 
-        var l = new Line(geometry, new LineBasicMaterial({ transparent: true, opacity: 0.8, linewidth: 3 }));
+        var l = new Line(geometry, new LineBasicMaterial({ transparent: true, opacity: 0.8, linewidth: 2 }));
         this.line = new Object3D();
         this.line.add(l);
     }
