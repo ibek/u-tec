@@ -9,3 +9,10 @@
 .simulatorActive {
     display: none;
 }
+
+.donate {
+    background-image: url("~/assets/images/donate.png");
+    width: 91px;
+    height: 36px;
+    margin-right: 15px;
+}

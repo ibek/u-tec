@@ -24,4 +24,8 @@ export class AppComponent {
     this.router.navigate(["simulator"], this.shipService.getNavigationExtras());
   }
 
+  donate(): void {
+    window.open("https://donorbox.org/uee-tactical-communications-interface", "_blank");
+  }
+
 }
