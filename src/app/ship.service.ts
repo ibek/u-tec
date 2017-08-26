@@ -81,6 +81,13 @@ export class ShipService {
             "scale": 0.003,
             "maxcrew": 1,
             "cargo": 0
+        },
+        {
+            "type": "Cutlass Black",
+            "size": "M",
+            "scale": 0.003,
+            "maxcrew": 3,
+            "cargo": 150
         }
     ];
 
