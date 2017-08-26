@@ -52,19 +52,9 @@ export class ShipModel3D {
         var loader = new GLTF2Loader();
         var scope = this;
         loader.load(modelPath, function (data) {
-            console.log(data.scene);
             scope.model = data.scene;
             scope.model.children[0].name = scope.data.origin.type;
         });
-        /**var loader = new CTMLoader();
-        var textureLoader = new TextureLoader();
-        var scope = this;
-
-        loader.load("ships/hornet-lp1.ctm", function (geometry) {
-            var material = new MeshLambertMaterial({ color: 0xcccccc, side: THREE.DoubleSide, combine: THREE.MixOperation, reflectivity: 0.1 });
-            var model = scope.callbackModel(geometry, 70, material, 0, 0, 0, 0, 0);
-            scope.scene.add(model);
-        }, { useWorker: false });*/
     }
 
     addShipsToScene(scene) {
@@ -77,9 +67,6 @@ export class ShipModel3D {
 
     addShipTo(scene, id:number, position: Vector3, scale: number) {
         var scope = this;
-        /**var material = new THREE.MeshPhongMaterial({
-            color: 0xaa0000, side: THREE.DoubleSide
-        });*/
         // 0x22dd22 green
         // 0x00ffff cyan
         // 0xdddd22 gold
@@ -105,9 +92,6 @@ export class ShipModel3D {
             object.children[0].material = material;
             object.userData.id = id;
             object.userData.shipData = this.data;
-            if (object.children.length > 0) {
-                //object.children.splice(1,object.children.length-1);
-            }
             this.objects.push(object.children[0]);
             scene.add(scope.model);
         } else {
@@ -121,7 +105,6 @@ export class ShipModel3D {
             obj.userData.shipData = this.data;
             scope.model.add(obj);
         }
-        console.log(scene);
     }
 
     static getNextPosition(): Vector3 {

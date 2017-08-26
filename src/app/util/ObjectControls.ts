@@ -14,6 +14,7 @@ export class ObjectControls {
     mouseoveredpart = null;
 
     _mouse = new THREE.Vector2();
+    mousewheelevt; // fix for firefox
 
     enabled = true;
     item = null;
@@ -40,14 +41,24 @@ export class ObjectControls {
         this.container.addEventListener('mousedown', this.onContainerMouseDown, false);
         this.container.addEventListener('mousemove', this.getMousePos, false);
         this.container.addEventListener('mouseup', this.onContainerMouseUp, false);
-        this.container.addEventListener('mousewheel', this.onDocumentMouseWheel, false);
+        this.mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x
+
+        var document: any = window.document;
+        if (document.attachEvent) //if IE (and Opera depending on user setting)
+            document.attachEvent("on" + this.mousewheelevt, this.onDocumentMouseWheel)
+        else if (document.addEventListener) //WC3 browsers
+            document.addEventListener(this.mousewheelevt, this.onDocumentMouseWheel, false)
     }
 
     deactivate() {
         this.container.removeEventListener('mousedown', this.onContainerMouseDown, false);
         this.container.removeEventListener('mousemove', this.getMousePos, false);
         this.container.removeEventListener('mouseup', this.onContainerMouseUp, false);
-        this.container.removeEventListener('mousewheel', this.onDocumentMouseWheel, false);
+        var document: any = document;
+        if (document.detachEvent) //if IE (and Opera depending on user setting)
+            document.detachEvent("on" + this.mousewheelevt, this.onDocumentMouseWheel)
+        else if (document.addEventListener) //WC3 browsers
+            document.removeEventListener(this.mousewheelevt, this.onDocumentMouseWheel, false)
     }
 
     update() {
@@ -262,23 +273,26 @@ export class ObjectControls {
         event.preventDefault();
         event.stopPropagation();
         var delta;
-        switch (event.deltaMode) {
-            case 2:
-                // Zoom in pages
-                delta = event.deltaY * 0.025;
-                break;
+        if (event.deltaY) {
+            switch (event.deltaMode) {
+                case 2:
+                    // Zoom in pages
+                    delta = event.deltaY * 0.025;
+                    break;
 
-            case 1:
-                // Zoom in lines
-                delta = event.deltaY * 0.01;
-                break;
+                case 1:
+                    // Zoom in lines
+                    delta = event.deltaY * 0.01;
+                    break;
 
-            default:
-                // undefined, 0, assume pixels
-                delta = event.deltaY * 0.00025;
-                break;
+                default:
+                    // undefined, 0, assume pixels
+                    delta = event.deltaY * 0.00025;
+                    break;
 
+            }
         }
+        delta = delta ? delta : event.detail/500.0;
         var zoomSpeed = 20.0;
         if (this.camera.zoom > 3.0) {
             zoomSpeed += 10.0;

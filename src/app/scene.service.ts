@@ -23,7 +23,6 @@ export class SceneService {
 
     loadingProgress(): number {
         var progress = 100;
-        console.log(this.shipModels3d.size);
         if (this.shipModels3d.size == 0) {
             return progress;
         }

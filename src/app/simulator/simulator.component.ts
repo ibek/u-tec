@@ -165,7 +165,6 @@ export class SimulatorComponent implements AfterViewInit {
         let data: Promise<ShipData[]> = this.shipService.getShips(); // the list needs to be upto date
         data.then((res) => {
             this.loadingProgress = this.sceneService.loadingProgress();
-            console.log(this.loadingProgress);
             var scope = this;
             if (this.loadingProgress == 100) {
                 this.loaded = true;
