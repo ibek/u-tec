@@ -1,6 +1,6 @@
 import { TextLabel } from './TextLabel';
 import { Vector3, Geometry, Line, LineBasicMaterial, Scene, Object3D } from 'three';
-import { ShipData } from '../ship-data';
+import { ShipData } from '../data-model';
 
 export class Pointer {
     title: TextLabel = new TextLabel(this.camera);
@@ -19,7 +19,7 @@ export class Pointer {
     }
 
     show(container, scene: Scene, shipData: ShipData) {
-        this.title.setLabel(shipData.origin.type);
+        this.title.setLabel(shipData.name);
         this.title.htmlElement.style.display = 'block';
         scene.add(this.line);
         this.visible = true;

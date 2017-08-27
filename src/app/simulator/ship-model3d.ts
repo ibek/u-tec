@@ -4,9 +4,8 @@ import { Mesh, Vector3, TextureLoader, MeshLambertMaterial, Object3D } from 'thr
 
 import * as THREE from 'three';
 import { GLTF2Loader } from '../util/GLTF2Loader';
-//import { CTMLoader } from './util/CTMLoader';
 
-import { ShipData, ShipDataInstance } from '../ship-data';
+import { Ship, ShipData } from '../data-model';
 
 const MAX_POS: number = 30;
 
@@ -20,7 +19,7 @@ export class ShipModel3D {
 
     objects = [];
 
-    constructor(public data: ShipData) {
+    constructor(public data: ShipData, public shipModel: Ship) {
 
     }
 
@@ -31,16 +30,12 @@ export class ShipModel3D {
     }
 
     init() {
+        this.objects = [];
         if (this.model.children.length > 3) {
             this.model.children.splice(3, this.model.children.length - 3);
         }
-        if (this.data.instances.length !== this.data.amount) {
-            for (var i = this.data.instances.length; i < this.data.amount; i++) {
-                var sdi = new ShipDataInstance();
-                var position = ShipModel3D.getNextPosition();
-                sdi.position = position;
-                this.data.add(sdi);
-            }
+        if (!this.data.position) {
+            this.data.position = ShipModel3D.getNextPosition();
         }
     }
 
@@ -48,24 +43,29 @@ export class ShipModel3D {
         return this.model !== undefined;
     }
 
-    load(modelPath:string) {
+    load(modelPath: string, loaded) {
         var loader = new GLTF2Loader();
         var scope = this;
         loader.load(modelPath, function (data) {
             scope.model = data.scene;
-            scope.model.children[0].name = scope.data.origin.type;
+            scope.model.children[0].name = scope.data.name;
+            loaded();
         });
     }
 
     addShipsToScene(scene) {
-
-        for (var i = 0; i < this.data.amount; i++) {
-            var instance = this.data.instances[i];
-            this.addShipTo(scene, i, instance.position, this.data.origin.scale);
-        }
+        // TODO: refactor amount
+        //for (var i = 0; i < this.data.amount; i++) {
+        //    var instance = this.data.instances[i];
+        this.addShipTo(scene, 0, this.shipModel.scale);
+        //}
     }
 
-    addShipTo(scene, id:number, position: Vector3, scale: number) {
+    removeShipFromScene() {
+        this.model.parent.remove(this.model);
+    }
+
+    addShipTo(scene, id: number, scale: number) {
         var scope = this;
         // 0x22dd22 green
         // 0x00ffff cyan
@@ -79,30 +79,34 @@ export class ShipModel3D {
             opacity: 0.4,
             side: THREE.DoubleSide
         });
-        let i = scene.getObjectByName(this.data.origin.type);
+        let i = scene.getObjectByName(this.data.name);
         if (i == undefined) {
             var object = scope.model.children[0];
             object.scale.set(scale, scale, scale);
-            object.position.set(position.x, position.y, position.z);
+            object.position.set(this.data.position.x, this.data.position.y, this.data.position.z);
+            this.data.position = object.position;
             object.rotation.z = Math.PI;
             object.children[0].geometry.computeBoundingSphere();
-            if (this.data.origin.size == 'L') {
+            if (this.shipModel.size == 'L') {
                 material.opacity = 0.6;
             }
             object.children[0].material = material;
             object.userData.id = id;
             object.userData.shipData = this.data;
+            object.userData.shipModel = this.shipModel;
             this.objects.push(object.children[0]);
             scene.add(scope.model);
         } else {
             var obj = scope.model.children[0].clone(false);
             var mesh = new THREE.Mesh(scope.model.children[0].children[0].geometry, material);
-            obj.position.set(position.x, position.y, position.z);
+            obj.position.set(this.data.position.x, this.data.position.y, this.data.position.z);
+            this.data.position = obj.position;
             obj.scale.set(scale, scale, scale);
             obj.add(mesh);
             this.objects.push(mesh);
             obj.userData.id = id;
             obj.userData.shipData = this.data;
+            obj.userData.shipModel = this.shipModel;
             scope.model.add(obj);
         }
     }

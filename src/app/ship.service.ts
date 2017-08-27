@@ -1,89 +1,96 @@
 import { Injectable } from '@angular/core';
-import { NavigationExtras, ActivatedRoute } from '@angular/router';
+import { NavigationExtras, ActivatedRoute, Router } from '@angular/router';
 import { Vector3 } from 'three';
 
-import { Ship } from './ship';
-import { ShipData, ShipDataInstance } from './ship-data';
+import { TacticalPlan, ShipData, Ship } from './data-model';
 import { SceneService } from './scene.service';
+
+import { AngularFireDatabase, FirebaseObjectObservable, FirebaseListObservable } from 'angularfire2/database';
 
 @Injectable()
 export class ShipService {
 
-    ships: ShipData[] = [];
+    id: string;
+    plans: FirebaseListObservable<TacticalPlan[]>;
+    tacticalPlanFO: FirebaseObjectObservable<TacticalPlan>;
+    tacticalPlan: TacticalPlan = new TacticalPlan();
+
+    ready: boolean = false;
+
     models: Map<string, Ship> = new Map();
     modelsArray: Ship[] = [
         {
-            "type": "F7C Hornet",
+            "name": "F7C Hornet",
             "size": "S",
             "scale": 0.003,
             "maxcrew": 1,
             "cargo": 13
         },
         {
-            "type": "Caterpillar",
+            "name": "Caterpillar",
             "size": "M",
             "scale": 0.0025,
             "maxcrew": 5,
             "cargo": 512
         },
         {
-            "type": "Reclaimer",
+            "name": "Reclaimer",
             "size": "L",
             "scale": 0.003,
             "maxcrew": 5,
             "cargo": 6555
         },
         {
-            "type": "Aurora LN",
+            "name": "Aurora LN",
             "size": "S",
             "scale": 0.003,
             "maxcrew": 1,
             "cargo": 13
         },
         {
-            "type": "Sabre",
+            "name": "Sabre",
             "size": "S",
             "scale": 0.003,
             "maxcrew": 1,
             "cargo": 0
         },
         {
-            "type": "Avenger Stalker",
+            "name": "Avenger Stalker",
             "size": "S",
             "scale": 0.03,
             "maxcrew": 1,
             "cargo": 4
         },
         {
-            "type": "Herald",
+            "name": "Herald",
             "size": "S",
             "scale": 0.003,
             "maxcrew": 2,
             "cargo": 0
         },
         {
-            "type": "Constellation Andromeda",
+            "name": "Constellation Andromeda",
             "size": "M",
             "scale": 0.003,
             "maxcrew": 5,
             "cargo": 134
         },
         {
-            "type": "Prospector",
+            "name": "Prospector",
             "size": "S",
             "scale": 0.003,
             "maxcrew": 1,
             "cargo": 128
         },
         {
-            "type": "Gladius",
+            "name": "Gladius",
             "size": "S",
             "scale": 0.003,
             "maxcrew": 1,
             "cargo": 0
         },
         {
-            "type": "Cutlass Black",
+            "name": "Cutlass Black",
             "size": "M",
             "scale": 0.003,
             "maxcrew": 3,
@@ -91,24 +98,63 @@ export class ShipService {
         }
     ];
 
-    constructor(private sceneService: SceneService, private route: ActivatedRoute) {
+    constructor(private sceneService: SceneService, private route: ActivatedRoute, private db: AngularFireDatabase, private router: Router) {
         for (var model of this.modelsArray) {
-            this.models[model.type] = model;
+            this.models[model.name] = model;
         };
+
+        route.queryParams.subscribe(
+            params => {
+                if (!this.id) {
+                    this.id = params['id'];
+                    if (this.id) {
+                        this.initPlans();
+                    }
+                }
+            });
+
+    }
+
+    initPlans() {
+        this.plans = this.db.list('/tactical-plans',
+            {
+                query: {
+                    orderByKey: true,
+                    equalTo: this.id
+                }
+            });
+        this.plans.subscribe(item => {
+            this.tacticalPlan.update(item[0], (shipName) => {
+                this.sceneService.removeShipModelFor(shipName);
+            });
+            this.tacticalPlan.ships.forEach(ship => {
+                var shipModel = this.getModel(ship.name);
+                this.sceneService.addShipModelFor(this.getModel3d(shipModel), ship, shipModel);
+            });
+            this.ready = true;
+        });
+    }
+
+    isReady(): boolean {
+        return this.id !== undefined && this.ready;
     }
 
     getImage(ship: Ship): string {
-        return "assets/ships/thumbnails/" + ship.type + ".png";
+        return "assets/ships/thumbnails/" + ship.name + ".png";
     }
 
     getModel3d(ship: Ship): string {
-        return "assets/ships/" + ship.type + ".gltf";
+        return "assets/ships/" + ship.name + ".gltf";
     }
 
-    addShip(data: ShipData): boolean {
+    getTacticalPlan(): Promise<TacticalPlan> {
+        return Promise.resolve(this.tacticalPlan);
+    }
+
+    addShip(shipModel: Ship): boolean {
         var found: boolean = false;
-        for (var s of this.ships) {
-            if (s.origin.type == data.origin.type) {
+        for (var s of this.tacticalPlan.ships) {
+            if (s.name == shipModel.name) {
                 found = true;
                 break;
             }
@@ -116,63 +162,42 @@ export class ShipService {
         if (found) {
             return false;
         } else {
-            this.ships.push(data);
-            this.sceneService.addShipModelFor(this.getModel3d(data.origin), data);
+            var data = new ShipData(shipModel.name);
+            this.tacticalPlan.ships.push(data);
+            if (!this.plans) {
+                this.plans = this.db.list('/tactical-plans');
+                this.plans.push(this.tacticalPlan).then(item => {
+                    this.id = item.key;
+                    this.router.navigate([this.router.url], this.getNavigationExtras());
+                });
+            } else {
+                this.updateTacticalPlan();
+            }
+            this.sceneService.addShipModelFor(this.getModel3d(shipModel), data, shipModel);
             return true;
         }
     }
 
-    deleteShip(data: ShipData) {
-        let index: number = this.ships.indexOf(data);
-        if (index !== -1) {
-            this.ships.splice(index, 1);
-        }
+    updateTacticalPlan() {
+        console.log("update");
+        this.plans.set(this.id, this.tacticalPlan);
     }
 
-    getShips(): Promise<ShipData[]> {
-        if (this.ships.length == 0) {
-            this.route.queryParams.subscribe(queryParams => {
-                let ships: string = queryParams['ships'];
-                if (ships) {
-                    let shipsArray: string[] = ships.split(',');
-                    for (let i = 0; i + 2 < shipsArray.length; i += 3) {
-                        let type = shipsArray[i];
-                        let amount = shipsArray[i + 1];
-                        let instances = shipsArray[i + 2];
-                        let model = this.models[type];
-                        var data = new ShipData();
-                        data.origin.type = type;
-                        data.origin = model;
-                        data.amount = Number(amount);
-                        let instancesArray: string[] = instances.split(';');
-                        for (let j = 0; j < instancesArray.length; j++) {
-                            let positions: string[] = instancesArray[j].split(':');
-                            if (positions.length !== 2) {
-                                break;
-                            }
-                            var sdi = new ShipDataInstance();
-                            sdi.position = new Vector3(Number(positions[0]), 1, Number(positions[1]));
-                            data.add(sdi);
-                        }
-                        this.addShip(data);
-                    }
-                }
-            });
+    deleteShip(shipModel: Ship) {
+        for (var i = 0; i < this.tacticalPlan.ships.length; i++) {
+            var data = this.tacticalPlan.ships[i];
+            if (data.name == shipModel.name) {
+                this.tacticalPlan.ships.splice(i, 1);
+                this.updateTacticalPlan();
+                break;
+            }
         }
-        return Promise.resolve(this.ships);
     }
 
     getNavigationExtras(): NavigationExtras {
-        var shipsParam = "";
-        for (var s of this.ships) {
-            var instances = "";
-            s.instances.forEach(i => {
-                instances += i.position.x + ":" + i.position.z + ";"
-            });
-            shipsParam += s.origin.type + "," + String(s.amount) + "," + instances + ",";
-        };
+        var scope = this;
         let navigationExtras: NavigationExtras = {
-            queryParams: { 'ships': shipsParam },
+            queryParams: { 'id': scope.id },
             queryParamsHandling: 'merge'
         };
         return navigationExtras;
@@ -182,16 +207,12 @@ export class ShipService {
         return Promise.resolve(this.modelsArray);
     }
 
-    getShipsSlowly(): Promise<ShipData[]> {
-        return new Promise(resolve => {
-            // Simulate server latency with 2 second delay
-            setTimeout(() => resolve(this.getShips()), 2000);
-        });
+    getModel(name: string): Ship {
+        return this.models[name];
     }
 
-    getShip(type: string): Promise<ShipData> {
-        return this.getShips()
-            .then(ships => ships.find(ship => ship.origin.type === type));
+    getShip(name: string): ShipData {
+        return this.tacticalPlan.ships.find(ship => ship.name === name);
     }
 
 }

@@ -1,7 +1,7 @@
-<div>
+<div *ngIf="tacticalPlan">
     <div class="ship-size-title">Small &lt; 30m</div>
     <md-grid-list [cols]="cols | async" gutterSize="16px" rowHeight="300px" class="ships-small">
-        <md-grid-tile *ngFor="let s of filterSize(ships, 'S')">
+        <md-grid-tile *ngFor="let s of filterSize('S')">
             <ship-card [ship]=s>
             </ship-card>
         </md-grid-tile>
@@ -11,7 +11,7 @@
     </md-grid-list>
     <div class="ship-size-title">Medium &lt; 100m</div>
     <md-grid-list [cols]="cols | async" gutterSize="16px" rowHeight="300px" class="ships-medium">
-        <md-grid-tile *ngFor="let s of filterSize(ships, 'M')">
+        <md-grid-tile *ngFor="let s of filterSize('M')">
             <ship-card [ship]=s>
             </ship-card>
         </md-grid-tile>
@@ -21,7 +21,7 @@
     </md-grid-list>
     <div class="ship-size-title">Large &gt; 100m</div>
     <md-grid-list [cols]="cols | async" gutterSize="16px" rowHeight="300px" class="ships-large">
-        <md-grid-tile *ngFor="let s of filterSize(ships, 'L')">
+        <md-grid-tile *ngFor="let s of filterSize('L')">
             <ship-card [ship]=s>
             </ship-card>
         </md-grid-tile>

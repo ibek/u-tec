@@ -3,8 +3,7 @@ import { ObservableMedia } from '@angular/flex-layout';
 import { Observable } from "rxjs/Observable";
 import {Router, ActivatedRoute} from '@angular/router';
 
-import {Ship} from '../ship';
-import {ShipData} from '../ship-data';
+import {Ship, ShipData, TacticalPlan} from '../data-model';
 import {ShipService} from '../ship.service';
 
 @Component({
@@ -13,7 +12,7 @@ import {ShipService} from '../ship.service';
     styleUrls: ['./inventory.component.css']
 })
 export class InventoryComponent implements OnInit {
-    ships:ShipData[] = [];
+    tacticalPlan:TacticalPlan;
     public cols: Observable<number>;
 
     constructor(private shipService: ShipService, private observableMedia: ObservableMedia, private route: ActivatedRoute, private router: Router) {
@@ -21,7 +20,9 @@ export class InventoryComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.shipService.getShips().then(ships => this.ships = ships);
+        this.shipService.getTacticalPlan().then((tacticalPlan) => {
+            this.tacticalPlan = tacticalPlan;
+        });
 
         // set cols
         if (this.observableMedia.isActive("xs")) {
@@ -54,8 +55,8 @@ export class InventoryComponent implements OnInit {
             });
     }
 
-    filterSize(array, size: string) {
-        return array.filter(x => x.origin.size == size);
+    filterSize(size: string) {
+        return this.tacticalPlan.ships.filter(x => this.shipService.getModel(x.name).size == size);
     }
 
     addS() {

@@ -1,6 +1,6 @@
 <md-card>
     <md-card-header>
-        <md-card-title class="ship-title">{{ship.origin.type}}</md-card-title>
+        <md-card-title class="ship-title">{{ship.name}}</md-card-title>
         <button md-icon-button [mdMenuTriggerFor]="configMenu" class="ship-menu">
             <md-icon>more_vert</md-icon>
         </button>
@@ -11,18 +11,18 @@
             </button>
         </md-menu>
     </md-card-header>
-    <img md-card-image src="{{shipService.getImage(ship.origin)}}" class="ship-thumbnail">
+    <img md-card-image src="{{shipService.getImage(model)}}" class="ship-thumbnail">
     <md-card-footer class="ship-amount">
         <div style="display: inline-block; width: 200px;">
-        <md-slider
+        <!--<md-slider
         max="5"
         min="1"
         step="1"
-        [(ngModel)]="ship.amount"
+        [(ngModel)]="{{shipService}}"
         thumb-label="1"
         (change)="onShipAmountChange()">
     </md-slider>
-    <button md-mini-fab color="none" style="right: -5px;">{{ship.amount}}</button>
+    <button md-mini-fab color="none" style="right: -5px;">{{ship.amount}}</button>-->
     </div>
     </md-card-footer>
 </md-card>

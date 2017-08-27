@@ -10,7 +10,7 @@
             <md-icon>star_rate</md-icon>
             <md-select placeholder="Ship Type" [(ngModel)]="selectedModel" name="ship" (change)="onShipTypeChange()">
                 <md-option *ngFor="let model of filterSize(models)" [value]="model">
-                    {{model.type}}
+                    {{model.name}}
                 </md-option>
             </md-select>
             <md-hint [hidden]="!typeExistsError" style="color: red">

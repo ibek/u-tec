@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, NavigationExtras } from '@angular/router';
 
-import { Ship } from '../ship';
-import { ShipData } from '../ship-data';
+import { Ship, ShipData } from '../data-model';
 import { ShipService } from '../ship.service';
 
 @Component({
@@ -21,7 +20,7 @@ export class AddShipComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.shipService.getModels().then(models => this.models = models.sort((a, b) => a.type > b.type ? 1 : -1));
+    this.shipService.getModels().then(models => this.models = models.sort((a, b) => a.name > b.name ? 1 : -1));
 
     this.route.params
       .subscribe(params => this.size = params['size']);
@@ -36,10 +35,7 @@ export class AddShipComponent implements OnInit {
   }
 
   addShip(): void {
-    var newShip = new ShipData();
-    newShip.origin = this.selectedModel;
-    newShip.amount = 1;
-    let added = this.shipService.addShip(newShip);
+    let added = this.shipService.addShip(this.selectedModel);
     if (added) {
       this.router.navigate(["inventory"], this.shipService.getNavigationExtras());
     } else {

@@ -20,6 +20,21 @@ import { AppRoutingModule } from './app-routing.module';
 
 import 'hammerjs';
 
+import { AngularFireModule } from 'angularfire2';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+
+export const environment = {
+  production: false,
+  firebase: {
+    apiKey: "AIzaSyAGQj1Q8t17IFQ5TnQXjHynUmQ99yWr0-s",
+    authDomain: "uee-tec.firebaseapp.com",
+    databaseURL: "https://uee-tec.firebaseio.com",
+    projectId: "uee-tec",
+    storageBucket: "uee-tec.appspot.com",
+    messagingSenderId: "9413130261"
+  }
+};
+
 @NgModule({
   imports: [
     BrowserModule,
@@ -28,7 +43,9 @@ import 'hammerjs';
     HttpModule,
     BrowserAnimationsModule,
     FlexLayoutModule,
-    AppRoutingModule
+    AppRoutingModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireDatabaseModule
   ],
   declarations: [
     AppComponent,

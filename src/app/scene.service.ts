@@ -1,24 +1,39 @@
 import { Injectable } from '@angular/core';
 import { NavigationExtras, ActivatedRoute } from '@angular/router';
 
-import { ShipData } from './ship-data';
+import { Ship, ShipData } from './data-model';
 import { ShipModel3D } from './simulator/ship-model3d';
 
 @Injectable()
 export class SceneService {
 
     shipModels3d: Map<string, ShipModel3D> = new Map();
+    updateCallback;
 
     constructor(private route: ActivatedRoute) {
 
     }
 
-    addShipModelFor(modelPath:string, shipData: ShipData) {
-        if (!this.shipModels3d.has(shipData.origin.type)) {
-            var model = new ShipModel3D(shipData);
-            this.shipModels3d.set(shipData.origin.type, model);
-            model.load(modelPath);
+    addShipModelFor(modelPath: string, shipData: ShipData, shipModel: Ship) {
+        if (!this.shipModels3d.has(shipData.name)) {
+            var model = new ShipModel3D(shipData, shipModel);
+            this.shipModels3d.set(shipData.name, model);
+            var scope = this;
+            model.load(modelPath, () => {
+                if (scope.updateCallback) {
+                    scope.updateCallback();
+                }
+            });
         }
+    }
+
+    removeShipModelFor(name: string) {
+        this.shipModels3d.get(name).removeShipFromScene();
+        this.shipModels3d.delete(name);
+    }
+
+    setUpdateCallback(update) {
+        this.updateCallback = update;
     }
 
     loadingProgress(): number {
