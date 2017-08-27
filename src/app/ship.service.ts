@@ -131,6 +131,9 @@ export class ShipService {
                 var shipModel = this.getModel(ship.name);
                 this.sceneService.addShipModelFor(this.getModel3d(shipModel), ship, shipModel);
             });
+            if (this.sceneService.updateCallback) {
+                this.sceneService.updateCallback();
+            }
             this.ready = true;
         });
     }
@@ -179,7 +182,6 @@ export class ShipService {
     }
 
     updateTacticalPlan() {
-        console.log("update");
         this.plans.set(this.id, this.tacticalPlan);
     }
 
@@ -189,6 +191,7 @@ export class ShipService {
             if (data.name == shipModel.name) {
                 this.tacticalPlan.ships.splice(i, 1);
                 this.updateTacticalPlan();
+                this.sceneService.removeShipModelFor(shipModel.name);
                 break;
             }
         }

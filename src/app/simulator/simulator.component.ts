@@ -165,12 +165,14 @@ export class SimulatorComponent implements AfterViewInit {
         let tacticalPlan: Promise<TacticalPlan> = this.shipService.getTacticalPlan(); // the list needs to be upto date
         tacticalPlan.then((res) => {
             this.loadingProgress = this.sceneService.loadingProgress();
+            console.log(this.loadingProgress);
             if (this.shipService.isReady() && this.loadingProgress == 100) {
                 this.loaded = true;
                 this.container.nativeElement.appendChild(this.renderer.domElement);
                 var scope = this;
                 ShipModel3D.init();
                 let updateCallback = function () {
+                    scope.objects.splice(0,scope.objects.length)
                     scope.sceneService.shipModels3d.forEach((model: ShipModel3D, type: string) => {
                         model.init();
                         model.addShipsToScene(scope.scene);

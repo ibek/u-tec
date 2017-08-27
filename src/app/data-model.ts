@@ -1,5 +1,6 @@
 
 import { Vector3 } from 'three';
+import {ShipModel3D} from './simulator/ship-model3d'
 
 export class TacticalPlan {
     ships: ShipData[] = [];
@@ -25,31 +26,65 @@ export class TacticalPlan {
         }
         for (var i = 0; i < tl; i++) {
             var ts = tacticalPlan.ships[i];
-            if (i < this.ships.length) {
+            if (i < this.ships.length) { // update ship
                 var s = this.ships[i];
                 s.name = ts.name;
-                if (ts.position) {
-                    if (!s.position) {
-                        s.position = new Vector3();
+                s.amount = ts.amount;
+                let il = ts.amount;
+                diff = s.instances.length - il;
+                if (diff > 0) { // removed instances
+                    s.instances.splice(il, diff); // remove last instances
+                } else {
+                    for (var m=0; m<il; m++) {
+                        if (m < s.instances.length) {
+                            var sinstance = s.instances[m];
+                            if (!sinstance.position) {
+                                sinstance.position = new Vector3();
+                            }
+                            if (ts.instances && ts.instances[m] && ts.instances[m].position) {
+                                sinstance.position.x = ts.instances[m].position.x;
+                                sinstance.position.y = ts.instances[m].position.y;
+                                sinstance.position.z = ts.instances[m].position.z;
+                            }
+                        } else { // newly added instance
+                            if (ts.instances && m < ts.instances.length) {
+                                s.instances.push(ts.instances[m]);
+                            }
+                        }
                     }
-                    s.position.x = ts.position.x;
-                    s.position.y = ts.position.y;
-                    s.position.z = ts.position.z;
                 }
             } else { // newly added ships
+                if (!ts.instances) {
+                    ts.instances = [];
+                }
                 this.ships.push(ts);
             }
         }
-        console.log(this.ships);
+
+        this.ships.forEach(s => {
+            while (s.instances.length < s.amount) {
+                s.instances.push(new ShipInstance());
+            }
+            s.instances.forEach(i => {
+                if (!i.position) {
+                    i.position = ShipModel3D.getNextPosition();
+                }
+            });
+        });
     }
 }
 
 export class ShipData {
-    position: Vector3;
+    amount: number = 1;
+    instances:ShipInstance[] = [];
 
     constructor(public name: string) {
 
     }
+}
+
+export class ShipInstance {
+    position: Vector3;
 }
 
 export class Ship {

@@ -27,7 +27,7 @@ export class ShipCardComponent implements OnInit {
   }
 
   onShipAmountChange() {
-    this.router.navigate(["inventory"], this.shipService.getNavigationExtras());
+    this.shipService.updateTacticalPlan();
   }
 
 }

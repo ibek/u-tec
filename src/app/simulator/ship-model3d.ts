@@ -5,7 +5,7 @@ import { Mesh, Vector3, TextureLoader, MeshLambertMaterial, Object3D } from 'thr
 import * as THREE from 'three';
 import { GLTF2Loader } from '../util/GLTF2Loader';
 
-import { Ship, ShipData } from '../data-model';
+import { Ship, ShipData, ShipInstance } from '../data-model';
 
 const MAX_POS: number = 30;
 
@@ -31,12 +31,11 @@ export class ShipModel3D {
 
     init() {
         this.objects = [];
-        if (this.model.children.length > 3) {
+        if (this.model && this.model.children.length > 3) {
             this.model.children.splice(3, this.model.children.length - 3);
         }
-        if (!this.data.position) {
-            this.data.position = ShipModel3D.getNextPosition();
-        }
+
+        this.removeShipFromScene();
     }
 
     isLoaded(): boolean {
@@ -54,18 +53,21 @@ export class ShipModel3D {
     }
 
     addShipsToScene(scene) {
-        // TODO: refactor amount
-        //for (var i = 0; i < this.data.amount; i++) {
-        //    var instance = this.data.instances[i];
-        this.addShipTo(scene, 0, this.shipModel.scale);
-        //}
+        if (!this.model) {
+            return;
+        }
+        for (var i = 0; i < this.data.instances.length; i++) {
+            this.addShipTo(scene, i, this.data.instances[i], this.shipModel.scale);
+        }
     }
 
     removeShipFromScene() {
-        this.model.parent.remove(this.model);
+        if (this.model && this.model.parent) {
+            this.model.parent.remove(this.model);
+        }
     }
 
-    addShipTo(scene, id: number, scale: number) {
+    addShipTo(scene, id: number, shipInstance: ShipInstance, scale: number) {
         var scope = this;
         // 0x22dd22 green
         // 0x00ffff cyan
@@ -83,8 +85,8 @@ export class ShipModel3D {
         if (i == undefined) {
             var object = scope.model.children[0];
             object.scale.set(scale, scale, scale);
-            object.position.set(this.data.position.x, this.data.position.y, this.data.position.z);
-            this.data.position = object.position;
+            object.position.set(shipInstance.position.x, shipInstance.position.y, shipInstance.position.z);
+            shipInstance.position = object.position;
             object.rotation.z = Math.PI;
             object.children[0].geometry.computeBoundingSphere();
             if (this.shipModel.size == 'L') {
@@ -99,8 +101,8 @@ export class ShipModel3D {
         } else {
             var obj = scope.model.children[0].clone(false);
             var mesh = new THREE.Mesh(scope.model.children[0].children[0].geometry, material);
-            obj.position.set(this.data.position.x, this.data.position.y, this.data.position.z);
-            this.data.position = obj.position;
+            obj.position.set(shipInstance.position.x, shipInstance.position.y, shipInstance.position.z);
+            shipInstance.position = obj.position;
             obj.scale.set(scale, scale, scale);
             obj.add(mesh);
             this.objects.push(mesh);

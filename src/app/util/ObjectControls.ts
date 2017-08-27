@@ -244,12 +244,10 @@ export class ObjectControls {
             var userData = this.focused.parent.userData;
             var x = Math.round(this.focused.parent.position.x * 10) / 10;
             this.focused.parent.position.x = x;
-            userData.shipData.position.x = x;
-            //userData.shipData.instances[userData.id].position.x = x; // TODO: refactor amount
+            userData.shipData.instances[userData.id].position.x = x;
             var z = Math.round(this.focused.parent.position.z * 10) / 10;
             this.focused.parent.position.z = z;
-            userData.shipData.position.z = z;
-            //userData.shipData.instances[userData.id].position.z = z;
+            userData.shipData.instances[userData.id].position.z = z;
             this.mouseup();
             this._DisplaceFocused = null;
             this.focused = null;
