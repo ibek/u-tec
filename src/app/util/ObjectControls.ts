@@ -1,6 +1,8 @@
 
 import * as THREE from 'three';
 import { Pointer } from './Pointer';
+import {ShipService} from '../ship.service'
+import { Router } from '@angular/router';
 
 export class ObjectControls {
     fixed = new THREE.Vector3(0, 0, 0);
@@ -33,7 +35,7 @@ export class ObjectControls {
     selected = null;
     pointer: Pointer = new Pointer(this.camera);
 
-    constructor(private camera, private container, private htmlContainer, private objects, private projectionMap, private scene) {
+    constructor(private camera, private container, private htmlContainer, private objects, private projectionMap, private scene, private shipService:ShipService, private router: Router) {
 
     }
 
@@ -71,9 +73,11 @@ export class ObjectControls {
         }
     }
 
-    move = function () { this.container.style.cursor = 'move' }
+    move = function () {
+        this.container.style.cursor = 'move'
+    }
     mouseover = function () {
-        if (this.selected) {
+        if (this.selected && this.shipService.isUnlocked()) {
             this.container.style.cursor = 'move';
         } else {
             this.container.style.cursor = 'pointer';
@@ -154,7 +158,7 @@ export class ObjectControls {
     }
 
     private onContainerMouseDown = (event) => {
-        if (this.selected) {
+        if (this.selected && this.shipService.isUnlocked()) {
             var raycaster = this._rayGet();
             this._intersects = raycaster.intersectObjects(this.objects, true);
 
@@ -270,6 +274,9 @@ export class ObjectControls {
     }
 
     private onDocumentMouseWheel = (event) => {
+        if (!this.router.url.startsWith("/simulator")) {
+            return;
+        }
         event.preventDefault();
         event.stopPropagation();
         var delta;

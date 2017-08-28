@@ -18,3 +18,46 @@
     bottom: 0px;
     left: 10px;
 }
+
+.ship-amount-panel {
+    display: inline-block; 
+    width: 200px;
+}
+
+.amount-number {
+    right: -5px;
+}
+
+@media (max-width: 480px) {
+
+.ship-title {
+    width: 80px;
+}
+
+.ship-thumbnail {
+    width: 128px;
+    height: 128px;
+    margin: 0px;
+    padding: 0px;
+}
+
+.ship-amount {
+    width: 0px;
+    bottom: 0px;
+    left: 7px;
+}
+
+.ship-amount-panel {
+    display: inline-block; 
+    width: 145px;
+}
+
+.amount-number {
+    display: none;
+}
+
+.slider {
+    width: 145px;
+    min-width: 145px;
+}
+}

@@ -4,8 +4,14 @@ import {ShipModel3D} from './simulator/ship-model3d'
 
 export class TacticalPlan {
     ships: ShipData[] = [];
+    passwordHash: string = null;
 
     update(tacticalPlan: TacticalPlan, removeCallback) {
+        this.passwordHash = tacticalPlan.passwordHash;
+        if (this.passwordHash == undefined) {
+            this.passwordHash = null;
+        }
+
         let tl = (tacticalPlan && tacticalPlan.ships)?tacticalPlan.ships.length:0;
         var diff = this.ships.length - tl;
         if (diff > 0) { // removed ships

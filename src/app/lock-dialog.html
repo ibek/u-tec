@@ -1,0 +1,13 @@
+<div>
+    <h1 md-dialog-title>{{data.type}} Tactical Plan</h1>
+    <md-dialog-content>
+        <p>Locked tactical plan is read-only until it is unlocked with the password.</p>
+        <md-input-container>
+            <input mdInput placeholder="Password" type="password" (keyup.enter)="dialogRef.close(password.value)" #password>
+        </md-input-container>
+    </md-dialog-content>
+    <md-dialog-actions>
+        <button md-button (click)="dialogRef.close(password.value)">{{data.type}}</button>
+        <button md-button md-dialog-close="Cancel">Cancel</button>
+    </md-dialog-actions>
+</div>

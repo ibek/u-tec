@@ -1,12 +1,15 @@
 .ships-small {
+    height: 300px;
     background-color: #ddd;
 }
 
 .ships-medium {
+    height: 300px;
     background-color: #aaa;
 }
 
 .ships-large {
+    height: 300px;
     background-color: #777;
 }
 
@@ -15,4 +18,21 @@
     padding-left: 30px;
     background-color: #333;
     color: #eee;
+}
+
+@media (max-width: 480px) {
+.ships-small {
+    height: 211px;
+    background-color: #ddd;
+}
+
+.ships-medium {
+    height: 211px;
+    background-color: #aaa;
+}
+
+.ships-large {
+    height: 211px;
+    background-color: #777;
+}
 }

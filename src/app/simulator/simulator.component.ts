@@ -133,12 +133,9 @@ export class SimulatorComponent implements AfterViewInit {
     }
 
     configureControls() {
-        this.controls = new ObjectControls(this.camera, this.renderer.domElement, this.container, this.objects, this.grid, this.scene);
+        this.controls = new ObjectControls(this.camera, this.renderer.domElement, this.container, this.objects, this.grid, this.scene, this.shipService, this.router);
         this.controls.fixed.y = 1;
         var scope = this;
-        this.controls.move = function () {
-            this.container.style.cursor = 'move';
-        }
         this.controls.mouseup = function () {
             this.container.style.cursor = 'auto';
             scope.shipService.updateTacticalPlan();
@@ -165,7 +162,6 @@ export class SimulatorComponent implements AfterViewInit {
         let tacticalPlan: Promise<TacticalPlan> = this.shipService.getTacticalPlan(); // the list needs to be upto date
         tacticalPlan.then((res) => {
             this.loadingProgress = this.sceneService.loadingProgress();
-            console.log(this.loadingProgress);
             if (this.shipService.isReady() && this.loadingProgress == 100) {
                 this.loaded = true;
                 this.container.nativeElement.appendChild(this.renderer.domElement);
@@ -181,6 +177,7 @@ export class SimulatorComponent implements AfterViewInit {
                 };
                 updateCallback();
                 this.sceneService.setUpdateCallback(updateCallback);
+                this.shipService.updateTacticalPlan(); // to update generated positions
                 this.render();
             } else {
                 setTimeout(() => {
@@ -193,7 +190,6 @@ export class SimulatorComponent implements AfterViewInit {
 
     showInfo() {
         this.selectedShip = this.controls.selected.parent.userData.shipModel;
-        console.log(this.selectedShip);
         this.shipInfoBar.toggle();
     }
 

@@ -16,6 +16,7 @@ export class ShipService {
     tacticalPlan: TacticalPlan = new TacticalPlan();
 
     ready: boolean = false;
+    passwordHash: string;
 
     models: Map<string, Ship> = new Map();
     modelsArray: Ship[] = [
@@ -95,6 +96,41 @@ export class ShipService {
             "scale": 0.003,
             "maxcrew": 3,
             "cargo": 150
+        },
+        {
+            "name": "Constellation Aquila",
+            "size": "M",
+            "scale": 0.003,
+            "maxcrew": 4,
+            "cargo": 134
+        },
+        {
+            "name": "Starfarer",
+            "size": "L",
+            "scale": 0.003,
+            "maxcrew": 7,
+            "cargo": 3321
+        },
+        {
+            "name": "Crucible",
+            "size": "L",
+            "scale": 0.25,
+            "maxcrew": 4,
+            "cargo": 300
+        },
+        {
+            "name": "P-52 Merlin",
+            "size": "S",
+            "scale": 0.003,
+            "maxcrew": 1,
+            "cargo": 0
+        },
+        {
+            "name": "Carrack",
+            "size": "L",
+            "scale": 0.003,
+            "maxcrew": 6,
+            "cargo": 1057
         }
     ];
 
@@ -182,7 +218,9 @@ export class ShipService {
     }
 
     updateTacticalPlan() {
-        this.plans.set(this.id, this.tacticalPlan);
+        if (this.id) {
+            this.plans.set(this.id, this.tacticalPlan);
+        }
     }
 
     deleteShip(shipModel: Ship) {
@@ -216,6 +254,22 @@ export class ShipService {
 
     getShip(name: string): ShipData {
         return this.tacticalPlan.ships.find(ship => ship.name === name);
+    }
+
+    isConnected(): boolean {
+        return this.id !== undefined;
+    }
+
+    isUnlocked(): boolean {
+        return !this.tacticalPlan.passwordHash || (this.tacticalPlan.passwordHash == this.passwordHash)
+    }
+
+    setPassword(password: string) {
+        if (this.tacticalPlan.passwordHash == null) {
+            this.tacticalPlan.passwordHash = btoa(password);
+            this.passwordHash = this.tacticalPlan.passwordHash;
+            this.updateTacticalPlan();
+        }
     }
 
 }

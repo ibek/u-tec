@@ -26,8 +26,19 @@
         </md-sidenav>
 
         <div class="container" #container>
-            <button md-mini-fab color='none' (click)="saveImage()" class="save-image"><md-icon>photo_camera</md-icon></button>
-            <button md-mini-fab color='none' (click)="toggleFullscreen()" class="fullscreen"><md-icon>fullscreen</md-icon></button>
+            <button md-icon-button [mdMenuTriggerFor]="simulatorMenu" class="simulatorMenu">
+                <md-icon>more_vert</md-icon>
+            </button>
+            <md-menu #simulatorMenu>
+                <button md-menu-item (click)="saveImage()">
+                <md-icon>fullscreen</md-icon>
+                <span>Fullscreen</span>
+                </button>
+                <button md-menu-item (click)="toggleFullscreen()">
+                <md-icon>photo_camera</md-icon>
+                <span>Save Image</span>
+                </button>
+            </md-menu>
             <button id="text-label" md-raised-button color='none' (click)="showInfo()"></button>
             <section class="loader" [hidden]="loaded">
                 <h3>Loading ...</h3>

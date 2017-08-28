@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
-import { AppComponent } from './app.component';
+import { AppComponent, LockDialogComponent } from './app.component';
 import { InventoryComponent } from './inventory/inventory.component';
 import { ShipCardComponent } from './inventory/ship-card.component';
 import { AddShipComponent } from './inventory/add-ship.component';
@@ -52,7 +52,11 @@ export const environment = {
     InventoryComponent,
     ShipCardComponent,
     AddShipComponent,
-    SimulatorComponent
+    SimulatorComponent,
+    LockDialogComponent
+  ],
+  entryComponents: [
+    LockDialogComponent
   ],
   providers: [{
     provide: LocationStrategy,

@@ -25,14 +25,8 @@
     padding: 20px;
 }
 
-.save-image {
-    position: absolute;
-    right: 70px;
-    top: 20px;
-    z-index: 1;
-}
-
-.fullscreen {
+.simulatorMenu {
+    color: white;
     position: absolute;
     right: 20px;
     top: 20px;

@@ -1,16 +1,43 @@
 <main>
   <md-toolbar>
-    <span>UEE Tactical Communications Interface</span>
+
+    <button md-icon-button [mdMenuTriggerFor]="menu">
+      <md-icon>menu</md-icon>
+    </button>
+
+    <md-menu #menu="mdMenu">
+      <button md-menu-item (click)="newTacticalPlan()">
+        <md-icon>clear_all</md-icon>
+        <span>New Tactical Plan</span>
+      </button>
+      <button md-menu-item (click)="lock()" *ngIf="!shipService.isConnected()">
+        <md-icon>lock_outline</md-icon>
+        <span>Lock</span>
+      </button>
+      <button md-menu-item (click)="unlock()" *ngIf="shipService.isConnected()" [disabled]="shipService.isUnlocked()">
+        <md-icon>lock_open</md-icon>
+        <span>Unlock</span>
+      </button>
+      <button class="donate" (click)="donate()" md-menu-item></button>
+    </md-menu>
+
+    <span class="title">UEE Tactical Communications Interface</span>
+    <button md-button *ngIf="!shipService.isUnlocked()" (click)="unlock()">
+      <md-icon md-tooltip='Tactical plan is locked' style="cursor:pointer">lock_outline</md-icon>
+    </button>
+
     <span class="spacer"></span>
-    <button class="donate" (click)="donate()"></button>
-    <button md-raised-button color="primary" routerLink="/inventory" routerLinkActive="inventoryActive" (click)="inventory()" skipLocationChange>
+    <button md-raised-button color="primary" routerLink="/inventory" routerLinkActive="inventoryActive" (click)="inventory()"
+      class="primary-button" skipLocationChange>
       <i class="material-icons">view_list</i>
       Inventory
     </button>
-    <button md-raised-button color="primary" routerLink="/simulator" routerLinkActive="simulatorActive" (click)="simulator()" skipLocationChange>
+    <button md-raised-button color="primary" routerLink="/simulator" routerLinkActive="simulatorActive" (click)="simulator()"
+      class="primary-button" skipLocationChange>
       Simulate
       <i class="material-icons">play_circle_outline</i>
     </button>
+
   </md-toolbar>
 
   <router-outlet></router-outlet>
