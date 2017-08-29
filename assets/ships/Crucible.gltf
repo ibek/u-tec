@@ -1,0 +1,178 @@
+{
+    "accessors" : [
+        {
+            "bufferView" : 0, 
+            "componentType" : 5123, 
+            "count" : 121869, 
+            "max" : [
+                49654
+            ], 
+            "min" : [
+                0
+            ], 
+            "type" : "SCALAR"
+        }, 
+        {
+            "bufferView" : 1, 
+            "componentType" : 5126, 
+            "count" : 49655, 
+            "max" : [
+                35.99796676635742, 
+                44.50333023071289, 
+                13.626888275146484
+            ], 
+            "min" : [
+                -35.99641418457031, 
+                -44.501949310302734, 
+                -3.705298662185669
+            ], 
+            "type" : "VEC3"
+        }, 
+        {
+            "bufferView" : 2, 
+            "componentType" : 5126, 
+            "count" : 49655, 
+            "max" : [
+                1.0, 
+                1.0, 
+                1.0
+            ], 
+            "min" : [
+                -1.0, 
+                -1.0, 
+                -1.0
+            ], 
+            "type" : "VEC3"
+        }
+    ], 
+    "asset" : {
+        "generator" : "Khronos Blender glTF 2.0 exporter", 
+        "version" : "2.0"
+    }, 
+    "bufferViews" : [
+        {
+            "buffer" : 0, 
+            "byteLength" : 243738, 
+            "byteOffset" : 0, 
+            "target" : 34963
+        }, 
+        {
+            "buffer" : 0, 
+            "byteLength" : 595860, 
+            "byteOffset" : 243740, 
+            "target" : 34962
+        }, 
+        {
+            "buffer" : 0, 
+            "byteLength" : 595860, 
+            "byteOffset" : 839600, 
+            "target" : 34962
+        }
+    ], 
+    "buffers" : [
+        {
+            "byteLength" : 1435460, 
+            "uri" : "Crucible.bin"
+        }
+    ], 
+    "cameras" : [
+        {
+            "name" : "Camera", 
+            "perspective" : {
+                "aspectRatio" : 1.7777777777777777, 
+                "yfov" : 0.5033799372418416, 
+                "zfar" : 100.0, 
+                "znear" : 0.10000000149011612
+            }, 
+            "type" : "perspective"
+        }
+    ], 
+    "meshes" : [
+        {
+            "name" : "crucible", 
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "NORMAL" : 2, 
+                        "POSITION" : 1
+                    }, 
+                    "indices" : 0
+                }
+            ]
+        }
+    ], 
+    "nodes" : [
+        {
+            "camera" : 0, 
+            "name" : "Correction_Camera", 
+            "rotation" : [
+                -0.7071067690849304, 
+                -0.0, 
+                0.0, 
+                0.7071067690849304
+            ]
+        }, 
+        {
+            "children" : [
+                0
+            ], 
+            "name" : "Camera", 
+            "rotation" : [
+                0.483536034822464, 
+                0.33687159419059753, 
+                -0.20870360732078552, 
+                0.7804827094078064
+            ], 
+            "translation" : [
+                7.481131553649902, 
+                5.34366512298584, 
+                6.5076398849487305
+            ]
+        }, 
+        {
+            "mesh" : 0, 
+            "name" : "crucible", 
+            "rotation" : [
+                0.7071068286895752, 
+                0.0, 
+                -0.0, 
+                0.7071068286895752
+            ], 
+            "scale" : [
+                0.1597997099161148, 
+                0.1597997099161148, 
+                0.1597997099161148
+            ]
+        }, 
+        {
+            "name" : "Lamp", 
+            "rotation" : [
+                0.16907575726509094, 
+                0.7558802962303162, 
+                -0.27217137813568115, 
+                0.570947527885437
+            ], 
+            "scale" : [
+                1.0, 
+                1.0, 
+                0.9999999403953552
+            ], 
+            "translation" : [
+                4.076245307922363, 
+                5.903861999511719, 
+                -1.0054539442062378
+            ]
+        }
+    ], 
+    "scene" : 0, 
+    "scenes" : [
+        {
+            "name" : "Scene", 
+            "nodes" : [
+                2, 
+                3, 
+                1
+            ]
+        }
+    ]
+}

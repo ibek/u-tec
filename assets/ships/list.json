@@ -1,0 +1,132 @@
+{
+    "ships": [
+        {
+            "name": "F7C Hornet",
+            "role": "Fighter",
+            "size": "S",
+            "scale": 0.003,
+            "maxcrew": 1,
+            "cargo": 13
+        },
+        {
+            "name": "Caterpillar",
+            "role": "Cargo",
+            "size": "M",
+            "scale": 0.0025,
+            "maxcrew": 5,
+            "cargo": 512
+        },
+        {
+            "name": "Reclaimer",
+            "role": "Salvage",
+            "size": "L",
+            "scale": 0.003,
+            "maxcrew": 5,
+            "cargo": 6555
+        },
+        {
+            "name": "Aurora LN",
+            "role": "Fighter",
+            "size": "S",
+            "scale": 0.003,
+            "maxcrew": 1,
+            "cargo": 13
+        },
+        {
+            "name": "Sabre",
+            "role": "Fighter",
+            "size": "S",
+            "scale": 0.003,
+            "maxcrew": 1,
+            "cargo": 0
+        },
+        {
+            "name": "Avenger Stalker",
+            "role": "Bounty Hunter",
+            "size": "S",
+            "scale": 0.03,
+            "maxcrew": 1,
+            "cargo": 4
+        },
+        {
+            "name": "Herald",
+            "role": "Information Runner",
+            "size": "S",
+            "scale": 0.003,
+            "maxcrew": 2,
+            "cargo": 0
+        },
+        {
+            "name": "Constellation Andromeda",
+            "role": "Versatile",
+            "size": "M",
+            "scale": 0.003,
+            "maxcrew": 5,
+            "cargo": 134
+        },
+        {
+            "name": "Prospector",
+            "role": "Mining",
+            "size": "S",
+            "scale": 0.003,
+            "maxcrew": 1,
+            "cargo": 128
+        },
+        {
+            "name": "Gladius",
+            "role": "Fighter",
+            "size": "S",
+            "scale": 0.003,
+            "maxcrew": 1,
+            "cargo": 0
+        },
+        {
+            "name": "Cutlass Black",
+            "role": "Search & Rescue",
+            "size": "M",
+            "scale": 0.003,
+            "maxcrew": 3,
+            "cargo": 150
+        },
+        {
+            "name": "Constellation Aquila",
+            "role": "Explorer",
+            "size": "M",
+            "scale": 0.003,
+            "maxcrew": 4,
+            "cargo": 134
+        },
+        {
+            "name": "Starfarer",
+            "role": "Refuel",
+            "size": "L",
+            "scale": 0.003,
+            "maxcrew": 7,
+            "cargo": 3321
+        },
+        {
+            "name": "Crucible",
+            "role": "Repair",
+            "size": "L",
+            "scale": 0.25,
+            "maxcrew": 4,
+            "cargo": 300
+        },
+        {
+            "name": "P-52 Merlin",
+            "role": "Fighter",
+            "size": "S",
+            "scale": 0.003,
+            "maxcrew": 1,
+            "cargo": 0
+        },
+        {
+            "name": "Carrack",
+            "role": "Explorer",
+            "size": "L",
+            "scale": 0.003,
+            "maxcrew": 6,
+            "cargo": 1057
+        }
+    ]
+}
