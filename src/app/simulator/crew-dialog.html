@@ -1,0 +1,15 @@
+<div>
+    <h1 md-dialog-title>Crew Management</h1>
+    <md-dialog-content>
+        <md-input-container style="width:300px;">
+            <textarea mdInput #message maxlength="256" rows="10" placeholder="Players" [(ngModel)]="data.players">
+             </textarea>
+                <md-hint align="start"><strong>Add every player to a new line.</strong> </md-hint>
+                <md-hint align="end">{{message.value.length}} / 256</md-hint>
+        </md-input-container>
+    </md-dialog-content>
+    <md-dialog-actions>
+        <button md-button (click)="dialogRef.close(message.value)" color="primary">Confirm</button>
+        <button md-button md-dialog-close="Cancel">Cancel</button>
+    </md-dialog-actions>
+</div>

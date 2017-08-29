@@ -1,18 +1,48 @@
 
 import { Vector3 } from 'three';
-import {ShipModel3D} from './simulator/ship-model3d'
+import { ShipModel3D } from './simulator/ship-model3d'
+import { ShipService } from './ship.service'
 
 export class TacticalPlan {
     ships: ShipData[] = [];
     passwordHash: string = null;
+    players: string[] = ["?"];
 
-    update(tacticalPlan: TacticalPlan, removeCallback) {
-        this.passwordHash = tacticalPlan.passwordHash;
+    verify(shipService: ShipService) {
         if (this.passwordHash == undefined) {
             this.passwordHash = null;
         }
+        if (this.players == undefined) {
+            this.players = ["?"];
+        }
 
-        let tl = (tacticalPlan && tacticalPlan.ships)?tacticalPlan.ships.length:0;
+        this.ships.forEach(s => {
+            while (s.instances.length < s.amount) {
+                s.instances.push(new ShipInstance());
+            }
+            s.instances.forEach(i => {
+                if (!i.position) {
+                    i.position = ShipModel3D.getNextPosition();
+                }
+                if (!i.pilot) {
+                    i.pilot = "?";
+                }
+                if (!i.crewmen) {
+                    var max = shipService.getModel(s.name).maxcrew - 1;
+                    i.crewmen = new Array<string>(max);
+                    for (var cm = 0; cm < max; ++cm) {
+                        i.crewmen[cm] = "?";
+                    }
+                }
+            });
+        });
+    }
+
+    update(tacticalPlan: TacticalPlan, shipService: ShipService, removeCallback) {
+        this.passwordHash = tacticalPlan.passwordHash;
+        this.players = tacticalPlan.players;
+
+        let tl = (tacticalPlan && tacticalPlan.ships) ? tacticalPlan.ships.length : 0;
         var diff = this.ships.length - tl;
         if (diff > 0) { // removed ships
             for (var j = 0; j < this.ships.length; j++) {
@@ -41,7 +71,7 @@ export class TacticalPlan {
                 if (diff > 0) { // removed instances
                     s.instances.splice(il, diff); // remove last instances
                 } else {
-                    for (var m=0; m<il; m++) {
+                    for (var m = 0; m < il; m++) {
                         if (m < s.instances.length) {
                             var sinstance = s.instances[m];
                             if (!sinstance.position) {
@@ -51,6 +81,12 @@ export class TacticalPlan {
                                 sinstance.position.x = ts.instances[m].position.x;
                                 sinstance.position.y = ts.instances[m].position.y;
                                 sinstance.position.z = ts.instances[m].position.z;
+                            }
+                            if (ts.instances && ts.instances[m]) {
+                                sinstance.pilot = ts.instances[m].pilot;
+                            }
+                            if (ts.instances && ts.instances[m] && ts.instances[m].crewmen) {
+                                sinstance.crewmen = ts.instances[m].crewmen;
                             }
                         } else { // newly added instance
                             if (ts.instances && m < ts.instances.length) {
@@ -67,22 +103,13 @@ export class TacticalPlan {
             }
         }
 
-        this.ships.forEach(s => {
-            while (s.instances.length < s.amount) {
-                s.instances.push(new ShipInstance());
-            }
-            s.instances.forEach(i => {
-                if (!i.position) {
-                    i.position = ShipModel3D.getNextPosition();
-                }
-            });
-        });
+        this.verify(shipService);
     }
 }
 
 export class ShipData {
     amount: number = 1;
-    instances:ShipInstance[] = [];
+    instances: ShipInstance[] = [];
 
     constructor(public name: string) {
 
@@ -91,6 +118,8 @@ export class ShipData {
 
 export class ShipInstance {
     position: Vector3;
+    pilot: string;
+    crewmen: string[] = [];
 }
 
 export class Ship {
@@ -99,5 +128,6 @@ export class Ship {
     scale: number;
     maxcrew: number;
     cargo: number;
+    role: string;
     // speed, additional information to the ship type
 }

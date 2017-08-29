@@ -7,6 +7,8 @@ import { SceneService } from './scene.service';
 
 import { AngularFireDatabase, FirebaseObjectObservable, FirebaseListObservable } from 'angularfire2/database';
 
+var list = require('../assets/ships/list.json');
+
 @Injectable()
 export class ShipService {
 
@@ -19,120 +21,7 @@ export class ShipService {
     passwordHash: string;
 
     models: Map<string, Ship> = new Map();
-    modelsArray: Ship[] = [
-        {
-            "name": "F7C Hornet",
-            "size": "S",
-            "scale": 0.003,
-            "maxcrew": 1,
-            "cargo": 13
-        },
-        {
-            "name": "Caterpillar",
-            "size": "M",
-            "scale": 0.0025,
-            "maxcrew": 5,
-            "cargo": 512
-        },
-        {
-            "name": "Reclaimer",
-            "size": "L",
-            "scale": 0.003,
-            "maxcrew": 5,
-            "cargo": 6555
-        },
-        {
-            "name": "Aurora LN",
-            "size": "S",
-            "scale": 0.003,
-            "maxcrew": 1,
-            "cargo": 13
-        },
-        {
-            "name": "Sabre",
-            "size": "S",
-            "scale": 0.003,
-            "maxcrew": 1,
-            "cargo": 0
-        },
-        {
-            "name": "Avenger Stalker",
-            "size": "S",
-            "scale": 0.03,
-            "maxcrew": 1,
-            "cargo": 4
-        },
-        {
-            "name": "Herald",
-            "size": "S",
-            "scale": 0.003,
-            "maxcrew": 2,
-            "cargo": 0
-        },
-        {
-            "name": "Constellation Andromeda",
-            "size": "M",
-            "scale": 0.003,
-            "maxcrew": 5,
-            "cargo": 134
-        },
-        {
-            "name": "Prospector",
-            "size": "S",
-            "scale": 0.003,
-            "maxcrew": 1,
-            "cargo": 128
-        },
-        {
-            "name": "Gladius",
-            "size": "S",
-            "scale": 0.003,
-            "maxcrew": 1,
-            "cargo": 0
-        },
-        {
-            "name": "Cutlass Black",
-            "size": "M",
-            "scale": 0.003,
-            "maxcrew": 3,
-            "cargo": 150
-        },
-        {
-            "name": "Constellation Aquila",
-            "size": "M",
-            "scale": 0.003,
-            "maxcrew": 4,
-            "cargo": 134
-        },
-        {
-            "name": "Starfarer",
-            "size": "L",
-            "scale": 0.003,
-            "maxcrew": 7,
-            "cargo": 3321
-        },
-        {
-            "name": "Crucible",
-            "size": "L",
-            "scale": 0.25,
-            "maxcrew": 4,
-            "cargo": 300
-        },
-        {
-            "name": "P-52 Merlin",
-            "size": "S",
-            "scale": 0.003,
-            "maxcrew": 1,
-            "cargo": 0
-        },
-        {
-            "name": "Carrack",
-            "size": "L",
-            "scale": 0.003,
-            "maxcrew": 6,
-            "cargo": 1057
-        }
-    ];
+    modelsArray: Ship[] = list.ships;
 
     constructor(private sceneService: SceneService, private route: ActivatedRoute, private db: AngularFireDatabase, private router: Router) {
         for (var model of this.modelsArray) {
@@ -159,8 +48,9 @@ export class ShipService {
                     equalTo: this.id
                 }
             });
+        var scope = this;
         this.plans.subscribe(item => {
-            this.tacticalPlan.update(item[0], (shipName) => {
+            this.tacticalPlan.update(item[0], scope, (shipName) => {
                 this.sceneService.removeShipModelFor(shipName);
             });
             this.tacticalPlan.ships.forEach(ship => {
@@ -207,6 +97,7 @@ export class ShipService {
                 this.plans = this.db.list('/tactical-plans');
                 this.plans.push(this.tacticalPlan).then(item => {
                     this.id = item.key;
+                    this.ready = true;
                     this.router.navigate([this.router.url], this.getNavigationExtras());
                 });
             } else {

@@ -1,7 +1,7 @@
 declare var require: any
 
-import { Component, AfterViewInit, HostListener, ViewChild, ElementRef } from '@angular/core';
-import { MdSidenav } from '@angular/material';
+import { Component, AfterViewInit, HostListener, ViewChild, ElementRef, Inject } from '@angular/core';
+import { MdSidenav, MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 import {
     Scene, PerspectiveCamera, WebGLRenderer,
     BoxGeometry, Mesh, MeshBasicMaterial,
@@ -16,7 +16,7 @@ import { OrbitControls } from 'three-orbitcontrols-ts';
 import { ShipModel3D } from './ship-model3d';
 import { SceneService } from '../scene.service';
 import { ShipService } from '../ship.service';
-import { Ship, ShipData, TacticalPlan } from '../data-model';
+import { Ship, ShipData, TacticalPlan, ShipInstance } from '../data-model';
 import { ObjectControls } from '../util/ObjectControls';
 
 @Component({
@@ -55,8 +55,10 @@ export class SimulatorComponent implements AfterViewInit {
     windowHeight = window.innerHeight;
 
     selectedShip: Ship; // info for selected ship
+    selectedShipInstance: ShipInstance;
+    Arr = Array; // helper property for multiple crewmen
 
-    constructor(private sceneService: SceneService, private shipService: ShipService, private router: Router) {
+    constructor(private sceneService: SceneService, private shipService: ShipService, private router: Router, public crewDialog: MdDialog) {
 
     }
 
@@ -161,6 +163,7 @@ export class SimulatorComponent implements AfterViewInit {
     start() {
         let tacticalPlan: Promise<TacticalPlan> = this.shipService.getTacticalPlan(); // the list needs to be upto date
         tacticalPlan.then((res) => {
+            res.verify(this.shipService);
             this.loadingProgress = this.sceneService.loadingProgress();
             if (this.shipService.isReady() && this.loadingProgress == 100) {
                 this.loaded = true;
@@ -168,7 +171,7 @@ export class SimulatorComponent implements AfterViewInit {
                 var scope = this;
                 ShipModel3D.init();
                 let updateCallback = function () {
-                    scope.objects.splice(0,scope.objects.length)
+                    scope.objects.splice(0, scope.objects.length)
                     scope.sceneService.shipModels3d.forEach((model: ShipModel3D, type: string) => {
                         model.init();
                         model.addShipsToScene(scope.scene);
@@ -189,12 +192,18 @@ export class SimulatorComponent implements AfterViewInit {
     }
 
     showInfo() {
-        this.selectedShip = this.controls.selected.parent.userData.shipModel;
+        var userData = this.controls.selected.parent.userData;
+        this.selectedShip = userData.shipModel;
+        this.selectedShipInstance = userData.shipData.instances[userData.id];
         this.shipInfoBar.toggle();
     }
 
     onCloseShipInfo() {
         this.controls.hideSelected();
+    }
+
+    onShipInfoChange() {
+        this.shipService.updateTacticalPlan();
     }
 
     saveImage() {
@@ -248,4 +257,24 @@ export class SimulatorComponent implements AfterViewInit {
 
         this.renderer.setSize(this.screenWidth, this.screenHeight);
     }
+
+    manageCrew() {
+        let dialogRef = this.crewDialog.open(CrewDialogComponent, {
+            data: { "players": this.shipService.tacticalPlan.players.join("\n") },
+        });
+        dialogRef.afterClosed().subscribe(players => {
+            if (players !== "Cancel") {
+                this.shipService.tacticalPlan.players = players.split("\n").filter(Boolean);
+                this.shipService.updateTacticalPlan();
+            }
+        });
+    }
+}
+
+@Component({
+    selector: 'crew-dialog',
+    templateUrl: 'crew-dialog.html',
+})
+export class CrewDialogComponent {
+    constructor(public dialogRef: MdDialogRef<CrewDialogComponent>, @Inject(MD_DIALOG_DATA) public data: any) { }
 }

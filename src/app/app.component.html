@@ -10,7 +10,7 @@
         <md-icon>clear_all</md-icon>
         <span>New Tactical Plan</span>
       </button>
-      <button md-menu-item (click)="lock()" *ngIf="!shipService.isConnected()">
+      <button md-menu-item (click)="lock()" *ngIf="!shipService.tacticalPlan.passwordHash">
         <md-icon>lock_outline</md-icon>
         <span>Lock</span>
       </button>

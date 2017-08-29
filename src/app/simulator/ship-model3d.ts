@@ -24,9 +24,9 @@ export class ShipModel3D {
     }
 
     static init() {
-        ShipModel3D.stepSize = 10;
-        ShipModel3D.currentZ = 30;
-        ShipModel3D.currentX = 0;
+        //ShipModel3D.stepSize = 10;
+        //ShipModel3D.currentZ = 30;
+        //ShipModel3D.currentX = 0;
     }
 
     init() {

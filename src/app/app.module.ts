@@ -11,7 +11,7 @@ import { AppComponent, LockDialogComponent } from './app.component';
 import { InventoryComponent } from './inventory/inventory.component';
 import { ShipCardComponent } from './inventory/ship-card.component';
 import { AddShipComponent } from './inventory/add-ship.component';
-import { SimulatorComponent } from './simulator/simulator.component';
+import { SimulatorComponent, CrewDialogComponent } from './simulator/simulator.component';
 
 import { SceneService } from './scene.service';
 import { ShipService } from './ship.service';
@@ -24,7 +24,6 @@ import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 
 export const environment = {
-  production: false,
   firebase: {
     apiKey: "AIzaSyAGQj1Q8t17IFQ5TnQXjHynUmQ99yWr0-s",
     authDomain: "uee-tec.firebaseapp.com",
@@ -53,10 +52,12 @@ export const environment = {
     ShipCardComponent,
     AddShipComponent,
     SimulatorComponent,
-    LockDialogComponent
+    LockDialogComponent,
+    CrewDialogComponent
   ],
   entryComponents: [
-    LockDialogComponent
+    LockDialogComponent,
+    CrewDialogComponent
   ],
   providers: [{
     provide: LocationStrategy,
