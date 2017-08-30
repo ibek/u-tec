@@ -1,7 +1,7 @@
 
 import * as THREE from 'three';
 import { Pointer } from './Pointer';
-import {ShipService} from '../ship.service'
+import { ShipService } from '../ship.service'
 import { Router } from '@angular/router';
 
 export class ObjectControls {
@@ -25,17 +25,10 @@ export class ObjectControls {
     intersectsMap;
     previous = new THREE.Vector3(0, 0, 0);
 
-    moveScene = false;
-    x = 0.0;
-    z = 0.0;
-    lx = 0.0;
-    lz = 0.0;
-    moveMax = 100;
-
     selected = null;
     pointer: Pointer = new Pointer(this.camera);
 
-    constructor(private camera, private container, private htmlContainer, private objects, private projectionMap, private scene, private shipService:ShipService, private router: Router) {
+    constructor(private camera, private gridCamera, private container, private htmlContainer, private objects, private projectionMap, private scene, private shipService: ShipService, private router: Router) {
 
     }
 
@@ -146,12 +139,12 @@ export class ObjectControls {
     }
 
     private getMousePos = (event) => {
-        this.x = event.offsetX == undefined ? event.layerX : event.offsetX;
-        this.z = event.offsetY == undefined ? event.layerY : event.offsetY;
+        var x = event.offsetX == undefined ? event.layerX : event.offsetX;
+        var z = event.offsetY == undefined ? event.layerY : event.offsetY;
 
         var rect = this.container.getBoundingClientRect();
-        this._mouse.x = ((this.x) / rect.width) * 2 - 1;
-        this._mouse.y = - ((this.z) / rect.height) * 2 + 1;
+        this._mouse.x = ((x) / rect.width) * 2 - 1;
+        this._mouse.y = - ((z) / rect.height) * 2 + 1;
 
         var vector = new THREE.Vector3(this._mouse.x, this._mouse.y, 0.5);
         return vector;
@@ -167,14 +160,6 @@ export class ObjectControls {
                 this.onclick();
 
             }
-        }
-        else if (event.ctrlKey) {
-            this.setFocusNull();
-            this.moveScene = true;
-            this.x = event.offsetX == undefined ? event.layerX : event.offsetX;
-            this.z = event.offsetY == undefined ? event.layerY : event.offsetY;
-            this.lx = this.x;
-            this.lz = this.z;
         }
     }
 
@@ -218,31 +203,12 @@ export class ObjectControls {
             }
             else {
                 if (this._DisplaceMouseOvered) { this.mouseout(); this._setSelectNull(); }
-                if (this.moveScene) {
-                    var dx = this.x - this.lx;
-                    var dz = this.z - this.lz;
-                    this.scene.position.x -= dx / 5.0;
-                    if (this.scene.position.x > this.moveMax) {
-                        this.scene.position.x = this.moveMax;
-                    } else if (this.scene.position.x < -this.moveMax) {
-                        this.scene.position.x = -this.moveMax;
-                    }
-                    this.scene.position.z -= dz / 5.0;
-                    if (this.scene.position.z > this.moveMax) {
-                        this.scene.position.z = this.moveMax;
-                    } else if (this.scene.position.z < -this.moveMax) {
-                        this.scene.position.z = -this.moveMax;
-                    }
-                    this.lx = this.x;
-                    this.lz = this.z;
-                }
             }
         }
     }
 
     private onContainerMouseUp = (event) => {
         event.preventDefault();
-        this.moveScene = false;
 
         if (this.focused) {
             var userData = this.focused.parent.userData;
@@ -299,7 +265,7 @@ export class ObjectControls {
 
             }
         }
-        delta = delta ? delta : event.detail/500.0;
+        delta = delta ? delta : event.detail / 500.0;
         var zoomSpeed = 20.0;
         if (this.camera.zoom > 3.0) {
             zoomSpeed += 10.0;
@@ -311,5 +277,15 @@ export class ObjectControls {
             this.camera.zoom = 7.0;
         }
         this.camera.updateProjectionMatrix();
+
+        this.gridCamera.zoom -= delta * zoomSpeed;
+        if (this.gridCamera.zoom < 1.0) {
+            this.gridCamera.zoom = 1.0;
+        } else if (this.gridCamera.zoom > 7.0) {
+            this.gridCamera.zoom = 7.0;
+        }
+        this.gridCamera.updateProjectionMatrix();
     }
+
+    
 }

@@ -8,6 +8,10 @@
                     <md-card-subtitle>Ship Info</md-card-subtitle>
                 </md-card-header>
                 <md-card-content>
+                    <md-slide-toggle color="warn" [(ngModel)]="selectedShipInstance.enemy" (change)="onShipInfoChange()" [disabled]="!shipService.isUnlocked()">
+                        <span *ngIf="!selectedShipInstance.enemy">Ally</span>
+                        <span *ngIf="selectedShipInstance.enemy">Enemy</span>
+                    </md-slide-toggle>
                     <md-list>
                         <md-list-item>
                             <md-icon md-list-icon>bookmark</md-icon>

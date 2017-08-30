@@ -27,6 +27,9 @@ export class TacticalPlan {
                 if (!i.pilot) {
                     i.pilot = "?";
                 }
+                if (!i.enemy) {
+                    i.enemy = false;
+                }
                 if (!i.crewmen) {
                     var max = shipService.getModel(s.name).maxcrew - 1;
                     i.crewmen = new Array<string>(max);
@@ -84,6 +87,7 @@ export class TacticalPlan {
                             }
                             if (ts.instances && ts.instances[m]) {
                                 sinstance.pilot = ts.instances[m].pilot;
+                                sinstance.enemy = ts.instances[m].enemy;
                             }
                             if (ts.instances && ts.instances[m] && ts.instances[m].crewmen) {
                                 sinstance.crewmen = ts.instances[m].crewmen;
@@ -120,6 +124,7 @@ export class ShipInstance {
     position: Vector3;
     pilot: string;
     crewmen: string[] = [];
+    enemy:boolean = false;
 }
 
 export class Ship {

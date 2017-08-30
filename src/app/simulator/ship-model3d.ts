@@ -73,21 +73,27 @@ export class ShipModel3D {
         // 0x00ffff cyan
         // 0xdddd22 gold
         // 0xdd2222 red
+        var color = (shipInstance.enemy)?0xff0000:0x00ffff
         var material = new THREE.MeshStandardMaterial({
-            color: 0x00ffff,
+            color: color,
             metalness: 1.0,
             roughness: 0.7,
             transparent: true,
             opacity: 0.4,
             side: THREE.DoubleSide
         });
+
         let i = scene.getObjectByName(this.data.name);
         if (i == undefined) {
             var object = scope.model.children[0];
             object.scale.set(scale, scale, scale);
             object.position.set(shipInstance.position.x, shipInstance.position.y, shipInstance.position.z);
             shipInstance.position = object.position;
-            object.rotation.z = Math.PI;
+            if (!shipInstance.enemy) {
+                object.rotation.z = Math.PI;
+            } else {
+                object.rotation.z = Math.PI*2;
+            }
             object.children[0].geometry.computeBoundingSphere();
             if (this.shipModel.size == 'L') {
                 material.opacity = 0.6;
@@ -103,6 +109,11 @@ export class ShipModel3D {
             var mesh = new THREE.Mesh(scope.model.children[0].children[0].geometry, material);
             obj.position.set(shipInstance.position.x, shipInstance.position.y, shipInstance.position.z);
             shipInstance.position = obj.position;
+            if (shipInstance.enemy) {
+                obj.rotation.z = Math.PI*2;
+            } else {
+                obj.rotation.z = Math.PI;
+            }
             obj.scale.set(scale, scale, scale);
             obj.add(mesh);
             this.objects.push(mesh);

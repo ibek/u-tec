@@ -135,7 +135,7 @@ export class SimulatorComponent implements AfterViewInit {
     }
 
     configureControls() {
-        this.controls = new ObjectControls(this.camera, this.renderer.domElement, this.container, this.objects, this.grid, this.scene, this.shipService, this.router);
+        this.controls = new ObjectControls(this.camera, this.gridCamera, this.renderer.domElement, this.container, this.objects, this.grid, this.scene, this.shipService, this.router);
         this.controls.fixed.y = 1;
         var scope = this;
         this.controls.mouseup = function () {
