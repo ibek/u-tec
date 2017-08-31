@@ -8,6 +8,7 @@ import { GLTF2Loader } from '../util/GLTF2Loader';
 import { Ship, ShipData, ShipInstance } from '../data-model';
 
 const MAX_POS: number = 30;
+const debug: boolean = true;
 
 export class ShipModel3D {
     static stepSize: number = 10;
@@ -73,7 +74,7 @@ export class ShipModel3D {
         // 0x00ffff cyan
         // 0xdddd22 gold
         // 0xdd2222 red
-        var color = (shipInstance.enemy)?0xff0000:0x00ffff
+        var color = (shipInstance.enemy) ? 0xff0000 : 0x00ffff
         var material = new THREE.MeshStandardMaterial({
             color: color,
             metalness: 1.0,
@@ -92,9 +93,9 @@ export class ShipModel3D {
             if (!shipInstance.enemy) {
                 object.rotation.z = Math.PI;
             } else {
-                object.rotation.z = Math.PI*2;
+                object.rotation.z = Math.PI * 2;
             }
-            object.children[0].geometry.computeBoundingSphere();
+            object.children[0].geometry.computeBoundingBox();
             if (this.shipModel.size == 'L') {
                 material.opacity = 0.6;
             }
@@ -102,15 +103,23 @@ export class ShipModel3D {
             object.userData.id = id;
             object.userData.shipData = this.data;
             object.userData.shipModel = this.shipModel;
+            /**var bb = new THREE.Box3().setFromObject(object);
+            var size = bb.getSize();
+            console.log(size);
+            var box: any = new Mesh(new THREE.BoxGeometry(size.x, size.y, size.z), new THREE.LineBasicMaterial({color: 0xffffff}));
+            //box.material.color.set(0xffffff);
+            //object.userData.box = box;
+            object.add(box);*/
             this.objects.push(object.children[0]);
             scene.add(scope.model);
         } else {
             var obj = scope.model.children[0].clone(false);
+            console.log(obj.name);
             var mesh = new THREE.Mesh(scope.model.children[0].children[0].geometry, material);
             obj.position.set(shipInstance.position.x, shipInstance.position.y, shipInstance.position.z);
             shipInstance.position = obj.position;
             if (shipInstance.enemy) {
-                obj.rotation.z = Math.PI*2;
+                obj.rotation.z = Math.PI * 2;
             } else {
                 obj.rotation.z = Math.PI;
             }

@@ -24,9 +24,14 @@ export class ObjectControls {
     previous = new THREE.Vector3(0, 0, 0);
 
     selected = null;
+    down: boolean;
+    lefttop: THREE.Vector3 = new THREE.Vector3();
+    selectedObjects = [];
+    selectedBoxes: Map<string, any> = new Map();
     pointer: Pointer = new Pointer(this.camera);
 
-    constructor(private camera, private gridCamera, private container, private htmlContainer, private objects, private projectionMap, private scene, private shipService: ShipService, private router: Router) {
+    constructor(private camera, private gridCamera, private container, private htmlContainer, private objects: THREE.Object3D[],
+        private projectionMap, private scene: THREE.Scene, private shipService: ShipService, private router: Router, private marqueeBox: THREE.Mesh) {
 
     }
 
@@ -55,6 +60,7 @@ export class ObjectControls {
     }
 
     update() {
+        this.marqueeBox.visible = this.down;
         this.onContainerMouseMove();
     }
 
@@ -149,16 +155,27 @@ export class ObjectControls {
     }
 
     private onContainerMouseDown = (event) => {
+        var raycaster = this._rayGet();
+        this.down = true;
+        var intersectsMap = raycaster.intersectObject(this.projectionMap);
+        this.lefttop = new THREE.Vector3().copy(intersectsMap[0].point);
+
         if (this.selected && this.shipService.isUnlocked()) {
-            var raycaster = this._rayGet();
             var intersects = raycaster.intersectObjects(this.objects, true);
 
             if (intersects.length > 0) {
                 this.setFocus(intersects[0].object);
                 this.onclick();
-
             }
         }
+
+        if (this.selectedObjects) {
+            this.selectedObjects = [];
+        }
+        this.selectedBoxes.forEach((value: any, key: string) => {
+            this.scene.remove(value);
+            this.selectedBoxes.delete(key);
+        });
     }
 
     onContainerMouseMove() {
@@ -170,18 +187,40 @@ export class ObjectControls {
                 var intersectsMap = raycaster.intersectObject(this.projectionMap);
 
                 try {
-                    var pos = new THREE.Vector3().copy(intersectsMap[0].point);
-                    if (this.fixed.x == 1) { pos.x = this.previous.x };
-                    if (this.fixed.y == 1) { pos.y = this.previous.y };
-                    if (this.fixed.z == 1) { pos.z = this.previous.z };
-                    pos.x -= this.scene.position.x;
-                    pos.z -= this.scene.position.z;
-                    this._selGetPos(pos);
+                    if (intersectsMap.length > 0) {
+                        var pos = new THREE.Vector3().copy(intersectsMap[0].point);
+                        if (this.fixed.x == 1) { pos.x = this.previous.x };
+                        if (this.fixed.y == 1) { pos.y = this.previous.y };
+                        if (this.fixed.z == 1) { pos.z = this.previous.z };
+                        pos.x -= this.scene.position.x;
+                        pos.z -= this.scene.position.z;
+                        this._selGetPos(pos);
+                    }
                 }
                 catch (err) { }
 
                 //this.move(); this._selGetPos(this.focused.parent.position);
             }
+        } else if (this.down) {
+            var intersectsMap = raycaster.intersectObject(this.projectionMap);
+
+            try {
+                if (intersectsMap.length > 0) {
+                    var pos = new THREE.Vector3().copy(intersectsMap[0].point);
+                    this.marqueeBox.position.set(this.lefttop.x - (this.lefttop.x - pos.x) / 2, 0, this.lefttop.z - (this.lefttop.z - pos.z) / 2);
+                    this.marqueeBox.scale.set(Math.abs(this.lefttop.x - pos.x), Math.abs(this.lefttop.z - pos.z), 1);
+                    var mbox = new THREE.Box3().setFromCenterAndSize(this.marqueeBox.position, new THREE.Vector3(this.marqueeBox.scale.x, 30, this.marqueeBox.scale.y));
+                    var sobjs = [];
+                    this.objects.forEach(o => {
+                        var obox = new THREE.Box3().setFromObject(o);
+                        if (mbox.intersectsBox(obox)) {
+                            sobjs.push(o);
+                        }
+                    });
+                    this.selectedObjects = sobjs;
+                }
+            }
+            catch (err) { }
         }
         else {
             var intersects = raycaster.intersectObjects(this.objects, true);
@@ -203,10 +242,49 @@ export class ObjectControls {
                 if (this._DisplaceMouseOvered) { this.mouseout(); this._setSelectNull(); }
             }
         }
+
+        this.selectedBoxes.forEach((value: any, key: string) => {
+            var found = false;
+            for (var i = 0; i < this.selectedObjects.length; i++) {
+                if (value.object == this.selectedObjects[i]) {
+                    found = true;
+                    break;
+                }
+            };
+            if (!found) {
+                this.scene.remove(value);
+                this.selectedBoxes.delete(key);
+            }
+        });
+
+        this.selectedObjects.forEach(o => {
+            var id = o.parent.name + "" + o.parent.userData.id;
+            if (!this.selectedBoxes.has(id)) { // for new selected ships
+                var boxHelper: any = new THREE.BoxHelper(o);
+                boxHelper.material.color.set(o.material.color);
+                boxHelper.material.transparent = true;
+                boxHelper.material.opacity = 0.3;
+                this.scene.add(boxHelper);
+                this.selectedBoxes.set(id, boxHelper);
+            }
+        });
+
+        if (this.selected) {
+            var id = this.selected.parent.name + "" + this.selected.parent.userData.id;
+            if (!this.selectedBoxes.has(id)) { // for new selected ship
+                var boxHelper: any = new THREE.BoxHelper(this.selected);
+                boxHelper.material.color.set(this.selected.material.color);
+                boxHelper.material.transparent = true;
+                boxHelper.material.opacity = 0.3;
+                this.scene.add(boxHelper);
+                this.selectedBoxes.set(id, boxHelper);
+            }
+        }
     }
 
     private onContainerMouseUp = (event) => {
         event.preventDefault();
+        this.down = false;
 
         if (this.focused) {
             var userData = this.focused.parent.userData;
@@ -284,6 +362,4 @@ export class ObjectControls {
         }
         this.gridCamera.updateProjectionMatrix();
     }
-
-    
 }

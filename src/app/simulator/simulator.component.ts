@@ -56,6 +56,8 @@ export class SimulatorComponent implements AfterViewInit {
 
     selectedShip: Ship; // info for selected ship
     selectedShipInstance: ShipInstance;
+    marqueeBox: Mesh;
+
     Arr = Array; // helper property for multiple crewmen
 
     constructor(private sceneService: SceneService, private shipService: ShipService, private router: Router, public crewDialog: MdDialog) {
@@ -107,13 +109,25 @@ export class SimulatorComponent implements AfterViewInit {
 
         texture.repeat.set(30, 30);
 
-        material = new THREE.MeshLambertMaterial({ map: texture, transparent: true, opacity: 1.0 });
+        material = new THREE.MeshLambertMaterial({ map: texture, transparent: true, opacity: 1.0, side: THREE.DoubleSide });
         this.grid = new THREE.Mesh(new THREE.PlaneGeometry(180, 120), material);
-        this.grid.material.side = THREE.DoubleSide;
         this.grid.rotation.x = Math.PI / 2;
         this.grid.position.y = -1;
         this.grid.position.z = 0;
 
+        material = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.15,
+            side: THREE.DoubleSide,
+            depthTest: false
+        });
+        this.marqueeBox = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
+        this.marqueeBox.position.set(0, 0, 0);
+        this.marqueeBox.rotation.x = Math.PI / 2;
+        this.marqueeBox.visible = false;
+
+        this.gridScene.add(this.marqueeBox);
         this.gridScene.add(this.grid);
     }
 
@@ -135,7 +149,8 @@ export class SimulatorComponent implements AfterViewInit {
     }
 
     configureControls() {
-        this.controls = new ObjectControls(this.camera, this.gridCamera, this.renderer.domElement, this.container, this.objects, this.grid, this.scene, this.shipService, this.router);
+        this.controls = new ObjectControls(this.camera, this.gridCamera, this.renderer.domElement, 
+            this.container, this.objects, this.grid, this.scene, this.shipService, this.router, this.marqueeBox);
         this.controls.fixed.y = 1;
         var scope = this;
         this.controls.mouseup = function () {
