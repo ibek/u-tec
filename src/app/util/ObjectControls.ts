@@ -21,8 +21,6 @@ export class ObjectControls {
     enabled = true;
     item = null;
 
-    _intersects = [];
-    intersectsMap;
     previous = new THREE.Vector3(0, 0, 0);
 
     selected = null;
@@ -153,10 +151,10 @@ export class ObjectControls {
     private onContainerMouseDown = (event) => {
         if (this.selected && this.shipService.isUnlocked()) {
             var raycaster = this._rayGet();
-            this._intersects = raycaster.intersectObjects(this.objects, true);
+            var intersects = raycaster.intersectObjects(this.objects, true);
 
-            if (this._intersects.length > 0) {
-                this.setFocus(this._intersects[0].object);
+            if (intersects.length > 0) {
+                this.setFocus(intersects[0].object);
                 this.onclick();
 
             }
@@ -169,10 +167,10 @@ export class ObjectControls {
 
         if (this.focused) {
             if (this.displacing) {
-                this.intersectsMap = raycaster.intersectObject(this.projectionMap);
+                var intersectsMap = raycaster.intersectObject(this.projectionMap);
 
                 try {
-                    var pos = new THREE.Vector3().copy(this.intersectsMap[0].point);
+                    var pos = new THREE.Vector3().copy(intersectsMap[0].point);
                     if (this.fixed.x == 1) { pos.x = this.previous.x };
                     if (this.fixed.y == 1) { pos.y = this.previous.y };
                     if (this.fixed.z == 1) { pos.z = this.previous.z };
@@ -186,18 +184,18 @@ export class ObjectControls {
             }
         }
         else {
-            this._intersects = raycaster.intersectObjects(this.objects, true);
-            if (this._intersects.length > 0) {
+            var intersects = raycaster.intersectObjects(this.objects, true);
+            if (intersects.length > 0) {
                 if (this.mouseovered) {
-                    if (this._DisplaceMouseOvered != this._intersects[0].object) {
+                    if (this._DisplaceMouseOvered != intersects[0].object) {
                         this.mouseout();
-                        this.select(this._intersects[0].object);
+                        this.select(intersects[0].object);
                         this.mouseover();
                     }
                     else this.mouseover();
                 }
                 else {
-                    this.select(this._intersects[0].object);
+                    this.select(intersects[0].object);
                     this.mouseover();
                 }
             }
@@ -223,10 +221,10 @@ export class ObjectControls {
             this.focused = null;
         } else { // selection
             var raycaster = this._rayGet();
-            this._intersects = raycaster.intersectObjects(this.objects, true);
+            var intersects = raycaster.intersectObjects(this.objects, true);
 
-            if (this._intersects.length > 0) {
-                this.selected = this._intersects[0].object;
+            if (intersects.length > 0) {
+                this.selected = intersects[0].object;
                 this.pointer.show(this.htmlContainer, this.scene, this.selected.parent.userData.shipData);
             } else if (this.selected) {
                 this.hideSelected();

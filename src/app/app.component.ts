@@ -18,7 +18,7 @@ export class AppComponent {
   }
 
   newTacticalPlan(): void {
-    window.location.href = '/inventory';
+    window.location.href = '/';
   }
 
   inventory(): void {
