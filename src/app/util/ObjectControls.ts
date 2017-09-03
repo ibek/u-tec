@@ -164,7 +164,7 @@ export class ObjectControls {
         if (this.selected && this.shipService.isUnlocked() && intersects.length > 0) {
             this.setFocus(intersects[0].object);
             this.onclick();
-        } else if (this.selectedObjects.length > 0 && this.shipService.isUnlocked() && intersects.length > 0) {
+        } else if (this.selectedObjects.length > 0 && this.shipService.isUnlocked() && intersects.length > 0 && this.selectedObjects.includes(intersects[0].object)) {
             this.multifocus = true;
             this.multiSelectedObj = intersects[0].object;
         }
@@ -260,9 +260,7 @@ export class ObjectControls {
                 this.multiSelectedObj.parent.position.copy(pos);
                 this.selectedObjects.forEach(o => {
                     if (o !== this.multiSelectedObj) {
-                        o.parent.position.x += diff.x;
-                        o.parent.position.y = pos.y;
-                        o.parent.position.z += diff.z;
+                        o.parent.position.set(o.parent.position.x + diff.x, pos.y, o.parent.position.z + diff.z);
                     }
                 });
             }

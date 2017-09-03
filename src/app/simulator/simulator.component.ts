@@ -90,7 +90,7 @@ export class SimulatorComponent implements AfterViewInit {
     }
 
     addBackground() {
-        var texture: THREE.Texture = THREE.ImageUtils.loadTexture("assets/images/background.png");
+        var texture: THREE.Texture = new THREE.TextureLoader().load("assets/images/background.png");
         var bg = new THREE.Mesh(
             new THREE.PlaneGeometry(2, 2, 0),
             new THREE.MeshBasicMaterial({ map: texture })
@@ -105,7 +105,7 @@ export class SimulatorComponent implements AfterViewInit {
     addGrid() {
         var texture, material;
 
-        texture = THREE.ImageUtils.loadTexture("assets/images/grid.png");
+        texture = new THREE.TextureLoader().load("assets/images/grid.png");
 
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
