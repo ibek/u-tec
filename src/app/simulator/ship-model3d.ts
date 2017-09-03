@@ -103,18 +103,10 @@ export class ShipModel3D {
             object.userData.id = id;
             object.userData.shipData = this.data;
             object.userData.shipModel = this.shipModel;
-            /**var bb = new THREE.Box3().setFromObject(object);
-            var size = bb.getSize();
-            console.log(size);
-            var box: any = new Mesh(new THREE.BoxGeometry(size.x, size.y, size.z), new THREE.LineBasicMaterial({color: 0xffffff}));
-            //box.material.color.set(0xffffff);
-            //object.userData.box = box;
-            object.add(box);*/
             this.objects.push(object.children[0]);
             scene.add(scope.model);
         } else {
             var obj = scope.model.children[0].clone(false);
-            console.log(obj.name);
             var mesh = new THREE.Mesh(scope.model.children[0].children[0].geometry, material);
             obj.position.set(shipInstance.position.x, shipInstance.position.y, shipInstance.position.z);
             shipInstance.position = obj.position;

@@ -29,6 +29,8 @@ export class ObjectControls {
     selectedObjects = [];
     selectedBoxes: Map<string, any> = new Map();
     pointer: Pointer = new Pointer(this.camera);
+    multifocus: boolean = false;
+    multiSelectedObj = null;
 
     constructor(private camera, private gridCamera, private container, private htmlContainer, private objects: THREE.Object3D[],
         private projectionMap, private scene: THREE.Scene, private shipService: ShipService, private router: Router, private marqueeBox: THREE.Mesh) {
@@ -74,7 +76,7 @@ export class ObjectControls {
         this.container.style.cursor = 'move'
     }
     mouseover = function () {
-        if (this.selected && this.shipService.isUnlocked()) {
+        if ((this.selected || this.selectedObjects.length > 0) && this.shipService.isUnlocked()) {
             this.container.style.cursor = 'move';
         } else {
             this.container.style.cursor = 'pointer';
@@ -102,8 +104,7 @@ export class ObjectControls {
         }
         // selection
         if (this.focused !== this.selected) {
-            this.focused = null;
-            this.selected = null;
+            this.selected = this.focused;
         }
     }
 
@@ -156,26 +157,26 @@ export class ObjectControls {
 
     private onContainerMouseDown = (event) => {
         var raycaster = this._rayGet();
-        this.down = true;
-        var intersectsMap = raycaster.intersectObject(this.projectionMap);
-        this.lefttop = new THREE.Vector3().copy(intersectsMap[0].point);
+        var intersects = raycaster.intersectObjects(this.objects, true);
 
-        if (this.selected && this.shipService.isUnlocked()) {
-            var intersects = raycaster.intersectObjects(this.objects, true);
-
-            if (intersects.length > 0) {
-                this.setFocus(intersects[0].object);
-                this.onclick();
-            }
+        if (this.selected && this.shipService.isUnlocked() && intersects.length > 0) {
+            this.setFocus(intersects[0].object);
+            this.onclick();
+        } else if (this.selectedObjects.length > 0 && this.shipService.isUnlocked() && intersects.length > 0) {
+            this.multifocus = true;
+            this.multiSelectedObj = intersects[0].object;
         }
 
-        if (this.selectedObjects) {
+        if (intersects.length == 0) {
             this.selectedObjects = [];
+            this.selectedBoxes.forEach((value: any, key: string) => {
+                this.scene.remove(value);
+                this.selectedBoxes.delete(key);
+            });
+            this.down = true;
+            var intersectsMap = raycaster.intersectObject(this.projectionMap);
+            this.lefttop = new THREE.Vector3().copy(intersectsMap[0].point);
         }
-        this.selectedBoxes.forEach((value: any, key: string) => {
-            this.scene.remove(value);
-            this.selectedBoxes.delete(key);
-        });
     }
 
     onContainerMouseMove() {
@@ -229,55 +230,68 @@ export class ObjectControls {
                     if (this._DisplaceMouseOvered != intersects[0].object) {
                         this.mouseout();
                         this.select(intersects[0].object);
-                        this.mouseover();
                     }
-                    else this.mouseover();
                 }
                 else {
                     this.select(intersects[0].object);
-                    this.mouseover();
                 }
+                this.mouseover();
             }
             else {
                 if (this._DisplaceMouseOvered) { this.mouseout(); this._setSelectNull(); }
             }
         }
 
-        this.selectedBoxes.forEach((value: any, key: string) => {
-            var found = false;
-            for (var i = 0; i < this.selectedObjects.length; i++) {
-                if (value.object == this.selectedObjects[i]) {
-                    found = true;
-                    break;
-                }
-            };
-            if (!found) {
+        if (this.multifocus && this.multiSelectedObj) { // move multiselect
+            var intersectsMap = raycaster.intersectObject(this.projectionMap);
+            if (intersectsMap.length > 0) {
+                var pos = new THREE.Vector3().copy(intersectsMap[0].point);
+                if (this.fixed.x == 1) { pos.x = this.previous.x };
+                if (this.fixed.y == 1) { pos.y = this.previous.y };
+                if (this.fixed.z == 1) { pos.z = this.previous.z };
+                pos.x -= this.scene.position.x;
+                pos.z -= this.scene.position.z;
+                var diff = new THREE.Vector3(pos.x - this.multiSelectedObj.parent.position.x, pos.y, pos.z - this.multiSelectedObj.parent.position.z);
+
+                this.multiSelectedObj.parent.position.copy(pos);
+                this.selectedObjects.forEach(o => {
+                    if (o !== this.multiSelectedObj) {
+                        o.parent.position.x += diff.x;
+                        o.parent.position.y = pos.y;
+                        o.parent.position.z += diff.z;
+                    }
+                });
+            }
+        }
+
+        if (this.selected || this.down || this.multifocus) {
+            this.selectedBoxes.forEach((value: any, key: string) => {
                 this.scene.remove(value);
                 this.selectedBoxes.delete(key);
-            }
-        });
+            });
 
-        this.selectedObjects.forEach(o => {
-            var id = o.parent.name + "" + o.parent.userData.id;
-            if (!this.selectedBoxes.has(id)) { // for new selected ships
-                var boxHelper: any = new THREE.BoxHelper(o);
-                boxHelper.material.color.set(o.material.color);
-                boxHelper.material.transparent = true;
-                boxHelper.material.opacity = 0.3;
-                this.scene.add(boxHelper);
-                this.selectedBoxes.set(id, boxHelper);
-            }
-        });
+            this.selectedObjects.forEach(o => {
+                var id = o.parent.name + "" + o.parent.userData.id;
+                if (!this.selectedBoxes.has(id)) {
+                    var boxHelper: any = new THREE.BoxHelper(o);
+                    boxHelper.material.color.set(o.material.color);
+                    boxHelper.material.transparent = true;
+                    boxHelper.material.opacity = 0.3;
+                    this.scene.add(boxHelper);
+                    this.selectedBoxes.set(id, boxHelper);
+                }
+            });
 
-        if (this.selected) {
-            var id = this.selected.parent.name + "" + this.selected.parent.userData.id;
-            if (!this.selectedBoxes.has(id)) { // for new selected ship
-                var boxHelper: any = new THREE.BoxHelper(this.selected);
-                boxHelper.material.color.set(this.selected.material.color);
-                boxHelper.material.transparent = true;
-                boxHelper.material.opacity = 0.3;
-                this.scene.add(boxHelper);
-                this.selectedBoxes.set(id, boxHelper);
+            if (this.selected) {
+                var id = this.selected.parent.name + "" + this.selected.parent.userData.id;
+                if (!this.selectedBoxes.has(id)) {
+                    var boxHelper: any = new THREE.BoxHelper(this.selected);
+                    boxHelper.material.color.set(this.selected.material.color);
+                    boxHelper.material.transparent = true;
+                    boxHelper.material.opacity = 0.3;
+                    this.scene.add(boxHelper);
+                    this.selectedBoxes.set(id, boxHelper);
+                }
             }
         }
     }
@@ -294,18 +308,34 @@ export class ObjectControls {
             var z = Math.round(this.focused.parent.position.z * 10) / 10;
             this.focused.parent.position.z = z;
             userData.shipData.instances[userData.id].position.z = z;
-            this.mouseup();
             this._DisplaceFocused = null;
             this.focused = null;
-        } else { // selection
-            var raycaster = this._rayGet();
-            var intersects = raycaster.intersectObjects(this.objects, true);
-
-            if (intersects.length > 0) {
-                this.selected = intersects[0].object;
+            this.mouseup();
+        } else if (this.multifocus) {
+            this.multifocus = false;
+            this.selectedObjects.forEach(o => {
+                var userData = o.parent.userData;
+                var x = Math.round(o.parent.position.x * 10) / 10;
+                o.parent.position.x = x;
+                userData.shipData.instances[userData.id].position.x = x;
+                var z = Math.round(o.parent.position.z * 10) / 10;
+                o.parent.position.z = z;
+                userData.shipData.instances[userData.id].position.z = z;
+            });
+            this.mouseup();
+        } else if (!this.focused) { // selection
+            if (this.selectedObjects.length == 1) {
+                this.selected = this.selectedObjects[0];
                 this.pointer.show(this.htmlContainer, this.scene, this.selected.parent.userData.shipData);
-            } else if (this.selected) {
-                this.hideSelected();
+            } else {
+                var raycaster = this._rayGet();
+                var intersects = raycaster.intersectObjects(this.objects, true);
+                if (intersects.length > 0) {
+                    this.selected = intersects[0].object;
+                    this.pointer.show(this.htmlContainer, this.scene, this.selected.parent.userData.shipData);
+                } else if (this.selected) {
+                    this.hideSelected();
+                }
             }
         }
     }
@@ -313,6 +343,13 @@ export class ObjectControls {
     hideSelected() {
         this.pointer.hide(this.htmlContainer, this.scene);
         this.selected = null;
+        this.multiSelectedObj = null;
+        this.multifocus = false;
+        this.selectedObjects = [];
+        this.selectedBoxes.forEach((value: any, key: string) => {
+            this.scene.remove(value);
+            this.selectedBoxes.delete(key);
+        });
     }
 
     private onDocumentMouseWheel = (event) => {
