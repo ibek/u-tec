@@ -18,6 +18,7 @@ import { SceneService } from '../scene.service';
 import { ShipService } from '../ship.service';
 import { Ship, ShipData, TacticalPlan, ShipInstance } from '../data-model';
 import { ObjectControls } from '../util/ObjectControls';
+import { Joystick } from '../util/Joystick';
 
 @Component({
     selector: 'simulator',
@@ -45,10 +46,12 @@ export class SimulatorComponent implements AfterViewInit {
     bgCam: THREE.Camera = new THREE.Camera();
 
     controls: ObjectControls;
+    joystick: Joystick;
 
     directionalLight: DirectionalLight;
 
     objects: any = [];
+    getImageData: any;
 
     // remember these initial values
     tanFOV = Math.tan(((Math.PI / 180) * this.camera.fov / 2));
@@ -149,8 +152,38 @@ export class SimulatorComponent implements AfterViewInit {
     }
 
     configureControls() {
-        this.controls = new ObjectControls(this.camera, this.gridCamera, this.renderer.domElement, 
-            this.container, this.objects, this.grid, this.scene, this.shipService, this.router, this.marqueeBox);
+        this.joystick = new Joystick();
+        var scope = this;
+        this.joystick.moveCallback = function (deltaX, deltaY) {
+            var speed = 10 * scope.camera.zoom;
+            deltaX = deltaX / speed;
+            deltaY = -deltaY / speed;
+            scope.camera.translateX(deltaX);
+            scope.camera.translateY(deltaY);
+            scope.gridCamera.translateX(deltaX);
+            scope.gridCamera.translateY(deltaY);
+            if (scope.camera.position.x < -90) {
+                scope.camera.translateX(-deltaX);
+                scope.gridCamera.translateX(-deltaX);
+            }
+            if (scope.camera.position.x > 90) {
+                scope.camera.translateX(-deltaX);
+                scope.gridCamera.translateX(-deltaX);
+            }
+            if (scope.camera.position.y > 140) {
+                scope.camera.translateY(-deltaY);
+                scope.gridCamera.translateY(-deltaY);
+            }
+            if (scope.camera.position.y < 80) {
+                scope.camera.translateY(-deltaY);
+                scope.gridCamera.translateY(-deltaY);
+            }
+        }
+        this.joystick.updateLocation(window.innerWidth, window.innerHeight);
+
+        this.controls = new ObjectControls(this.camera, this.gridCamera, this.renderer.domElement,
+            this.container, this.objects, this.grid, this.scene, this.shipService, this.router, this.marqueeBox,
+            this.joystick);
         this.controls.fixed.y = 1;
         var scope = this;
         this.controls.mouseup = function () {
@@ -163,10 +196,10 @@ export class SimulatorComponent implements AfterViewInit {
         this.controls.activate();
     }
 
-    getImageData: any;
     render() {
         requestAnimationFrame(() => this.render());
         this.controls.update();
+        this.joystick.update();
         this.renderer.autoClear = false;
         this.renderer.clear();
         this.renderer.render(this.bgScene, this.bgCam);
@@ -270,6 +303,7 @@ export class SimulatorComponent implements AfterViewInit {
         this.camera.updateProjectionMatrix();
         this.camera.lookAt(this.scene.position);
 
+        this.joystick.updateLocation(window.innerWidth, window.innerHeight);
         this.renderer.setSize(this.screenWidth, this.screenHeight);
     }
 

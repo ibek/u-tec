@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { Pointer } from './Pointer';
 import { ShipService } from '../ship.service'
 import { Router } from '@angular/router';
+import { Joystick } from './Joystick'
 
 export class ObjectControls {
     fixed = new THREE.Vector3(0, 0, 0);
@@ -33,7 +34,8 @@ export class ObjectControls {
     multiSelectedObj = null;
 
     constructor(private camera, private gridCamera, private container, private htmlContainer, private objects: THREE.Object3D[],
-        private projectionMap, private scene: THREE.Scene, private shipService: ShipService, private router: Router, private marqueeBox: THREE.Mesh) {
+        private projectionMap, private scene: THREE.Scene, private shipService: ShipService, private router: Router, private marqueeBox: THREE.Mesh,
+        private joystick: Joystick) {
 
     }
 
@@ -175,7 +177,9 @@ export class ObjectControls {
             });
             this.down = true;
             var intersectsMap = raycaster.intersectObject(this.projectionMap);
-            this.lefttop = new THREE.Vector3().copy(intersectsMap[0].point);
+            if (intersectsMap.length > 0) {
+                this.lefttop = new THREE.Vector3().copy(intersectsMap[0].point);
+            }
         }
     }
 
@@ -386,14 +390,24 @@ export class ObjectControls {
         this.camera.zoom -= delta * zoomSpeed;
         if (this.camera.zoom < 1.0) {
             this.camera.zoom = 1.0;
+            this.camera.position.x = 0;
+            this.camera.position.y = 110;
+            this.camera.position.z = -80;
+            this.joystick.hide();
         } else if (this.camera.zoom > 7.0) {
             this.camera.zoom = 7.0;
+            this.joystick.show();
+        } else {
+            this.joystick.show();
         }
         this.camera.updateProjectionMatrix();
 
         this.gridCamera.zoom -= delta * zoomSpeed;
         if (this.gridCamera.zoom < 1.0) {
             this.gridCamera.zoom = 1.0;
+            this.gridCamera.position.x = 0;
+            this.gridCamera.position.y = 110;
+            this.gridCamera.position.z = -80;
         } else if (this.gridCamera.zoom > 7.0) {
             this.gridCamera.zoom = 7.0;
         }
