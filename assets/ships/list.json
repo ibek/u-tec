@@ -127,6 +127,38 @@
             "scale": 0.003,
             "maxcrew": 6,
             "cargo": 1057
+        },
+        {
+            "name": "Mustang Alpha",
+            "role": "Personal Transport",
+            "size": "S",
+            "scale": 0.003,
+            "maxcrew": 1,
+            "cargo": 0
+        },
+        {
+            "name": "Orion",
+            "role": "Mining",
+            "size": "L",
+            "scale": 0.3,
+            "maxcrew": 6,
+            "cargo": 216
+        },
+        {
+            "name": "Reliant Kore",
+            "role": "Light Cargo",
+            "size": "S",
+            "scale": 0.003,
+            "maxcrew": 2,
+            "cargo": 30
+        },
+        {
+            "name": "Vanguard Warden",
+            "role": "Long-range Fighter",
+            "size": "M",
+            "scale": 0.003,
+            "maxcrew": 2,
+            "cargo": 0
         }
     ]
 }
