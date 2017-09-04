@@ -225,6 +225,7 @@ export class SimulatorComponent implements AfterViewInit {
                         model.addShipsToScene(scope.scene);
                         model.objects.forEach(o => scope.objects.push(o));
                     })
+                    scope.controls.onUpdateTacticalPlan();
                 };
                 updateCallback();
                 this.sceneService.setUpdateCallback(updateCallback);

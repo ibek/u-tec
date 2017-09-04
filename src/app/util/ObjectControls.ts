@@ -74,6 +74,22 @@ export class ObjectControls {
         }
     }
 
+    onUpdateTacticalPlan() {
+        var updatedObjects = [];
+        this.selectedObjects.forEach(o => {
+            var id = o.parent.name + "" + o.parent.userData.id;
+            for (var i=0; i<this.objects.length; i++) {
+                var nobj = this.objects[i];
+                var id2 = nobj.parent.name + "" + nobj.parent.userData.id;
+                if (id == id2) {
+                    updatedObjects.push(nobj);
+                    break;
+                }
+            }
+        });
+        this.selectedObjects = updatedObjects;
+    }
+
     move = function () {
         this.container.style.cursor = 'move'
     }

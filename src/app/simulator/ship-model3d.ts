@@ -80,7 +80,7 @@ export class ShipModel3D {
             metalness: 1.0,
             roughness: 0.7,
             transparent: true,
-            opacity: 0.4,
+            opacity: 0.5,
             side: THREE.DoubleSide
         });
 
