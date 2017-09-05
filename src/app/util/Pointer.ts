@@ -31,8 +31,9 @@ export class Pointer {
         scene.remove(this.line);
     }
 
-    update(position: Vector3, screenWidth, screenHeight) {
+    update(position: Vector3, shipData: ShipData, screenWidth, screenHeight) {
         if (this.visible) {
+            this.title.setLabel(shipData.name);
             this.line.position.x = position.x;
             this.line.position.y = position.y;
             this.line.position.z = position.z;

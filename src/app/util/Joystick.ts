@@ -14,6 +14,7 @@ export class Joystick {
 
     pressed = false;
     touchIdx = null;
+    visible = false;
 
     constructor() {
         this.baseEl = this.buildJoystickBase();
@@ -52,10 +53,12 @@ export class Joystick {
 
     show() {
         this.baseEl.style.display = "";
+        this.visible = true;
     }
 
     hide() {
         this.baseEl.style.display = "none";
+        this.visible = false;
     }
 
     deltaX() { return this.stickX - this.baseX; }
@@ -105,7 +108,7 @@ export class Joystick {
     onDown(x, y) {
         var leftX = this.baseX - this.baseEl.width / 2;
         var topY = this.baseY - this.baseEl.height / 2;
-        if (x > leftX && x < leftX + this.baseEl.width &&
+        if (this.visible && x > leftX && x < leftX + this.baseEl.width &&
             y > topY && y < topY + this.baseEl.height) {
             this.pressed = true;
 

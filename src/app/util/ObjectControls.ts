@@ -70,7 +70,7 @@ export class ObjectControls {
 
     updateAfter(screenWidth, screenHeight) {
         if (this.selected) {
-            this.pointer.update(this.selected.parent.position.clone(), screenWidth, screenHeight);
+            this.pointer.update(this.selected.parent.position.clone(), this.selected.parent.userData.shipData, screenWidth, screenHeight);
         }
     }
 
@@ -283,13 +283,10 @@ export class ObjectControls {
         }
 
         if (this.selected || this.down || this.multifocus) {
-            this.selectedBoxes.forEach((value: any, key: string) => {
-                this.scene.remove(value);
-                this.selectedBoxes.delete(key);
-            });
-
+            var ids = [];
             this.selectedObjects.forEach(o => {
                 var id = o.parent.name + "" + o.parent.userData.id;
+                ids.push(id);
                 if (!this.selectedBoxes.has(id)) {
                     var boxHelper: any = new THREE.BoxHelper(o);
                     boxHelper.material.color.set(o.material.color);
@@ -297,6 +294,12 @@ export class ObjectControls {
                     boxHelper.material.opacity = 0.3;
                     this.scene.add(boxHelper);
                     this.selectedBoxes.set(id, boxHelper);
+                }
+            });
+            this.selectedBoxes.forEach((value: any, key: string) => {
+                if (!ids.includes(key)) {
+                    this.scene.remove(value);
+                    this.selectedBoxes.delete(key);
                 }
             });
 
