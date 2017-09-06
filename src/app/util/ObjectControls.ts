@@ -33,6 +33,8 @@ export class ObjectControls {
     multifocus: boolean = false;
     multiSelectedObj = null;
 
+    updateNeeded = false;
+
     constructor(private camera, private gridCamera, private container, private htmlContainer, private objects: THREE.Object3D[],
         private projectionMap, private scene: THREE.Scene, private shipService: ShipService, private router: Router, private marqueeBox: THREE.Mesh,
         private joystick: Joystick) {
@@ -78,7 +80,7 @@ export class ObjectControls {
         var updatedObjects = [];
         this.selectedObjects.forEach(o => {
             var id = o.parent.name + "" + o.parent.userData.id;
-            for (var i=0; i<this.objects.length; i++) {
+            for (var i = 0; i < this.objects.length; i++) {
                 var nobj = this.objects[i];
                 var id2 = nobj.parent.name + "" + nobj.parent.userData.id;
                 if (id == id2) {
@@ -207,41 +209,33 @@ export class ObjectControls {
             if (this.displacing) {
                 var intersectsMap = raycaster.intersectObject(this.projectionMap);
 
-                try {
-                    if (intersectsMap.length > 0) {
-                        var pos = new THREE.Vector3().copy(intersectsMap[0].point);
-                        if (this.fixed.x == 1) { pos.x = this.previous.x };
-                        if (this.fixed.y == 1) { pos.y = this.previous.y };
-                        if (this.fixed.z == 1) { pos.z = this.previous.z };
-                        pos.x -= this.scene.position.x;
-                        pos.z -= this.scene.position.z;
-                        this._selGetPos(pos);
-                    }
+                if (intersectsMap.length > 0) {
+                    var pos = new THREE.Vector3().copy(intersectsMap[0].point);
+                    if (this.fixed.x == 1) { pos.x = this.previous.x };
+                    if (this.fixed.y == 1) { pos.y = this.previous.y };
+                    if (this.fixed.z == 1) { pos.z = this.previous.z };
+                    pos.x -= this.scene.position.x;
+                    pos.z -= this.scene.position.z;
+                    this._selGetPos(pos);
                 }
-                catch (err) { }
-
-                //this.move(); this._selGetPos(this.focused.parent.position);
             }
         } else if (this.down) {
             var intersectsMap = raycaster.intersectObject(this.projectionMap);
 
-            try {
-                if (intersectsMap.length > 0) {
-                    var pos = new THREE.Vector3().copy(intersectsMap[0].point);
-                    this.marqueeBox.position.set(this.lefttop.x - (this.lefttop.x - pos.x) / 2, 0, this.lefttop.z - (this.lefttop.z - pos.z) / 2);
-                    this.marqueeBox.scale.set(Math.abs(this.lefttop.x - pos.x), Math.abs(this.lefttop.z - pos.z), 1);
-                    var mbox = new THREE.Box3().setFromCenterAndSize(this.marqueeBox.position, new THREE.Vector3(this.marqueeBox.scale.x, 30, this.marqueeBox.scale.y));
-                    var sobjs = [];
-                    this.objects.forEach(o => {
-                        var obox = new THREE.Box3().setFromObject(o);
-                        if (mbox.intersectsBox(obox)) {
-                            sobjs.push(o);
-                        }
-                    });
-                    this.selectedObjects = sobjs;
-                }
+            if (intersectsMap.length > 0) {
+                var pos = new THREE.Vector3().copy(intersectsMap[0].point);
+                this.marqueeBox.position.set(this.lefttop.x - (this.lefttop.x - pos.x) / 2, 0, this.lefttop.z - (this.lefttop.z - pos.z) / 2);
+                this.marqueeBox.scale.set(Math.abs(this.lefttop.x - pos.x), Math.abs(this.lefttop.z - pos.z), 1);
+                var mbox = new THREE.Box3().setFromCenterAndSize(this.marqueeBox.position, new THREE.Vector3(this.marqueeBox.scale.x, 80, this.marqueeBox.scale.y));
+                var sobjs = [];
+                this.objects.forEach(o => {
+                    var obox = new THREE.Box3().setFromObject(o);
+                    if (mbox.intersectsBox(obox)) {
+                        sobjs.push(o);
+                    }
+                });
+                this.selectedObjects = sobjs;
             }
-            catch (err) { }
         }
         else {
             var intersects = raycaster.intersectObjects(this.objects, true);
@@ -266,17 +260,14 @@ export class ObjectControls {
             var intersectsMap = raycaster.intersectObject(this.projectionMap);
             if (intersectsMap.length > 0) {
                 var pos = new THREE.Vector3().copy(intersectsMap[0].point);
-                if (this.fixed.x == 1) { pos.x = this.previous.x };
-                if (this.fixed.y == 1) { pos.y = this.previous.y };
-                if (this.fixed.z == 1) { pos.z = this.previous.z };
                 pos.x -= this.scene.position.x;
                 pos.z -= this.scene.position.z;
-                var diff = new THREE.Vector3(pos.x - this.multiSelectedObj.parent.position.x, pos.y, pos.z - this.multiSelectedObj.parent.position.z);
+                var diff = new THREE.Vector3(pos.x - this.multiSelectedObj.parent.position.x, pos.y - this.multiSelectedObj.parent.position.y, pos.z - this.multiSelectedObj.parent.position.z);
 
                 this.multiSelectedObj.parent.position.copy(pos);
                 this.selectedObjects.forEach(o => {
                     if (o !== this.multiSelectedObj) {
-                        o.parent.position.set(o.parent.position.x + diff.x, pos.y, o.parent.position.z + diff.z);
+                        o.parent.position.set(o.parent.position.x + diff.x, o.parent.position.y + diff.y, o.parent.position.z + diff.z);
                     }
                 });
             }
@@ -288,12 +279,13 @@ export class ObjectControls {
                 var id = o.parent.name + "" + o.parent.userData.id;
                 ids.push(id);
                 if (!this.selectedBoxes.has(id)) {
-                    var boxHelper: any = new THREE.BoxHelper(o);
-                    boxHelper.material.color.set(o.material.color);
-                    boxHelper.material.transparent = true;
-                    boxHelper.material.opacity = 0.3;
+                    var size = new THREE.Box3().setFromObject(o.parent).getSize();
+                    var boxHelper: any = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxBufferGeometry(size.x, size.y, size.z), 1), new THREE.LineBasicMaterial({ color: o.material.color, transparent: true, opacity: 0.3, linewidth: 1 }));
+                    boxHelper.position.set(o.parent.position.x, o.parent.position.y/2.0, o.parent.position.z);
                     this.scene.add(boxHelper);
                     this.selectedBoxes.set(id, boxHelper);
+                } else {
+                    this.selectedBoxes.get(id).position.set(o.parent.position.x, o.parent.position.y/2.0, o.parent.position.z);
                 }
             });
             this.selectedBoxes.forEach((value: any, key: string) => {
@@ -306,12 +298,13 @@ export class ObjectControls {
             if (this.selected) {
                 var id = this.selected.parent.name + "" + this.selected.parent.userData.id;
                 if (!this.selectedBoxes.has(id)) {
-                    var boxHelper: any = new THREE.BoxHelper(this.selected);
-                    boxHelper.material.color.set(this.selected.material.color);
-                    boxHelper.material.transparent = true;
-                    boxHelper.material.opacity = 0.3;
+                    var size = new THREE.Box3().setFromObject(this.selected.parent).getSize();
+                    var boxHelper: any = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxBufferGeometry(size.x, size.y, size.z), 1), new THREE.LineBasicMaterial({ color: this.selected.material.color, transparent: true, opacity: 0.3, linewidth: 1 }));
+                    boxHelper.position.set(this.selected.parent.position.x, this.selected.parent.position.y/2.0, this.selected.parent.position.z);
                     this.scene.add(boxHelper);
                     this.selectedBoxes.set(id, boxHelper);
+                } else {
+                    this.selectedBoxes.get(id).position.set(this.selected.parent.position.x, this.selected.parent.position.y/2.0, this.selected.parent.position.z);
                 }
             }
         }
@@ -371,6 +364,10 @@ export class ObjectControls {
             this.scene.remove(value);
             this.selectedBoxes.delete(key);
         });
+        if (this.updateNeeded) {
+            this.updateNeeded = false;
+            this.shipService.updateTacticalPlan();
+        }
     }
 
     private onDocumentMouseWheel = (event) => {
@@ -400,6 +397,18 @@ export class ObjectControls {
             }
         }
         delta = delta ? delta : event.detail / 500.0;
+
+        if (this.selected) { // move selected ships up/down
+            this.selected.parent.position.y += delta * 200;
+            if (this.selected.parent.position.y < 1) {
+                this.selected.parent.position.y = 1;
+            } else if (this.selected.parent.position.y > 40) {
+                this.selected.parent.position.y = 40;
+            }
+            this.updateNeeded = true;
+            return;
+        }
+
         var zoomSpeed = 20.0;
         if (this.camera.zoom > 3.0) {
             zoomSpeed += 10.0;

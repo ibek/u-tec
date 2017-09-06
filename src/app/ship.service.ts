@@ -95,6 +95,7 @@ export class ShipService {
             this.tacticalPlan.ships.push(data);
             if (!this.plans) {
                 this.plans = this.db.list('/tactical-plans');
+                this.tacticalPlan.updated = this._getToday();
                 this.plans.push(this.tacticalPlan).then(item => {
                     this.id = item.key;
                     this.ready = true;
@@ -110,6 +111,7 @@ export class ShipService {
 
     updateTacticalPlan() {
         if (this.id) {
+            this.tacticalPlan.updated = this._getToday();
             this.plans.set(this.id, this.tacticalPlan);
         }
     }
@@ -161,6 +163,24 @@ export class ShipService {
             this.passwordHash = this.tacticalPlan.passwordHash;
             this.updateTacticalPlan();
         }
+    }
+
+    _getToday(): string {
+        var today = new Date();
+        var dd: any = today.getDate();
+        var mm: any = today.getMonth() + 1; //January is 0!
+        var yyyy = today.getFullYear();
+
+        if (dd < 10) {
+            dd = '0' + dd;
+        }
+
+        if (mm < 10) {
+            mm = '0' + mm;
+        }
+
+        var t = yyyy + '/' + mm + '/' + dd;
+        return t;
     }
 
 }

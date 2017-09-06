@@ -7,6 +7,7 @@ export class TacticalPlan {
     ships: ShipData[] = [];
     passwordHash: string = null;
     players: string[] = ["?"];
+    updated: string = null; // date yyyy/mm/dd
 
     verify(shipService: ShipService) {
         if (this.passwordHash == undefined) {
@@ -14,6 +15,9 @@ export class TacticalPlan {
         }
         if (this.players == undefined) {
             this.players = ["?"];
+        }
+        if (this.updated == undefined) {
+            this.updated = null;
         }
 
         this.ships.forEach(s => {
@@ -44,6 +48,7 @@ export class TacticalPlan {
     update(tacticalPlan: TacticalPlan, shipService: ShipService, removeCallback) {
         this.passwordHash = tacticalPlan.passwordHash;
         this.players = tacticalPlan.players;
+        this.updated = tacticalPlan.updated;
 
         let tl = (tacticalPlan && tacticalPlan.ships) ? tacticalPlan.ships.length : 0;
         var diff = this.ships.length - tl;

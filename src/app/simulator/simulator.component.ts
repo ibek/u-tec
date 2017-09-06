@@ -110,13 +110,14 @@ export class SimulatorComponent implements AfterViewInit {
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
 
-        texture.repeat.set(30, 30);
+        texture.repeat.set(40, 40);
 
         material = new THREE.MeshLambertMaterial({ map: texture, transparent: true, opacity: 1.0, side: THREE.DoubleSide });
-        this.grid = new THREE.Mesh(new THREE.PlaneGeometry(180, 120), material);
+        //this.grid = new THREE.Mesh(new THREE.PlaneGeometry(180, 120), material);
+        this.grid = new THREE.Mesh(new THREE.CircleGeometry( 120, 30, 0, Math.PI ), material);
         this.grid.rotation.x = Math.PI / 2;
         this.grid.position.y = -1;
-        this.grid.position.z = 0;
+        this.grid.position.z = -60;
 
         material = new THREE.MeshStandardMaterial({
             color: 0xffffff,

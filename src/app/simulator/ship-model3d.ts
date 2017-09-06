@@ -35,6 +35,12 @@ export class ShipModel3D {
         if (this.model && this.model.children.length > 3) {
             this.model.children.splice(3, this.model.children.length - 3);
         }
+        if (this.model) {
+            var len = this.model.children[0].children[0].children.length;
+            if (len > 0) {
+                this.model.children[0].children[0].children.splice(0, len);
+            }
+        }
 
         this.removeShipFromScene();
     }
@@ -95,7 +101,6 @@ export class ShipModel3D {
             } else {
                 object.rotation.z = Math.PI * 2;
             }
-            object.children[0].geometry.computeBoundingBox();
             if (this.shipModel.size == 'L') {
                 material.opacity = 0.6;
             }
@@ -104,10 +109,22 @@ export class ShipModel3D {
             object.userData.shipData = this.data;
             object.userData.shipModel = this.shipModel;
             this.objects.push(object.children[0]);
+
+            if (shipInstance.position.y > 1) {
+                var geometry = new THREE.Geometry();
+                geometry.vertices.push(new Vector3(0, 0, shipInstance.position.y/scale));
+                geometry.vertices.push(new Vector3(0, 0, 0));
+
+                var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ transparent: true, opacity: 0.5, linewidth: 2 }));
+                object.children[0].add(line);
+            }
+            object.children[0].geometry.computeBoundingBox();
+
             scene.add(scope.model);
         } else {
             var obj = scope.model.children[0].clone(false);
             var mesh = new THREE.Mesh(scope.model.children[0].children[0].geometry, material);
+
             obj.position.set(shipInstance.position.x, shipInstance.position.y, shipInstance.position.z);
             shipInstance.position = obj.position;
             if (shipInstance.enemy) {
@@ -117,6 +134,16 @@ export class ShipModel3D {
             }
             obj.scale.set(scale, scale, scale);
             obj.add(mesh);
+
+            if (shipInstance.position.y > 1) {
+                var geometry = new THREE.Geometry();
+                geometry.vertices.push(new Vector3(0, 0, shipInstance.position.y/scale));
+                geometry.vertices.push(new Vector3(0, 0, 0));
+
+                var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ transparent: true, opacity: 0.5, linewidth: 2 }));
+                obj.add(line);
+            }
+
             this.objects.push(mesh);
             obj.userData.id = id;
             obj.userData.shipData = this.data;
