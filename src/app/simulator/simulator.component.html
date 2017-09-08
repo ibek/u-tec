@@ -1,5 +1,5 @@
 <div>
-    <md-sidenav-container>
+    <md-sidenav-container class="sidenav">
         <md-sidenav mode="over" opened="false" align="end" class="info" (close-start)="onCloseShipInfo()" #shipInfo>
             <md-card *ngIf="selectedShip">
                 <md-card-header>
@@ -62,7 +62,7 @@
         </md-sidenav>
 
         <div class="container" #container>
-            <button md-icon-button [mdMenuTriggerFor]="simulatorMenu" class="simulatorMenu">
+            <button md-icon-button [mdMenuTriggerFor]="simulatorMenu" class="simulatorMenu" *ngIf="loaded">
                 <md-icon>more_vert</md-icon>
             </button>
             <md-menu #simulatorMenu>
@@ -81,6 +81,5 @@
                 <md-progress-bar color="primary" mode="determinate" [value]="loadingProgress">
                 </md-progress-bar>
             </section>
-        </div>
     </md-sidenav-container>
-</div>
+    </div>

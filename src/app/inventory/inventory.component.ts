@@ -14,6 +14,9 @@ import {ShipService} from '../ship.service';
 export class InventoryComponent implements OnInit {
     tacticalPlan:TacticalPlan;
     public cols: Observable<number>;
+    shipsSmall;
+    shipsMedium;
+    shipsLarge;
 
     constructor(private shipService: ShipService, private observableMedia: ObservableMedia, private route: ActivatedRoute, private router: Router) {
 
@@ -56,7 +59,24 @@ export class InventoryComponent implements OnInit {
     }
 
     filterSize(size: string) {
-        return this.tacticalPlan.ships.filter(x => this.shipService.getModel(x.name).size == size);
+        var ships;
+        if (size === 'S' && this.shipsSmall) {
+            ships = this.shipsSmall;
+        } else if (size === 'M' && this.shipsMedium) {
+            ships = this.shipsMedium;
+        } else if (size === 'L' && this.shipsLarge) {
+            ships = this.shipsLarge;
+        }else {
+            ships = this.tacticalPlan.ships.filter(x => this.shipService.getModel(x.name).size == size);
+        }
+        if (size === 'S') {
+            this.shipsSmall = ships;
+        } else if (size === 'M') {
+            this.shipsMedium = ships;
+        } else if (size === 'L') {
+            this.shipsLarge = ships;
+        }
+        return ships;
     }
 
     addS() {

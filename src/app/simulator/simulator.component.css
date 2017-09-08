@@ -1,9 +1,24 @@
 .container {
     text-align: center;
+    background: url("~/assets/images/grid-bg.png") repeat center top;
+    background-color: rgba(6, 70, 102, 0.2);
+    height: 100%;
+}
+
+.sidenav {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    padding-top: 64px;
+    background: url("~/assets/images/inventory-bg.jpg") repeat;
 }
 
 .loader {
     padding: 20px;
+    padding-top: 50px;
+    color: #99e3f5;
 }
 
 #text-label {
@@ -31,4 +46,8 @@
     right: 20px;
     top: 20px;
     z-index: 1;
+}
+
+.progress-bar {
+    background-color: #99e3f5;
 }

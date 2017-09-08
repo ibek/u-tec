@@ -6,7 +6,7 @@ import '@angular/common';
 import '@angular/http';
 import '@angular/router';
 import "@angular/material";
-import "@angular/material/prebuilt-themes/deeppurple-amber.css";
+//import "@angular/material/prebuilt-themes/deeppurple-amber.css";
 import "@angular/animations";
 import "@angular/animations/browser";
 import "@angular/platform-browser/animations";

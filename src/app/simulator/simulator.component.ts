@@ -85,7 +85,6 @@ export class SimulatorComponent implements AfterViewInit {
 
         this.addBackground();
         this.addGrid();
-        this.configureControls();
 
         this.start();
     }
@@ -223,6 +222,7 @@ export class SimulatorComponent implements AfterViewInit {
             this.loadingProgress = this.sceneService.loadingProgress();
             if (this.shipService.isReady() && this.loadingProgress == 100) {
                 this.loaded = true;
+                this.configureControls();
                 this.container.nativeElement.appendChild(this.renderer.domElement);
                 var scope = this;
                 ShipModel3D.init();
