@@ -42,6 +42,7 @@ export class SimulatorComponent implements AfterViewInit {
     gridScene: Scene = new Scene();
     gridCamera: PerspectiveCamera = new PerspectiveCamera(60, this.screenWidth / this.screenHeight, 0.1, 300);
     grid: Mesh;
+    virtualGrid: Mesh;
     bgScene: Scene = new THREE.Scene();
     bgCam: THREE.Camera = new THREE.Camera();
 
@@ -113,11 +114,16 @@ export class SimulatorComponent implements AfterViewInit {
         texture.repeat.set(40, 40);
 
         material = new THREE.MeshLambertMaterial({ map: texture, transparent: true, opacity: 1.0, side: THREE.DoubleSide });
-        //this.grid = new THREE.Mesh(new THREE.PlaneGeometry(180, 120), material);
-        this.grid = new THREE.Mesh(new THREE.CircleGeometry( 120, 30, 0, Math.PI ), material);
+        this.grid = new THREE.Mesh(new THREE.CircleGeometry( 120, 30, -0.3, Math.PI + 0.6 ), material);
         this.grid.rotation.x = Math.PI / 2;
         this.grid.position.y = -1;
-        this.grid.position.z = -60;
+        this.grid.position.z = -50;
+
+        var transparentMaterial = new THREE.MeshLambertMaterial({ transparent: true, opacity: 0.0, side: THREE.DoubleSide, depthTest: false });
+        this.virtualGrid = new THREE.Mesh(new THREE.CircleGeometry( 120, 30, -0.3, Math.PI + 0.6 ), transparentMaterial);
+        this.virtualGrid.rotation.x = Math.PI / 2;
+        this.virtualGrid.position.y = -1;
+        this.virtualGrid.position.z = -50;
 
         material = new THREE.MeshStandardMaterial({
             color: 0xffffff,
@@ -133,6 +139,7 @@ export class SimulatorComponent implements AfterViewInit {
 
         this.gridScene.add(this.marqueeBox);
         this.gridScene.add(this.grid);
+        this.gridScene.add(this.virtualGrid);
     }
 
     configureLight() {
@@ -183,7 +190,7 @@ export class SimulatorComponent implements AfterViewInit {
         this.joystick.updateLocation(window.innerWidth, window.innerHeight);
 
         this.controls = new ObjectControls(this.camera, this.gridCamera, this.renderer.domElement,
-            this.container, this.objects, this.grid, this.scene, this.shipService, this.router, this.marqueeBox,
+            this.container, this.objects, this.virtualGrid, this.scene, this.shipService, this.router, this.marqueeBox,
             this.joystick);
         this.controls.fixed.y = 1;
         var scope = this;

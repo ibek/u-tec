@@ -4,6 +4,7 @@ import { Pointer } from './Pointer';
 import { ShipService } from '../ship.service'
 import { Router } from '@angular/router';
 import { Joystick } from './Joystick'
+import * as Ship3D from '../simulator/ship-model3d'
 
 export class ObjectControls {
     fixed = new THREE.Vector3(0, 0, 0);
@@ -181,10 +182,12 @@ export class ObjectControls {
 
         if (this.selected && this.shipService.isUnlocked() && intersects.length > 0) {
             this.setFocus(intersects[0].object);
+            this.projectionMap.position.y = this.selected.parent.position.y;
             this.onclick();
         } else if (this.selectedObjects.length > 0 && this.shipService.isUnlocked() && intersects.length > 0 && this.selectedObjects.includes(intersects[0].object)) {
             this.multifocus = true;
             this.multiSelectedObj = intersects[0].object;
+            this.projectionMap.position.y = this.multiSelectedObj.parent.position.y;
         }
 
         if (intersects.length == 0) {
@@ -260,32 +263,37 @@ export class ObjectControls {
             var intersectsMap = raycaster.intersectObject(this.projectionMap);
             if (intersectsMap.length > 0) {
                 var pos = new THREE.Vector3().copy(intersectsMap[0].point);
-                pos.x -= this.scene.position.x;
-                pos.z -= this.scene.position.z;
-                var diff = new THREE.Vector3(pos.x - this.multiSelectedObj.parent.position.x, pos.y - this.multiSelectedObj.parent.position.y, pos.z - this.multiSelectedObj.parent.position.z);
+                var diff = new THREE.Vector3(pos.x - this.multiSelectedObj.parent.position.x, 0, pos.z - this.multiSelectedObj.parent.position.z);
 
-                this.multiSelectedObj.parent.position.copy(pos);
+                this.multiSelectedObj.parent.position.set(pos.x, this.multiSelectedObj.parent.position.y, pos.z);
                 this.selectedObjects.forEach(o => {
                     if (o !== this.multiSelectedObj) {
-                        o.parent.position.set(o.parent.position.x + diff.x, o.parent.position.y + diff.y, o.parent.position.z + diff.z);
+                        o.parent.position.set(o.parent.position.x + diff.x, o.parent.position.y, o.parent.position.z + diff.z);
                     }
                 });
             }
         }
 
-        if (this.selected || this.down || this.multifocus) {
+        if (this.selected || this.down || this.multifocus || this.updateNeeded) {
             var ids = [];
+            if (this.selected) {
+                ids.push(this.selected.parent.name + "" + this.selected.parent.userData.id);
+            }
             this.selectedObjects.forEach(o => {
                 var id = o.parent.name + "" + o.parent.userData.id;
                 ids.push(id);
                 if (!this.selectedBoxes.has(id)) {
-                    var size = new THREE.Box3().setFromObject(o.parent).getSize();
+                    var size = new THREE.Box3().setFromObject(o).getSize();
                     var boxHelper: any = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxBufferGeometry(size.x, size.y, size.z), 1), new THREE.LineBasicMaterial({ color: o.material.color, transparent: true, opacity: 0.3, linewidth: 1 }));
-                    boxHelper.position.set(o.parent.position.x, o.parent.position.y/2.0, o.parent.position.z);
+                    boxHelper.position.set(o.parent.position.x, o.parent.position.y, o.parent.position.z);
                     this.scene.add(boxHelper);
                     this.selectedBoxes.set(id, boxHelper);
                 } else {
-                    this.selectedBoxes.get(id).position.set(o.parent.position.x, o.parent.position.y/2.0, o.parent.position.z);
+                    var sb = this.selectedBoxes.get(id);
+                    sb.position.set(o.parent.position.x, o.parent.position.y, o.parent.position.z);
+                    if (o.parent.children.length > 1) {
+                        o.parent.children[1].scale.z = o.parent.position.y/Ship3D.MAX_HEIGHT;
+                    }
                 }
             });
             this.selectedBoxes.forEach((value: any, key: string) => {
@@ -298,13 +306,17 @@ export class ObjectControls {
             if (this.selected) {
                 var id = this.selected.parent.name + "" + this.selected.parent.userData.id;
                 if (!this.selectedBoxes.has(id)) {
-                    var size = new THREE.Box3().setFromObject(this.selected.parent).getSize();
-                    var boxHelper: any = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxBufferGeometry(size.x, size.y, size.z), 1), new THREE.LineBasicMaterial({ color: this.selected.material.color, transparent: true, opacity: 0.3, linewidth: 1 }));
-                    boxHelper.position.set(this.selected.parent.position.x, this.selected.parent.position.y/2.0, this.selected.parent.position.z);
+                    var size = new THREE.Box3().setFromObject(this.selected).getSize();
+                    var boxHelper = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxBufferGeometry(size.x, size.y, size.z), 1), new THREE.LineBasicMaterial({ color: this.selected.material.color, transparent: true, opacity: 0.3, linewidth: 1 }));
+                    boxHelper.position.set(this.selected.parent.position.x, this.selected.parent.position.y, this.selected.parent.position.z);
                     this.scene.add(boxHelper);
                     this.selectedBoxes.set(id, boxHelper);
                 } else {
-                    this.selectedBoxes.get(id).position.set(this.selected.parent.position.x, this.selected.parent.position.y/2.0, this.selected.parent.position.z);
+                    var sb = this.selectedBoxes.get(id);
+                    sb.position.set(this.selected.parent.position.x, this.selected.parent.position.y, this.selected.parent.position.z);
+                    if (this.selected.parent.children.length > 1) {
+                        this.selected.parent.children[1].scale.z = this.selected.parent.position.y/Ship3D.MAX_HEIGHT;
+                    }
                 }
             }
         }
@@ -398,13 +410,26 @@ export class ObjectControls {
         }
         delta = delta ? delta : event.detail / 500.0;
 
-        if (this.selected) { // move selected ships up/down
+        if (this.selected) { // move selected ship up/down
             this.selected.parent.position.y += delta * 200;
             if (this.selected.parent.position.y < 1) {
                 this.selected.parent.position.y = 1;
-            } else if (this.selected.parent.position.y > 40) {
-                this.selected.parent.position.y = 40;
+            } else if (this.selected.parent.position.y > Ship3D.MAX_HEIGHT) {
+                this.selected.parent.position.y = Ship3D.MAX_HEIGHT;
             }
+            this.updateNeeded = true;
+            return;
+        }
+
+        if (this.selectedObjects.length > 0) { // move selected ships up/down
+            this.selectedObjects.forEach(o => {
+                o.parent.position.y += delta * 200;
+                if (o.parent.position.y < 1) {
+                    o.parent.position.y = 1;
+                } else if (o.parent.position.y > Ship3D.MAX_HEIGHT) {
+                    o.parent.position.y = Ship3D.MAX_HEIGHT;
+                }
+            });
             this.updateNeeded = true;
             return;
         }

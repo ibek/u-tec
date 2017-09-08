@@ -33,7 +33,7 @@ export class TextLabel {
         var widthHalf = 0.5 * screenWidth;
         var heightHalf = 0.5 * screenHeight;
         vector.x = (vector.x * widthHalf) + widthHalf + 30*camera.zoom;
-        vector.y = - (vector.y * heightHalf) + heightHalf - camera.zoom*(camera.zoom+45);
+        vector.y = - (vector.y * heightHalf) + heightHalf - camera.zoom*(camera.zoom+45) - position.z*20;
         return vector;
     }
 

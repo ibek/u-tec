@@ -9,6 +9,7 @@ import { Ship, ShipData, ShipInstance } from '../data-model';
 
 const MAX_POS: number = 30;
 const debug: boolean = true;
+export const MAX_HEIGHT = 40;
 
 export class ShipModel3D {
     static stepSize: number = 10;
@@ -36,9 +37,9 @@ export class ShipModel3D {
             this.model.children.splice(3, this.model.children.length - 3);
         }
         if (this.model) {
-            var len = this.model.children[0].children[0].children.length;
-            if (len > 0) {
-                this.model.children[0].children[0].children.splice(0, len);
+            var len = this.model.children[0].children.length;
+            if (len > 1) {
+                this.model.children[0].children.splice(1, len-1);
             }
         }
 
@@ -110,14 +111,13 @@ export class ShipModel3D {
             object.userData.shipModel = this.shipModel;
             this.objects.push(object.children[0]);
 
-            if (shipInstance.position.y > 1) {
-                var geometry = new THREE.Geometry();
-                geometry.vertices.push(new Vector3(0, 0, shipInstance.position.y/scale));
-                geometry.vertices.push(new Vector3(0, 0, 0));
+            var geometry = new THREE.Geometry();
+            geometry.vertices.push(new Vector3(0, 0, MAX_HEIGHT / scale));
+            geometry.vertices.push(new Vector3(0, 0, 0));
 
-                var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ transparent: true, opacity: 0.5, linewidth: 2 }));
-                object.children[0].add(line);
-            }
+            var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ transparent: true, opacity: 0.5, linewidth: 2 }));
+            line.scale.z = shipInstance.position.y/MAX_HEIGHT;
+            object.add(line);
             object.children[0].geometry.computeBoundingBox();
 
             scene.add(scope.model);
@@ -135,14 +135,13 @@ export class ShipModel3D {
             obj.scale.set(scale, scale, scale);
             obj.add(mesh);
 
-            if (shipInstance.position.y > 1) {
-                var geometry = new THREE.Geometry();
-                geometry.vertices.push(new Vector3(0, 0, shipInstance.position.y/scale));
-                geometry.vertices.push(new Vector3(0, 0, 0));
+            var geometry = new THREE.Geometry();
+            geometry.vertices.push(new Vector3(0, 0, MAX_HEIGHT / scale));
+            geometry.vertices.push(new Vector3(0, 0, 0));
 
-                var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ transparent: true, opacity: 0.5, linewidth: 2 }));
-                obj.add(line);
-            }
+            var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ transparent: true, opacity: 0.5, linewidth: 2 }));
+            line.scale.z = shipInstance.position.y/MAX_HEIGHT;
+            obj.add(line);
 
             this.objects.push(mesh);
             obj.userData.id = id;
