@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ObservableMedia } from '@angular/flex-layout';
 import { Observable } from "rxjs/Observable";
-import {Router, ActivatedRoute} from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
-import {Ship, ShipData, TacticalPlan} from '../data-model';
-import {ShipService} from '../ship.service';
+import { Ship, ShipData, TacticalPlan } from '../data-model';
+import { ShipService } from '../ship.service';
 
 @Component({
     selector: 'inventory',
@@ -12,7 +12,7 @@ import {ShipService} from '../ship.service';
     styleUrls: ['./inventory.component.css']
 })
 export class InventoryComponent implements OnInit {
-    tacticalPlan:TacticalPlan;
+    tacticalPlan: TacticalPlan;
     public cols: Observable<number>;
     shipsSmall;
     shipsMedium;
@@ -59,16 +59,7 @@ export class InventoryComponent implements OnInit {
     }
 
     filterSize(size: string) {
-        var ships;
-        if (size === 'S' && this.shipsSmall) {
-            ships = this.shipsSmall;
-        } else if (size === 'M' && this.shipsMedium) {
-            ships = this.shipsMedium;
-        } else if (size === 'L' && this.shipsLarge) {
-            ships = this.shipsLarge;
-        }else {
-            ships = this.tacticalPlan.ships.filter(x => this.shipService.getModel(x.name).size == size);
-        }
+        var ships = this.tacticalPlan.ships.filter(x => this.shipService.getModel(x.name).size == size);
         if (size === 'S') {
             this.shipsSmall = ships;
         } else if (size === 'M') {

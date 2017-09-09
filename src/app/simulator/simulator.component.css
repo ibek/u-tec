@@ -1,8 +1,19 @@
 .container {
+    position: relative;
     text-align: center;
     background: url("~/assets/images/grid-bg.png") repeat center top;
     background-color: rgba(6, 70, 102, 0.2);
     height: 100%;
+    overflow: hidden;
+}
+
+.background {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background: url("~/assets/images/inventory-bg.jpg") repeat;
 }
 
 .sidenav {
@@ -11,13 +22,11 @@
     left: 0px;
     right: 0px;
     bottom: 0px;
-    padding-top: 64px;
-    background: url("~/assets/images/inventory-bg.jpg") repeat;
 }
 
 .loader {
     padding: 20px;
-    padding-top: 50px;
+    padding-top: 114px;
     color: #99e3f5;
 }
 
@@ -35,19 +44,73 @@
 }
 
 .info {
-    background-color: rgba(22,255,255,0.1);
-    color: white;
+    background: rgba(0, 0, 0, 0.1);
     padding: 20px;
+    padding-top: 144px;
+}
+
+.info-card {
+    background: rgba(6, 70, 102, 0.4);
+    color: #80CADC;
+    padding: 0px;
 }
 
 .simulatorMenu {
     color: white;
     position: absolute;
     right: 20px;
-    top: 20px;
+    top: 84px;
     z-index: 1;
 }
 
 .progress-bar {
     background-color: #99e3f5;
+}
+
+.card-corner {
+    position: absolute;
+    width: 100%;
+}
+
+.card-corner::before {
+    left: 0px;
+}
+
+.card-corner::after {
+    right: 0px;
+}
+
+.card-corner-top {
+    top: 0px;
+}
+
+.card-corner-top::before {
+    border-width: 1px 0 0 1px;
+}
+
+.card-corner-top::after {
+    border-width: 1px 1px 0 0;
+}
+
+.card-corner::before,
+.card-corner::after {
+    top: 0;
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-color: #00edff;
+    border-style: solid;
+}
+
+.card-corner-bottom {
+    bottom: 9px;
+}
+
+.card-corner-bottom::before {
+    border-width: 0 0 1px 1px;
+}
+
+.card-corner-bottom::after {
+    border-width: 0 1px 1px 0;
 }

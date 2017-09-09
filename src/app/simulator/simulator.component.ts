@@ -32,8 +32,8 @@ export class SimulatorComponent implements AfterViewInit {
     loadingProgress: number = 0;
     loaded: boolean = false;
 
-    screenWidth = window.innerWidth - 20;
-    screenHeight = window.innerHeight - 85;
+    screenWidth = window.innerWidth;
+    screenHeight = window.innerHeight - 5;
 
     scene: Scene = new Scene();
     camera: PerspectiveCamera = new PerspectiveCamera(60, this.screenWidth / this.screenHeight, 10, 500);
@@ -80,7 +80,7 @@ export class SimulatorComponent implements AfterViewInit {
 
         this.configureLight();
         this.scene.add(this.directionalLight);
-        this.scene.add(new AmbientLight(new Color(0.7, 0.7, 0.7).getHex()));
+        this.scene.add(new AmbientLight(new Color(1.0, 1.0, 1.0).getHex()));
         this.gridScene.add(new AmbientLight(new Color(1.0, 1.0, 1.0).getHex()));
 
         this.addBackground();
@@ -113,13 +113,28 @@ export class SimulatorComponent implements AfterViewInit {
         texture.repeat.set(40, 40);
 
         material = new THREE.MeshLambertMaterial({ map: texture, transparent: true, opacity: 1.0, side: THREE.DoubleSide });
-        this.grid = new THREE.Mesh(new THREE.CircleGeometry( 120, 30, -0.3, Math.PI + 0.6 ), material);
+        this.grid = new THREE.Mesh(new THREE.CircleGeometry(100, 30, 0, Math.PI * 2), material);
         this.grid.rotation.x = Math.PI / 2;
         this.grid.position.y = -1;
         this.grid.position.z = -50;
 
+        var path = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(0, 0, 0),
+            new THREE.Vector3(0, 40, 0),
+        ]);
+        var panel3dgeom = new THREE.TubeGeometry(path, 30, 100, 60, false);
+        var ptex = new THREE.TextureLoader().load("assets/images/grid.png");
+        ptex.wrapS = THREE.RepeatWrapping;
+        ptex.wrapT = THREE.RepeatWrapping;
+        ptex.repeat.set(10,120);
+        var panel3d = new THREE.Mesh(panel3dgeom, new THREE.MeshLambertMaterial({map: ptex, side: THREE.DoubleSide, transparent: true, opacity: 1.0}));
+        panel3d.rotation.x = Math.PI;
+        panel3d.position.y = 40;
+        panel3d.position.z = -50;
+        this.gridScene.add(panel3d);
+
         var transparentMaterial = new THREE.MeshLambertMaterial({ transparent: true, opacity: 0.0, side: THREE.DoubleSide, depthTest: false });
-        this.virtualGrid = new THREE.Mesh(new THREE.CircleGeometry( 120, 30, -0.3, Math.PI + 0.6 ), transparentMaterial);
+        this.virtualGrid = new THREE.Mesh(new THREE.CircleGeometry(100, 30, 0, Math.PI * 2), transparentMaterial);
         this.virtualGrid.rotation.x = Math.PI / 2;
         this.virtualGrid.position.y = -1;
         this.virtualGrid.position.z = -50;
@@ -143,7 +158,7 @@ export class SimulatorComponent implements AfterViewInit {
 
     configureLight() {
         this.directionalLight = new DirectionalLight(0xffffff);
-        this.directionalLight.position.set(0, 1000, 0);
+        this.directionalLight.position.set(0, 200, 0);
         this.directionalLight.lookAt(new Vector3(0, 0, 0));
     }
 
@@ -181,7 +196,7 @@ export class SimulatorComponent implements AfterViewInit {
                 scope.camera.translateY(-deltaY);
                 scope.gridCamera.translateY(-deltaY);
             }
-            if (scope.camera.position.y < 80) {
+            if (scope.camera.position.y < 50) {
                 scope.camera.translateY(-deltaY);
                 scope.gridCamera.translateY(-deltaY);
             }

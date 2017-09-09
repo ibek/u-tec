@@ -1,3 +1,8 @@
+.ship-card {
+    background: rgba(6, 70, 102, 0.4);
+    color: #99e3f5;
+}
+
 .ship-title {
     width: 130px;
 }
@@ -5,6 +10,10 @@
 .ship-thumbnail {
     width: 200px;
     height: 200px;
+    border-bottom: 1px solid #99e3f5;
+    border-top: 1px solid #99e3f5;
+    opacity: 1;
+    box-shadow: 0px 3px 4px rgba(153, 227, 245, 0.7), 0px -3px 4px rgba(153, 227, 245, 0.7);
 }
 
 .ship-menu {
@@ -26,6 +35,56 @@
 
 .amount-number {
     right: -5px;
+    background: rgba(6, 70, 102, 0.4);
+    color: #99e3f5;
+}
+
+.card-corner {
+    position: absolute;
+    width: 100%;
+}
+
+.card-corner::before {
+    left: -24px;
+}
+
+.card-corner::after {
+    right: 24px;
+}
+
+.card-corner-top {
+    top: 2px;
+}
+
+.card-corner-top::before {
+    border-width: 1px 0 0 1px;
+}
+
+.card-corner-top::after {
+    border-width: 1px 1px 0 0;
+}
+
+.card-corner::before,
+.card-corner::after {
+    top: 0;
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-color: #00edff;
+    border-style: solid;
+}
+
+.card-corner-bottom {
+    bottom: 11px;
+}
+
+.card-corner-bottom::before {
+    border-width: 0 0 1px 1px;
+}
+
+.card-corner-bottom::after {
+    border-width: 0 1px 1px 0;
 }
 
 @media (max-width: 480px) {

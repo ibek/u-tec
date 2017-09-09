@@ -1,7 +1,27 @@
+.container {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    padding-top: 64px;
+    background: url("~/assets/images/inventory-bg.jpg") repeat;
+}
+
+.background {
+    background: url("~/assets/images/grid-bg.png") repeat center top;
+    background-color: rgba(6, 70, 102, 0.2);
+    height: 100%;
+    padding: 30px;
+}
+
 .ship-card {
     width: 300px;
     height: 380px;
     margin: 0 auto;
+    background: rgba(6, 70, 102, 0.4);
+    color: #99e3f5;
+    padding: 0px;
 }
 
 .ship-content {
@@ -13,6 +33,9 @@
     margin-top: 20px;
     width: 200px;
     height: 200px;
+    border: 1px solid #99e3f5;
+    opacity: 1;
+    box-shadow: 4px 4px 10px rgba(153, 227, 245, 0.7), -4px -4px 10px rgba(153, 227, 245, 0.7), -4px 4px 10px rgba(153, 227, 245, 0.7), 4px -4px 10px rgba(153, 227, 245, 0.7);
 }
 
 .ship-actions {
@@ -20,5 +43,72 @@
 }
 
 .ship-action-cancel {
-    margin-right: 10px;
+    position: absolute;
+    bottom: -46px;
+    right: 98px;
+    background: rgba(6, 70, 102, 0.4);
+    color: #99e3f5;
+}
+
+.add-button {
+    position: absolute;
+    bottom: -46px;
+    right: 0px;
+    background: rgba(6, 70, 102, 0.4);
+    color: #99e3f5;
+}
+
+.highlight {
+    background-color: rgba(153, 227, 245, 0.6);
+    color: black;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+}
+
+.card-corner {
+    position: absolute;
+    width: 100%;
+}
+
+.card-corner::before {
+    left: 0px;
+}
+
+.card-corner::after {
+    right: 0px;
+}
+
+.card-corner-top {
+    top: 0px;
+}
+
+.card-corner-top::before {
+    border-width: 1px 0 0 1px;
+}
+
+.card-corner-top::after {
+    border-width: 1px 1px 0 0;
+}
+
+.card-corner::before,
+.card-corner::after {
+    top: 0;
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-color: #00edff;
+    border-style: solid;
+}
+
+.card-corner-bottom {
+    bottom: 9px;
+}
+
+.card-corner-bottom::before {
+    border-width: 0 0 1px 1px;
+}
+
+.card-corner-bottom::after {
+    border-width: 0 1px 1px 0;
 }

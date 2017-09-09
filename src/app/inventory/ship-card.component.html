@@ -1,4 +1,4 @@
-<md-card>
+<md-card class="ship-card">
     <md-card-header style="margin: 0px; padding: 0px;">
         <md-card-title class="ship-title">{{ship.name}}</md-card-title>
         <button md-icon-button [mdMenuTriggerFor]="configMenu" class="ship-menu" [disabled]="!shipService.isUnlocked()">
@@ -14,9 +14,12 @@
     <img md-card-image src="{{shipService.getImage(model)}}" class="ship-thumbnail">
     <md-card-footer class="ship-amount">
         <div class="ship-amount-panel">
-            <md-slider max="5" min="1" step="1" [(ngModel)]="ship.amount" thumb-label="1" (change)="onShipAmountChange()" class="slider" [disabled]="!shipService.isUnlocked()">
+            <md-slider color="primary" max="10" min="1" step="1" [(ngModel)]="ship.amount" thumb-label="1" (change)="onShipAmountChange()"
+                class="slider" [disabled]="!shipService.isUnlocked()">
             </md-slider>
             <button md-mini-fab color="none" class="amount-number">{{ship.amount}}</button>
         </div>
     </md-card-footer>
+    <div class="card-corner card-corner-top"></div>
+    <div class="card-corner card-corner-bottom"></div>
 </md-card>

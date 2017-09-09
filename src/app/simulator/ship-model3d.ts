@@ -84,10 +84,10 @@ export class ShipModel3D {
         var color = (shipInstance.enemy) ? 0xff0000 : 0x00ffff
         var material = new THREE.MeshStandardMaterial({
             color: color,
-            metalness: 1.0,
-            roughness: 0.7,
+            metalness: 0.3,
+            roughness: 0.1,
             transparent: true,
-            opacity: 0.5,
+            opacity: 0.20,
             side: THREE.DoubleSide
         });
 
@@ -103,7 +103,7 @@ export class ShipModel3D {
                 object.rotation.z = Math.PI * 2;
             }
             if (this.shipModel.size == 'L') {
-                material.opacity = 0.6;
+                material.opacity = 0.3;
             }
             object.children[0].material = material;
             object.userData.id = id;

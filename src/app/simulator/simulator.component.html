@@ -1,55 +1,55 @@
 <div>
     <md-sidenav-container class="sidenav">
         <md-sidenav mode="over" opened="false" align="end" class="info" (close-start)="onCloseShipInfo()" #shipInfo>
-            <md-card *ngIf="selectedShip">
-                <md-card-header>
+            <md-card *ngIf="selectedShip" class="info-card">
+                <md-card-header style="padding: 20px;">
                     <img md-card-avatar src="{{shipService.getImage(selectedShip)}}">
                     <md-card-title>{{selectedShip.name}}</md-card-title>
-                    <md-card-subtitle>Ship Info</md-card-subtitle>
+                    <md-card-subtitle style="color: #80CADC;">Ship Info</md-card-subtitle>
                 </md-card-header>
-                <md-card-content>
+                <md-card-content style="padding: 20px;">
                     <md-slide-toggle color="warn" [(ngModel)]="selectedShipInstance.enemy" (change)="onShipInfoChange()" [disabled]="!shipService.isUnlocked()">
                         <span *ngIf="!selectedShipInstance.enemy">Ally</span>
                         <span *ngIf="selectedShipInstance.enemy">Enemy</span>
                     </md-slide-toggle>
                     <md-list>
-                        <md-list-item>
+                        <md-list-item style="color: #80CADC;">
                             <md-icon md-list-icon>bookmark</md-icon>
                             <h4 md-line>Role</h4>
                             <p md-line>{{selectedShip.role}}</p>
                         </md-list-item>
                         <md-divider></md-divider>
-                        <md-list-item>
+                        <md-list-item style="color: #80CADC;">
                             <md-icon md-list-icon>people</md-icon>
                             <h4 md-line>Max Crew</h4>
                             <p md-line>{{selectedShip.maxcrew}}</p>
                         </md-list-item>
                         <md-divider></md-divider>
-                        <md-list-item>
+                        <md-list-item style="color: #80CADC;">
                             <md-icon md-list-icon>layers</md-icon>
                             <h4 md-line>Cargo Capacity</h4>
                             <p md-line>{{selectedShip.cargo}}</p>
                         </md-list-item>
                         <md-divider></md-divider>
-                        <md-list-item>
+                        <md-list-item style="color: #80CADC;">
                             <md-icon md-list-icon>flight</md-icon>
                             <h4 md-line>Pilot
                                 <button md-button *ngIf="shipService.isUnlocked()" (click)="manageCrew()">
-                                    <md-icon md-tooltip='Click here to add available players.'>settings</md-icon>
+                                    <md-icon md-tooltip='Click here to add players.'>settings</md-icon>
                                 </button>
                             </h4>
-                            <md-select md-line placeholder="Select Pilot" [(ngModel)]="selectedShipInstance.pilot" (change)="onShipInfoChange()" [disabled]="!shipService.isUnlocked()">
+                            <md-select md-line placeholder="Select Pilot" color="primary" [(ngModel)]="selectedShipInstance.pilot" (change)="onShipInfoChange()" [disabled]="!shipService.isUnlocked()">
                                 <md-option *ngFor="let player of shipService.tacticalPlan.players" [value]="player">
                                     {{ player }}
                                 </md-option>
                             </md-select>
                         </md-list-item>
-                        <md-list-item *ngIf="selectedShip.maxcrew > 1">
+                        <md-list-item *ngIf="selectedShip.maxcrew > 1" style="color: #80CADC;">
                             <md-icon md-list-icon>airline_seat_recline_extra</md-icon>
                             <h4 md-line>Crewmen</h4>
                         </md-list-item>
-                        <md-list-item *ngIf="selectedShip.maxcrew > 1">
-                            <md-select style="padding-left: 10px;" md-line placeholder="Select Crewman" *ngFor="let cm of Arr(selectedShip.maxcrew-1).fill(1); let i=index"
+                        <md-list-item *ngIf="selectedShip.maxcrew > 1" style="color: #80CADC;">
+                            <md-select style="padding-left: 10px;" color="primary" md-line placeholder="Select Crewman" *ngFor="let cm of Arr(selectedShip.maxcrew-1).fill(1); let i=index"
                                 [(ngModel)]="selectedShipInstance.crewmen[i]" (change)="onShipInfoChange()" [disabled]="!shipService.isUnlocked()">
                                 <md-option *ngFor="let player of shipService.tacticalPlan.players" [value]="player">
                                     {{ player }}
@@ -58,28 +58,33 @@
                         </md-list-item>
                     </md-list>
                 </md-card-content>
+                <div class="card-corner card-corner-top"></div>
+                <div class="card-corner card-corner-bottom"></div>
             </md-card>
         </md-sidenav>
 
-        <div class="container" #container>
-            <button md-icon-button [mdMenuTriggerFor]="simulatorMenu" class="simulatorMenu" *ngIf="loaded">
+        <div class="background">
+            <div class="container" #container>
+                <button md-icon-button [mdMenuTriggerFor]="simulatorMenu" class="simulatorMenu" *ngIf="loaded">
                 <md-icon>more_vert</md-icon>
             </button>
-            <md-menu #simulatorMenu>
-                <button md-menu-item (click)="saveImage()">
+                <md-menu #simulatorMenu>
+                    <button md-menu-item (click)="saveImage()">
                 <md-icon>fullscreen</md-icon>
                 <span>Fullscreen</span>
                 </button>
-                <button md-menu-item (click)="toggleFullscreen()">
+                    <button md-menu-item (click)="toggleFullscreen()">
                 <md-icon>photo_camera</md-icon>
                 <span>Save Image</span>
                 </button>
-            </md-menu>
-            <button id="text-label" md-raised-button color='none' (click)="showInfo()"></button>
-            <section class="loader" [hidden]="loaded">
-                <h3>Loading ...</h3>
-                <md-progress-bar color="primary" mode="determinate" [value]="loadingProgress">
-                </md-progress-bar>
-            </section>
+                </md-menu>
+                <button id="text-label" md-raised-button color='none' (click)="showInfo()"></button>
+                <section class="loader" [hidden]="loaded">
+                    <h3>Loading ...</h3>
+                    <md-progress-bar color="primary" mode="determinate" [value]="loadingProgress">
+                    </md-progress-bar>
+                </section>
+            </div>
+        </div>
     </md-sidenav-container>
-    </div>
+</div>

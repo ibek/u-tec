@@ -411,7 +411,7 @@ export class ObjectControls {
         delta = delta ? delta : event.detail / 500.0;
 
         if (this.selected) { // move selected ship up/down
-            this.selected.parent.position.y += delta * 200;
+            this.selected.parent.position.y -= delta * 200;
             if (this.selected.parent.position.y < 1) {
                 this.selected.parent.position.y = 1;
             } else if (this.selected.parent.position.y > Ship3D.MAX_HEIGHT) {
@@ -423,7 +423,7 @@ export class ObjectControls {
 
         if (this.selectedObjects.length > 0) { // move selected ships up/down
             this.selectedObjects.forEach(o => {
-                o.parent.position.y += delta * 200;
+                o.parent.position.y -= delta * 200;
                 if (o.parent.position.y < 1) {
                     o.parent.position.y = 1;
                 } else if (o.parent.position.y > Ship3D.MAX_HEIGHT) {

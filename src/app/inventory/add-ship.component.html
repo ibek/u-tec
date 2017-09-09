@@ -1,29 +1,38 @@
-<md-card class="ship-card">
-    <md-card-header>
-        <md-card-title>
-            <h3>Add Ship</h3>
-        </md-card-title>
-    </md-card-header>
+<div class="container">
+    <div class="background">
+        <md-card class="ship-card">
+            <md-card-header>
+                <md-card-title style="padding: 20px;">
+                    <h3>Add Ship</h3>
+                </md-card-title>
+            </md-card-header>
 
-    <md-card-content class="ship-content">
-        <form>
-            <md-icon>star_rate</md-icon>
-            <md-select placeholder="Ship Type" [(ngModel)]="selectedModel" name="ship" (change)="onShipTypeChange()">
-                <md-option *ngFor="let model of filterSize(models)" [value]="model">
-                    {{model.name}}
-                </md-option>
-            </md-select>
-            <md-hint [hidden]="!typeExistsError" style="color: red">
-                <div>
-                    This type of ship already exists in the Inventory
-                </div>
-            </md-hint>
-        </form>
-        <img md-card-image src="{{shipService.getImage(selectedModel)}}" class="ship-thumbnail" *ngIf="selectedModel">
-    </md-card-content>
+            <md-card-content class="ship-content">
+                <form>
+                    <div class="highlight">
+                        <md-icon style="padding-right: 5px;">star_rate</md-icon>
+                        <md-select placeholder="Ship Type" [(ngModel)]="selectedModel" name="ship" (change)="onShipTypeChange()" style="width:180px;">
+                            <md-option *ngFor="let model of filterSize(models)" [value]="model">
+                                {{model.name}}
+                            </md-option>
+                        </md-select>
+                    </div>
+                    <md-hint [hidden]="!typeExistsError" style="color: red">
+                        <div>
+                            This type of ship already exists in the Inventory
+                        </div>
+                    </md-hint>
+                </form>
+                <img md-card-image src="{{shipService.getImage(selectedModel)}}" class="ship-thumbnail" *ngIf="selectedModel">
+            </md-card-content>
 
-    <md-card-footer class="ship-actions">
-        <button md-raised-button (click)="goBack()" class="ship-action-cancel">Cancel</button>
-        <button md-raised-button (click)="addShip()" color="accent">Add</button>
-    </md-card-footer>
-</md-card>
+            <md-card-footer class="ship-actions">
+                <button md-raised-button (click)="goBack()" class="ship-action-cancel">Cancel</button>
+                <button md-raised-button (click)="addShip()" class="add-button">Add</button>
+            </md-card-footer>
+            
+            <div class="card-corner card-corner-top"></div>
+            <div class="card-corner card-corner-bottom"></div>
+        </md-card>
+    </div>
+</div>
