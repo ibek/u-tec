@@ -80,7 +80,7 @@ export class SimulatorComponent implements AfterViewInit {
 
         this.configureLight();
         this.scene.add(this.directionalLight);
-        this.scene.add(new AmbientLight(new Color(1.0, 1.0, 1.0).getHex()));
+        this.scene.add(new AmbientLight(new Color(0.8, 0.8, 0.8).getHex()));
         this.gridScene.add(new AmbientLight(new Color(1.0, 1.0, 1.0).getHex()));
 
         this.addBackground();
@@ -158,7 +158,7 @@ export class SimulatorComponent implements AfterViewInit {
 
     configureLight() {
         this.directionalLight = new DirectionalLight(0xffffff);
-        this.directionalLight.position.set(0, 200, 0);
+        this.directionalLight.position.set(0, 1000, 0);
         this.directionalLight.lookAt(new Vector3(0, 0, 0));
     }
 
@@ -341,6 +341,17 @@ export class SimulatorComponent implements AfterViewInit {
                 this.shipService.updateTacticalPlan();
             }
         });
+    }
+
+    rotateTowards() {
+        this.controls.rotation = true;
+    }
+
+    rotateReset() {
+        if (this.controls.selected) {
+            this.controls.selected.rotation.set(-Math.PI / 2,Math.PI,0);
+            this.controls.selected.parent.rotation.set(0,0,0);
+        }
     }
 }
 

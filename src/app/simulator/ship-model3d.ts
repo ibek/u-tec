@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { GLTF2Loader } from '../util/GLTF2Loader';
 
 import { Ship, ShipData, ShipInstance } from '../data-model';
+import { Gyroscope } from '../util/Gyroscope'
 
 const MAX_POS: number = 30;
 const debug: boolean = true;
@@ -84,10 +85,10 @@ export class ShipModel3D {
         var color = (shipInstance.enemy) ? 0xff0000 : 0x00ffff
         var material = new THREE.MeshStandardMaterial({
             color: color,
-            metalness: 0.3,
-            roughness: 0.1,
+            metalness: 1.0,
+            roughness: 0.7,
             transparent: true,
-            opacity: 0.20,
+            opacity: 0.5,
             side: THREE.DoubleSide
         });
 
@@ -96,14 +97,11 @@ export class ShipModel3D {
             var object = scope.model.children[0];
             object.scale.set(scale, scale, scale);
             object.position.set(shipInstance.position.x, shipInstance.position.y, shipInstance.position.z);
+            object.rotation.set(shipInstance.rotation.x, shipInstance.rotation.y, shipInstance.rotation.z);
+            object.children[0].rotation.set(-Math.PI/2,Math.PI,0);
             shipInstance.position = object.position;
-            if (!shipInstance.enemy) {
-                object.rotation.z = Math.PI;
-            } else {
-                object.rotation.z = Math.PI * 2;
-            }
             if (this.shipModel.size == 'L') {
-                material.opacity = 0.3;
+                material.opacity = 0.6;
             }
             object.children[0].material = material;
             object.userData.id = id;
@@ -117,7 +115,11 @@ export class ShipModel3D {
 
             var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ transparent: true, opacity: 0.5, linewidth: 2 }));
             line.scale.z = shipInstance.position.y/MAX_HEIGHT;
-            object.add(line);
+            line.rotateX(Math.PI/2);
+            var gyro = new Gyroscope();
+            gyro.add(line);
+
+            object.add(gyro);
             object.children[0].geometry.computeBoundingBox();
 
             scene.add(scope.model);
@@ -126,12 +128,9 @@ export class ShipModel3D {
             var mesh = new THREE.Mesh(scope.model.children[0].children[0].geometry, material);
 
             obj.position.set(shipInstance.position.x, shipInstance.position.y, shipInstance.position.z);
+            obj.rotation.set(shipInstance.rotation.x, shipInstance.rotation.y, shipInstance.rotation.z);
+            mesh.rotation.set(-Math.PI/2,Math.PI,0);
             shipInstance.position = obj.position;
-            if (shipInstance.enemy) {
-                obj.rotation.z = Math.PI * 2;
-            } else {
-                obj.rotation.z = Math.PI;
-            }
             obj.scale.set(scale, scale, scale);
             obj.add(mesh);
 
@@ -141,7 +140,10 @@ export class ShipModel3D {
 
             var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ transparent: true, opacity: 0.5, linewidth: 2 }));
             line.scale.z = shipInstance.position.y/MAX_HEIGHT;
-            obj.add(line);
+            line.rotateX(Math.PI/2);
+            var gyro = new Gyroscope();
+            gyro.add(line);
+            obj.add(gyro);
 
             this.objects.push(mesh);
             obj.userData.id = id;

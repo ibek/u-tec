@@ -67,6 +67,38 @@
     background-color: #99e3f5;
 }
 
+.tools {
+    position: absolute;
+    top: 60px;
+    left: 10px;
+    padding: 0px;
+    background: rgba(6, 70, 102, 0.4);
+    z-index: 2;
+}
+
+.tools ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.tools ul li {
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+    text-align: center;
+    color: #80CADC;
+}
+
+.tools-divider {
+    width:1px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    height: 26px;
+    background-color: #99e3f5;
+    content: '';
+}
+
 .card-corner {
     position: absolute;
     width: 100%;

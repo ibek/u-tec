@@ -38,7 +38,8 @@
                                     <md-icon md-tooltip='Click here to add players.'>settings</md-icon>
                                 </button>
                             </h4>
-                            <md-select md-line placeholder="Select Pilot" color="primary" [(ngModel)]="selectedShipInstance.pilot" (change)="onShipInfoChange()" [disabled]="!shipService.isUnlocked()">
+                            <md-select md-line placeholder="Select Pilot" color="primary" [(ngModel)]="selectedShipInstance.pilot" (change)="onShipInfoChange()"
+                                [disabled]="!shipService.isUnlocked()">
                                 <md-option *ngFor="let player of shipService.tacticalPlan.players" [value]="player">
                                     {{ player }}
                                 </md-option>
@@ -64,20 +65,62 @@
         </md-sidenav>
 
         <div class="background">
+            <md-card class="tools" *ngIf="loaded">
+                <div md-card-content>
+                    <ul>
+                        <li>
+                            <button md-button [mdMenuTriggerFor]="simulatorMenu">
+                                <md-icon>settings</md-icon>
+                            </button>
+                            <md-menu #simulatorMenu>
+                                <button md-button (click)="manageCrew()">
+                                    <md-icon md-tooltip='Click here to add players.'>airline_seat_recline_extra</md-icon>
+                                    <span>Crew Management</span>
+                                </button>
+                                <button md-menu-item (click)="toggleFullscreen()">
+                                    <md-icon>photo_camera</md-icon>
+                                    <span>Save Image</span>
+                                </button>
+                                <button md-menu-item (click)="saveImage()">
+                                    <md-icon>fullscreen</md-icon>
+                                    <span>Fullscreen</span>
+                                </button>
+                            </md-menu>
+                        </li>
+                        <li class="tools-divider">
+                        </li>
+                        <li>
+                            <button md-button (click)="rotateTowards()" md-tooltip='Rotate selected ship towards mouse target.'>
+                                <md-icon>rotate_90_degrees_ccw</md-icon>
+                            </button>
+                        </li>
+                        <li class="tools-divider">
+                        </li>
+                        <li>
+                            <button md-button (click)="rotateReset()" md-tooltip='Reset rotation of the selected ship(s).'>
+                                <md-icon>airplay</md-icon>
+                            </button>
+                        </li>
+                        <li class="tools-divider">
+                        </li>
+                        <li>
+                            <button md-button md-tooltip='Change camera view.'>
+                                <md-icon>explore</md-icon>
+                            </button>
+                        </li>
+                        <li class="tools-divider">
+                        </li>
+                        <li>
+                            <button md-button md-tooltip='Switch allies and enemies of selected ships.'>
+                                <md-icon>invert_colors</md-icon>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-corner card-corner-top"></div>
+                <div class="card-corner card-corner-bottom"></div>
+            </md-card>
             <div class="container" #container>
-                <button md-icon-button [mdMenuTriggerFor]="simulatorMenu" class="simulatorMenu" *ngIf="loaded">
-                <md-icon>more_vert</md-icon>
-            </button>
-                <md-menu #simulatorMenu>
-                    <button md-menu-item (click)="saveImage()">
-                <md-icon>fullscreen</md-icon>
-                <span>Fullscreen</span>
-                </button>
-                    <button md-menu-item (click)="toggleFullscreen()">
-                <md-icon>photo_camera</md-icon>
-                <span>Save Image</span>
-                </button>
-                </md-menu>
                 <button id="text-label" md-raised-button color='none' (click)="showInfo()"></button>
                 <section class="loader" [hidden]="loaded">
                     <h3>Loading ...</h3>

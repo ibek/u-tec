@@ -28,6 +28,9 @@ export class TacticalPlan {
                 if (!i.position) {
                     i.position = ShipModel3D.getNextPosition();
                 }
+                if (!i.rotation) {
+                    i.rotation = new Vector3(0,0,0);
+                }
                 if (!i.pilot) {
                     i.pilot = "?";
                 }
@@ -90,6 +93,14 @@ export class TacticalPlan {
                                 sinstance.position.y = ts.instances[m].position.y;
                                 sinstance.position.z = ts.instances[m].position.z;
                             }
+                            if (!sinstance.rotation) {
+                                sinstance.rotation = new Vector3();
+                            }
+                            if (ts.instances && ts.instances[m] && ts.instances[m].rotation) {
+                                sinstance.rotation.x = ts.instances[m].rotation.x;
+                                sinstance.rotation.y = ts.instances[m].rotation.y;
+                                sinstance.rotation.z = ts.instances[m].rotation.z;
+                            }
                             if (ts.instances && ts.instances[m]) {
                                 sinstance.pilot = ts.instances[m].pilot;
                                 sinstance.enemy = ts.instances[m].enemy;
@@ -127,6 +138,7 @@ export class ShipData {
 
 export class ShipInstance {
     position: Vector3;
+    rotation: Vector3;
     pilot: string;
     crewmen: string[] = [];
     enemy:boolean = false;

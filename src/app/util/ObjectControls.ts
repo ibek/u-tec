@@ -34,6 +34,8 @@ export class ObjectControls {
     multifocus: boolean = false;
     multiSelectedObj = null;
 
+    rotation = false;
+
     updateNeeded = false;
 
     constructor(private camera, private gridCamera, private container, private htmlContainer, private objects: THREE.Object3D[],
@@ -180,17 +182,17 @@ export class ObjectControls {
         var raycaster = this._rayGet();
         var intersects = raycaster.intersectObjects(this.objects, true);
 
-        if (this.selected && this.shipService.isUnlocked() && intersects.length > 0) {
+        if (!this.rotation && this.selected && this.shipService.isUnlocked() && intersects.length > 0) {
             this.setFocus(intersects[0].object);
             this.projectionMap.position.y = this.selected.parent.position.y;
             this.onclick();
-        } else if (this.selectedObjects.length > 0 && this.shipService.isUnlocked() && intersects.length > 0 && this.selectedObjects.includes(intersects[0].object)) {
+        } else if (!this.rotation && this.selectedObjects.length > 0 && this.shipService.isUnlocked() && intersects.length > 0 && this.selectedObjects.includes(intersects[0].object)) {
             this.multifocus = true;
             this.multiSelectedObj = intersects[0].object;
             this.projectionMap.position.y = this.multiSelectedObj.parent.position.y;
         }
 
-        if (intersects.length == 0) {
+        if (!this.rotation && intersects.length == 0) {
             this.selectedObjects = [];
             this.selectedBoxes.forEach((value: any, key: string) => {
                 this.scene.remove(value);
@@ -208,7 +210,7 @@ export class ObjectControls {
 
         var raycaster = this._rayGet();
 
-        if (this.focused) {
+        if (this.focused && !this.rotation) {
             if (this.displacing) {
                 var intersectsMap = raycaster.intersectObject(this.projectionMap);
 
@@ -274,7 +276,7 @@ export class ObjectControls {
             }
         }
 
-        if (this.selected || this.down || this.multifocus || this.updateNeeded) {
+        if (!this.rotation && (this.selected || this.down || this.multifocus || this.updateNeeded)) {
             var ids = [];
             if (this.selected) {
                 ids.push(this.selected.parent.name + "" + this.selected.parent.userData.id);
@@ -292,7 +294,7 @@ export class ObjectControls {
                     var sb = this.selectedBoxes.get(id);
                     sb.position.set(o.parent.position.x, o.parent.position.y, o.parent.position.z);
                     if (o.parent.children.length > 1) {
-                        o.parent.children[1].scale.z = o.parent.position.y/Ship3D.MAX_HEIGHT;
+                        o.parent.children[1].scale.z = o.parent.position.y / Ship3D.MAX_HEIGHT;
                     }
                 }
             });
@@ -315,10 +317,31 @@ export class ObjectControls {
                     var sb = this.selectedBoxes.get(id);
                     sb.position.set(this.selected.parent.position.x, this.selected.parent.position.y, this.selected.parent.position.z);
                     if (this.selected.parent.children.length > 1) {
-                        this.selected.parent.children[1].scale.z = this.selected.parent.position.y/Ship3D.MAX_HEIGHT;
+                        this.selected.parent.children[1].scale.z = this.selected.parent.position.y / Ship3D.MAX_HEIGHT;
                     }
                 }
             }
+        }
+
+        if (this.rotation && this.selected) {
+            var o: THREE.Mesh;
+
+            var intersects = raycaster.intersectObjects(this.objects, true);
+            var dpoint = null;
+            if (intersects.length > 0) {
+                dpoint = intersects[0].object.parent.position;
+            } else {
+                var intersectsMap = raycaster.intersectObject(this.projectionMap);
+                if (intersectsMap.length > 0) {
+                    dpoint = intersectsMap[0].point;
+                } else {
+                    return;
+                }
+            }
+            var dir = new THREE.Vector3().copy(dpoint);
+            this.selected.rotation.x = -Math.PI / 2;
+            this.selected.rotation.y = Math.PI;
+            this.selected.parent.lookAt(dir);
         }
     }
 
@@ -326,7 +349,23 @@ export class ObjectControls {
         event.preventDefault();
         this.down = false;
 
-        if (this.focused) {
+        if (this.rotation) {
+            this.rotation = false;
+            if (this.selected) {
+                var userData = this.selected.parent.userData;
+                var x = Math.round(this.selected.parent.rotation.x * 1000) / 1000;
+                this.selected.parent.rotation.x = x;
+                userData.shipData.instances[userData.id].rotation.x = x;
+                var y = Math.round(this.selected.parent.rotation.y * 1000) / 1000;
+                this.selected.parent.rotation.y = y;
+                userData.shipData.instances[userData.id].rotation.y = y;
+                var z = Math.round(this.selected.parent.rotation.z * 1000) / 1000;
+                this.selected.parent.rotation.z = z;
+                userData.shipData.instances[userData.id].rotation.z = z;
+            } // TODO: multiselect
+            this.mouseup();
+            this.hideSelected();
+        } else if (this.focused) {
             var userData = this.focused.parent.userData;
             var x = Math.round(this.focused.parent.position.x * 10) / 10;
             this.focused.parent.position.x = x;
