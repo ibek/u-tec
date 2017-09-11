@@ -40,7 +40,7 @@ export class ObjectControls {
 
     constructor(private camera, private gridCamera, private container, private htmlContainer, private objects: THREE.Object3D[],
         private projectionMap, private scene: THREE.Scene, private shipService: ShipService, private router: Router, private marqueeBox: THREE.Mesh,
-        private joystick: Joystick) {
+        private joystick: Joystick, private resetCameraView) {
 
     }
 
@@ -323,8 +323,7 @@ export class ObjectControls {
             }
         }
 
-        if (this.rotation && this.selected) {
-            var o: THREE.Mesh;
+        if (this.rotation) {
 
             var intersects = raycaster.intersectObjects(this.objects, true);
             var dpoint = null;
@@ -339,9 +338,18 @@ export class ObjectControls {
                 }
             }
             var dir = new THREE.Vector3().copy(dpoint);
-            this.selected.rotation.x = -Math.PI / 2;
-            this.selected.rotation.y = Math.PI;
-            this.selected.parent.lookAt(dir);
+
+            if (this.selectedObjects.length > 0) {
+                this.selectedObjects.forEach(o => {
+                    o.rotation.x = -Math.PI / 2;
+                    o.rotation.y = Math.PI;
+                    o.parent.lookAt(dir);
+                });
+            } else if (this.selected) {
+                this.selected.rotation.x = -Math.PI / 2;
+                this.selected.rotation.y = Math.PI;
+                this.selected.parent.lookAt(dir);
+            }
         }
     }
 
@@ -351,7 +359,20 @@ export class ObjectControls {
 
         if (this.rotation) {
             this.rotation = false;
-            if (this.selected) {
+            if (this.selectedObjects.length > 0) {
+                this.selectedObjects.forEach(o => {
+                    var userData = o.parent.userData;
+                    var x = Math.round(o.parent.rotation.x * 1000) / 1000;
+                    o.parent.rotation.x = x;
+                    userData.shipData.instances[userData.id].rotation.x = x;
+                    var y = Math.round(o.parent.rotation.y * 1000) / 1000;
+                    o.parent.rotation.y = y;
+                    userData.shipData.instances[userData.id].rotation.y = y;
+                    var z = Math.round(o.parent.rotation.z * 1000) / 1000;
+                    o.parent.rotation.z = z;
+                    userData.shipData.instances[userData.id].rotation.z = z;
+                });
+            } else if (this.selected) {
                 var userData = this.selected.parent.userData;
                 var x = Math.round(this.selected.parent.rotation.x * 1000) / 1000;
                 this.selected.parent.rotation.x = x;
@@ -362,7 +383,7 @@ export class ObjectControls {
                 var z = Math.round(this.selected.parent.rotation.z * 1000) / 1000;
                 this.selected.parent.rotation.z = z;
                 userData.shipData.instances[userData.id].rotation.z = z;
-            } // TODO: multiselect
+            }
             this.mouseup();
             this.hideSelected();
         } else if (this.focused) {
@@ -478,11 +499,10 @@ export class ObjectControls {
             zoomSpeed += 10.0;
         }
         this.camera.zoom -= delta * zoomSpeed;
+        var resetView = false;
         if (this.camera.zoom < 1.0) {
             this.camera.zoom = 1.0;
-            this.camera.position.x = 0;
-            this.camera.position.y = 110;
-            this.camera.position.z = -80;
+            resetView = true;
             this.joystick.hide();
         } else if (this.camera.zoom > 7.0) {
             this.camera.zoom = 7.0;
@@ -495,12 +515,14 @@ export class ObjectControls {
         this.gridCamera.zoom -= delta * zoomSpeed;
         if (this.gridCamera.zoom < 1.0) {
             this.gridCamera.zoom = 1.0;
-            this.gridCamera.position.x = 0;
-            this.gridCamera.position.y = 110;
-            this.gridCamera.position.z = -80;
+            resetView = true;
         } else if (this.gridCamera.zoom > 7.0) {
             this.gridCamera.zoom = 7.0;
         }
         this.gridCamera.updateProjectionMatrix();
+
+        if (resetView) {
+            this.resetCameraView();
+        }
     }
 }

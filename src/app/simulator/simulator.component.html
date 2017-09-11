@@ -70,7 +70,7 @@
                     <ul>
                         <li>
                             <button md-button [mdMenuTriggerFor]="simulatorMenu">
-                                <md-icon>settings</md-icon>
+                                <md-icon>more_horiz</md-icon>
                             </button>
                             <md-menu #simulatorMenu>
                                 <button md-button (click)="manageCrew()">
@@ -104,14 +104,14 @@
                         <li class="tools-divider">
                         </li>
                         <li>
-                            <button md-button md-tooltip='Change camera view.'>
+                            <button md-button (click)="switchCameraView()" md-tooltip='Change camera view.'>
                                 <md-icon>explore</md-icon>
                             </button>
                         </li>
                         <li class="tools-divider">
                         </li>
                         <li>
-                            <button md-button md-tooltip='Switch allies and enemies of selected ships.'>
+                            <button md-button (click)="switchSide()" md-tooltip='Switch allies and enemies of selected ships.'>
                                 <md-icon>invert_colors</md-icon>
                             </button>
                         </li>

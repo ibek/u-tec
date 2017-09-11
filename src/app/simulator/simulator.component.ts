@@ -64,6 +64,8 @@ export class SimulatorComponent implements AfterViewInit {
 
     Arr = Array; // helper property for multiple crewmen
 
+    cameraMode=1;
+
     constructor(private sceneService: SceneService, private shipService: ShipService, private router: Router, public crewDialog: MdDialog) {
 
     }
@@ -76,7 +78,7 @@ export class SimulatorComponent implements AfterViewInit {
         this.renderer.domElement.style.position = "relative";
         this.renderer.setClearColor(0xEEEEEE);
 
-        this.configureCamera();
+        this.resetCameraView();
 
         this.configureLight();
         this.scene.add(this.directionalLight);
@@ -112,7 +114,7 @@ export class SimulatorComponent implements AfterViewInit {
 
         texture.repeat.set(40, 40);
 
-        material = new THREE.MeshLambertMaterial({ map: texture, transparent: true, opacity: 1.0, side: THREE.DoubleSide });
+        material = new THREE.MeshLambertMaterial({ map: texture, transparent: true, opacity: 1.0, side: THREE.BackSide });
         this.grid = new THREE.Mesh(new THREE.CircleGeometry(100, 30, 0, Math.PI * 2), material);
         this.grid.rotation.x = Math.PI / 2;
         this.grid.position.y = -1;
@@ -120,16 +122,16 @@ export class SimulatorComponent implements AfterViewInit {
 
         var path = new THREE.CatmullRomCurve3([
             new THREE.Vector3(0, 0, 0),
-            new THREE.Vector3(0, 40, 0),
+            new THREE.Vector3(0, 60, 0),
         ]);
         var panel3dgeom = new THREE.TubeGeometry(path, 30, 100, 60, false);
         var ptex = new THREE.TextureLoader().load("assets/images/grid.png");
         ptex.wrapS = THREE.RepeatWrapping;
         ptex.wrapT = THREE.RepeatWrapping;
-        ptex.repeat.set(10,120);
-        var panel3d = new THREE.Mesh(panel3dgeom, new THREE.MeshLambertMaterial({map: ptex, side: THREE.DoubleSide, transparent: true, opacity: 1.0}));
+        ptex.repeat.set(20,120);
+        var panel3d = new THREE.Mesh(panel3dgeom, new THREE.MeshLambertMaterial({map: ptex, side: THREE.BackSide, transparent: true, opacity: 1.0}));
         panel3d.rotation.x = Math.PI;
-        panel3d.position.y = 40;
+        panel3d.position.y = 60;
         panel3d.position.z = -50;
         this.gridScene.add(panel3d);
 
@@ -162,17 +164,6 @@ export class SimulatorComponent implements AfterViewInit {
         this.directionalLight.lookAt(new Vector3(0, 0, 0));
     }
 
-    configureCamera() {
-        this.camera.position.x = 0;
-        this.camera.position.y = 110;
-        this.camera.position.z = -80;
-        this.camera.lookAt(new Vector3(0, 0, 0));
-        this.gridCamera.position.x = 0;
-        this.gridCamera.position.y = 110;
-        this.gridCamera.position.z = -80;
-        this.gridCamera.lookAt(new Vector3(0, 0, 0));
-    }
-
     configureControls() {
         this.joystick = new Joystick();
         var scope = this;
@@ -182,30 +173,16 @@ export class SimulatorComponent implements AfterViewInit {
             deltaY = -deltaY / speed;
             scope.camera.translateX(deltaX);
             scope.camera.translateY(deltaY);
+            scope.camera.lookAt(new Vector3(0,0,-50));
             scope.gridCamera.translateX(deltaX);
             scope.gridCamera.translateY(deltaY);
-            if (scope.camera.position.x < -90) {
-                scope.camera.translateX(-deltaX);
-                scope.gridCamera.translateX(-deltaX);
-            }
-            if (scope.camera.position.x > 90) {
-                scope.camera.translateX(-deltaX);
-                scope.gridCamera.translateX(-deltaX);
-            }
-            if (scope.camera.position.y > 140) {
-                scope.camera.translateY(-deltaY);
-                scope.gridCamera.translateY(-deltaY);
-            }
-            if (scope.camera.position.y < 50) {
-                scope.camera.translateY(-deltaY);
-                scope.gridCamera.translateY(-deltaY);
-            }
+            scope.gridCamera.lookAt(new Vector3(0,0,-50));
         }
         this.joystick.updateLocation(window.innerWidth, window.innerHeight);
 
         this.controls = new ObjectControls(this.camera, this.gridCamera, this.renderer.domElement,
             this.container, this.objects, this.virtualGrid, this.scene, this.shipService, this.router, this.marqueeBox,
-            this.joystick);
+            this.joystick, this.resetCameraView);
         this.controls.fixed.y = 1;
         var scope = this;
         this.controls.mouseup = function () {
@@ -348,10 +325,79 @@ export class SimulatorComponent implements AfterViewInit {
     }
 
     rotateReset() {
-        if (this.controls.selected) {
+        if (this.controls.selectedObjects.length > 0) {
+            this.controls.selectedObjects.forEach(o => {
+                o.rotation.set(-Math.PI / 2,Math.PI,0);
+                o.parent.rotation.set(0,0,0);
+            });
+        } else if (this.controls.selected) {
             this.controls.selected.rotation.set(-Math.PI / 2,Math.PI,0);
             this.controls.selected.parent.rotation.set(0,0,0);
         }
+    }
+
+    switchCameraView() {
+        this.cameraMode++;
+        this.resetCameraView();
+    }
+
+    resetCameraView = () => {
+        if (this.cameraMode > 4) {
+            this.cameraMode = 1;
+        }
+
+        if (this.cameraMode == 1) {
+            this.camera.position.x = 0;
+            this.camera.position.y = 130;
+            this.camera.position.z = -160;
+            this.camera.lookAt(new Vector3(0, 0, -50));
+            this.gridCamera.position.x = 0;
+            this.gridCamera.position.y = 130;
+            this.gridCamera.position.z = -160;
+            this.gridCamera.lookAt(new Vector3(0, 0, -50));
+        } else if (this.cameraMode == 2) {
+            this.camera.position.x = 110;
+            this.camera.position.y = 130;
+            this.camera.position.z = -50;
+            this.camera.lookAt(new Vector3(0, 0, -50));
+            this.gridCamera.position.x = 110;
+            this.gridCamera.position.y = 130;
+            this.gridCamera.position.z = -50;
+            this.gridCamera.lookAt(new Vector3(0, 0, -50));
+        } else if (this.cameraMode == 3) {
+            this.camera.position.x = 0;
+            this.camera.position.y = 130;
+            this.camera.position.z = 60;
+            this.camera.lookAt(new Vector3(0, 0, -50));
+            this.gridCamera.position.x = 0;
+            this.gridCamera.position.y = 130;
+            this.gridCamera.position.z = 60;
+            this.gridCamera.lookAt(new Vector3(0, 0, -50));
+        } else if (this.cameraMode == 4) {
+            this.camera.position.x = -110;
+            this.camera.position.y = 130;
+            this.camera.position.z = -50;
+            this.camera.lookAt(new Vector3(0, 0, -50));
+            this.gridCamera.position.x = -110;
+            this.gridCamera.position.y = 130;
+            this.gridCamera.position.z = -50;
+            this.gridCamera.lookAt(new Vector3(0, 0, -50));
+        }
+    }
+
+    switchSide() {
+        if (this.controls.selectedObjects.length > 0) {
+            this.controls.selectedObjects.forEach(o => {
+                var userData = o.parent.userData;
+                var selectedShipInstance = userData.shipData.instances[userData.id];
+                selectedShipInstance.enemy = !selectedShipInstance.enemy;
+            });
+        } else if(this.controls.selected) {
+            var userData = this.controls.selected.parent.userData;
+            var selectedShipInstance = userData.shipData.instances[userData.id];
+            selectedShipInstance.enemy = !selectedShipInstance.enemy;
+        }
+        this.onShipInfoChange();
     }
 }
 

@@ -33,7 +33,7 @@
 #text-label {
     display: none;
     position: absolute;
-    z-index: 1;
+    z-index: 10;
     width: auto;
     white-space: nowrap;
     min-height: 40px;
@@ -46,7 +46,7 @@
 .info {
     background: rgba(0, 0, 0, 0.1);
     padding: 20px;
-    padding-top: 144px;
+    padding-top: 74px;
 }
 
 .info-card {

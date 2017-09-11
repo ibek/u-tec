@@ -10,7 +10,7 @@ import { Gyroscope } from '../util/Gyroscope'
 
 const MAX_POS: number = 30;
 const debug: boolean = true;
-export const MAX_HEIGHT = 40;
+export const MAX_HEIGHT = 60;
 
 export class ShipModel3D {
     static stepSize: number = 10;
