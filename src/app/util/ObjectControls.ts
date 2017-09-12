@@ -34,13 +34,13 @@ export class ObjectControls {
     multifocus: boolean = false;
     multiSelectedObj = null;
 
-    rotation = false;
+    ctrl = false;
 
     updateNeeded = false;
 
     constructor(private camera, private gridCamera, private container, private htmlContainer, private objects: THREE.Object3D[],
         private projectionMap, private scene: THREE.Scene, private shipService: ShipService, private router: Router, private marqueeBox: THREE.Mesh,
-        private joystick: Joystick, private resetCameraView) {
+        private joystick: Joystick, private resetCameraView, private simulator) {
 
     }
 
@@ -173,6 +173,7 @@ export class ObjectControls {
         var rect = this.container.getBoundingClientRect();
         this._mouse.x = ((x) / rect.width) * 2 - 1;
         this._mouse.y = - ((z) / rect.height) * 2 + 1;
+        this.ctrl = event.ctrlKey;
 
         var vector = new THREE.Vector3(this._mouse.x, this._mouse.y, 0.5);
         return vector;
@@ -182,17 +183,17 @@ export class ObjectControls {
         var raycaster = this._rayGet();
         var intersects = raycaster.intersectObjects(this.objects, true);
 
-        if (!this.rotation && this.selected && this.shipService.isUnlocked() && intersects.length > 0) {
+        if (!this.simulator.rotation && this.selected && this.shipService.isUnlocked() && intersects.length > 0) {
             this.setFocus(intersects[0].object);
             this.projectionMap.position.y = this.selected.parent.position.y;
             this.onclick();
-        } else if (!this.rotation && this.selectedObjects.length > 0 && this.shipService.isUnlocked() && intersects.length > 0 && this.selectedObjects.includes(intersects[0].object)) {
+        } else if (!this.simulator.rotation && this.selectedObjects.length > 0 && this.shipService.isUnlocked() && intersects.length > 0 && this.selectedObjects.includes(intersects[0].object)) {
             this.multifocus = true;
             this.multiSelectedObj = intersects[0].object;
             this.projectionMap.position.y = this.multiSelectedObj.parent.position.y;
         }
 
-        if (!this.rotation && intersects.length == 0) {
+        if (!this.simulator.rotation && intersects.length == 0) {
             this.selectedObjects = [];
             this.selectedBoxes.forEach((value: any, key: string) => {
                 this.scene.remove(value);
@@ -203,6 +204,13 @@ export class ObjectControls {
             if (intersectsMap.length > 0) {
                 this.lefttop = new THREE.Vector3().copy(intersectsMap[0].point);
             }
+        } else if (this.simulator.rotation) {
+            var raycaster = this._rayGet();
+            var intersectsMap = raycaster.intersectObject(this.projectionMap);
+            if (intersects.length == 0 && intersectsMap.length == 0) {
+                this.simulator.rotation = false;
+                this.resetRotation();
+            }
         }
     }
 
@@ -210,7 +218,7 @@ export class ObjectControls {
 
         var raycaster = this._rayGet();
 
-        if (this.focused && !this.rotation) {
+        if (this.focused && !this.simulator.rotation) {
             if (this.displacing) {
                 var intersectsMap = raycaster.intersectObject(this.projectionMap);
 
@@ -276,7 +284,7 @@ export class ObjectControls {
             }
         }
 
-        if (!this.rotation && (this.selected || this.down || this.multifocus || this.updateNeeded)) {
+        if (!this.simulator.rotation && (this.selected || this.down || this.multifocus || this.updateNeeded)) {
             var ids = [];
             if (this.selected) {
                 ids.push(this.selected.parent.name + "" + this.selected.parent.userData.id);
@@ -323,7 +331,7 @@ export class ObjectControls {
             }
         }
 
-        if (this.rotation) {
+        if (this.simulator.rotation) {
 
             var intersects = raycaster.intersectObjects(this.objects, true);
             var dpoint = null;
@@ -343,13 +351,35 @@ export class ObjectControls {
                 this.selectedObjects.forEach(o => {
                     o.rotation.x = -Math.PI / 2;
                     o.rotation.y = Math.PI;
+                    if (!this.ctrl) {
+                        dir.y = o.parent.position.y;
+                    }
                     o.parent.lookAt(dir);
                 });
             } else if (this.selected) {
                 this.selected.rotation.x = -Math.PI / 2;
                 this.selected.rotation.y = Math.PI;
+                if (!this.ctrl) {
+                    dir.y = this.selected.parent.position.y;
+                }
                 this.selected.parent.lookAt(dir);
             }
+        }
+    }
+
+    resetRotation() {
+        if (this.selectedObjects.length > 0) {
+            this.selectedObjects.forEach(o => {
+                var userData = o.parent.userData;
+                o.parent.rotation.x = userData.shipData.instances[userData.id].rotation.x;
+                o.parent.rotation.y = userData.shipData.instances[userData.id].rotation.y;
+                o.parent.rotation.z = userData.shipData.instances[userData.id].rotation.z;
+            });
+        } else if (this.selected) {
+            var userData = this.selected.parent.userData;
+            this.selected.parent.rotation.x = userData.shipData.instances[userData.id].rotation.x;
+            this.selected.parent.rotation.y = userData.shipData.instances[userData.id].rotation.y;
+            this.selected.parent.rotation.z = userData.shipData.instances[userData.id].rotation.z;
         }
     }
 
@@ -357,8 +387,8 @@ export class ObjectControls {
         event.preventDefault();
         this.down = false;
 
-        if (this.rotation) {
-            this.rotation = false;
+        if (this.simulator.rotation) {
+            this.simulator.rotation = false;
             if (this.selectedObjects.length > 0) {
                 this.selectedObjects.forEach(o => {
                     var userData = o.parent.userData;

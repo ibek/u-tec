@@ -146,3 +146,16 @@
 .card-corner-bottom::after {
     border-width: 0 1px 1px 0;
 }
+
+.toggle-button {
+    color: #99e3f5;
+    text-align: center;
+    margin: 0 auto;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.mat-button-toggle-checked {
+    background-color: #80CADC;
+    color: rgba(6, 70, 102, 0.4);
+}

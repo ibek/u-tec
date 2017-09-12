@@ -90,9 +90,9 @@
                         <li class="tools-divider">
                         </li>
                         <li>
-                            <button md-button (click)="rotateTowards()" md-tooltip='Rotate selected ship towards mouse target.'>
+                            <md-button-toggle (change)="rotateTowards()" md-tooltip='Rotate selected ship towards mouse target.' [checked]="rotation" class="toggle-button mat-button-toggle-checked">
                                 <md-icon>rotate_90_degrees_ccw</md-icon>
-                            </button>
+                            </md-button-toggle>
                         </li>
                         <li class="tools-divider">
                         </li>
