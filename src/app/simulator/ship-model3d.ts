@@ -16,6 +16,11 @@ export class ShipModel3D {
     static stepSize: number = 10;
     static currentZ: number = 30;
     static currentX: number = 0;
+    static time = { type: "f", value: 1.0 };
+
+    static defaultShipColor;
+    static enemyShipColor;
+    static noiseTexture;
 
     model: any;
     first: boolean = true;
@@ -27,9 +32,15 @@ export class ShipModel3D {
     }
 
     static init() {
-        //ShipModel3D.stepSize = 10;
-        //ShipModel3D.currentZ = 30;
-        //ShipModel3D.currentX = 0;
+        var loader = new THREE.TextureLoader();
+        ShipModel3D.defaultShipColor = loader.load( 'assets/ships/textures/defaultShipColor.png' );
+        ShipModel3D.defaultShipColor.wrapS = this.defaultShipColor.wrapT = THREE.RepeatWrapping; 
+            
+        ShipModel3D.enemyShipColor = loader.load( 'assets/ships/textures/enemyShipColor.png' );
+	    ShipModel3D.enemyShipColor.wrapS = ShipModel3D.enemyShipColor.wrapT = THREE.RepeatWrapping; 
+
+        ShipModel3D.noiseTexture = loader.load( 'assets/ships/textures/noise.png' );
+	    ShipModel3D.noiseTexture.wrapS = ShipModel3D.noiseTexture.wrapT = THREE.RepeatWrapping;
     }
 
     init() {
@@ -40,7 +51,7 @@ export class ShipModel3D {
         if (this.model) {
             var len = this.model.children[0].children.length;
             if (len > 1) {
-                this.model.children[0].children.splice(1, len-1);
+                this.model.children[0].children.splice(1, len - 1);
             }
         }
 
@@ -76,33 +87,84 @@ export class ShipModel3D {
         }
     }
 
+    vertexShader = `
+        varying vec2 vUv;
+        uniform float p;
+        varying float intensity;
+
+        void main()
+        {
+            vUv = uv;
+            vec3 vNormal = normalize( normalMatrix * normal );
+            intensity = pow( 1.0 - abs(dot( vNormal, vec3( 0, 0, 1.0 ) ) ), p );
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+        }
+    `;
+
+    fragmentShader = `
+        uniform float baseSpeed;
+        uniform sampler2D baseTexture;
+        uniform sampler2D noiseTexture;
+        uniform float noiseScale;
+        uniform float alpha;
+        uniform float time;
+
+        varying vec2 vUv;
+        varying float intensity;
+        
+        void main()
+        {
+            vec2 uvTimeShift = vUv + vec2( -0.7, 1.5 ) * time * baseSpeed;	
+            vec4 noiseGeneratorTimeShift = texture2D( noiseTexture, uvTimeShift );
+            vec2 uvNoiseTimeShift = vUv + noiseScale * vec2( noiseGeneratorTimeShift.r, noiseGeneratorTimeShift.b );
+            vec4 baseColor = texture2D( baseTexture, uvNoiseTimeShift );
+            baseColor.x = baseColor.x * intensity;
+            baseColor.y = baseColor.y * intensity;
+            baseColor.z = baseColor.z * intensity;
+            baseColor.a = 1.0;
+            gl_FragColor = baseColor;
+        }
+    `;
+
     addShipTo(scene, id: number, shipInstance: ShipInstance, scale: number) {
         var scope = this;
-        // 0x22dd22 green
-        // 0x00ffff cyan
-        // 0xdddd22 gold
-        // 0xdd2222 red
-        var color = (shipInstance.enemy) ? 0xff0000 : 0x00ffff
-        var material = new THREE.MeshStandardMaterial({
-            color: color,
-            metalness: 1.0,
-            roughness: 0.7,
+        
+        if (!ShipModel3D.defaultShipColor || !ShipModel3D.enemyShipColor || !ShipModel3D.noiseTexture) {
+            ShipModel3D.init();
+        }
+
+        var color = (shipInstance.enemy)?ShipModel3D.enemyShipColor:ShipModel3D.defaultShipColor;
+
+        var uniforms = {
+            baseTexture: 	{ type: "t", value: color },
+            baseSpeed: 		{ type: "f", value: 0.3 },
+            noiseTexture: 	{ type: "t", value: ShipModel3D.noiseTexture },
+            noiseScale:		{ type: "f", value: 0.5 },
+            alpha: 			{ type: "f", value: 1.0 },
+            time: ShipModel3D.time,
+            p: { type: "f", value: 1.3 }
+        };
+
+        var material = new THREE.ShaderMaterial({
+            uniforms: uniforms,
+            vertexShader: this.vertexShader,
+            fragmentShader: this.fragmentShader,
+            blending: THREE.AdditiveBlending,
             transparent: true,
-            opacity: 0.5,
-            side: THREE.DoubleSide
+            depthWrite: false
         });
 
         let i = scene.getObjectByName(this.data.name);
         if (i == undefined) {
             var object = scope.model.children[0];
+
+            object.children[0].geometry.computeVertexNormals();
+
             object.scale.set(scale, scale, scale);
             object.position.set(shipInstance.position.x, shipInstance.position.y, shipInstance.position.z);
             object.rotation.set(shipInstance.rotation.x, shipInstance.rotation.y, shipInstance.rotation.z);
-            object.children[0].rotation.set(-Math.PI/2,Math.PI,0);
+            object.children[0].rotation.set(-Math.PI / 2, Math.PI, 0);
             shipInstance.position = object.position;
-            if (this.shipModel.size == 'L') {
-                material.opacity = 0.6;
-            }
             object.children[0].material = material;
             object.userData.id = id;
             object.userData.shipData = this.data;
@@ -114,8 +176,8 @@ export class ShipModel3D {
             geometry.vertices.push(new Vector3(0, 0, 0));
 
             var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ transparent: true, opacity: 0.5, linewidth: 2 }));
-            line.scale.z = shipInstance.position.y/MAX_HEIGHT;
-            line.rotateX(Math.PI/2);
+            line.scale.z = shipInstance.position.y / MAX_HEIGHT;
+            line.rotateX(Math.PI / 2);
             var gyro = new Gyroscope();
             gyro.add(line);
 
@@ -129,7 +191,7 @@ export class ShipModel3D {
 
             obj.position.set(shipInstance.position.x, shipInstance.position.y, shipInstance.position.z);
             obj.rotation.set(shipInstance.rotation.x, shipInstance.rotation.y, shipInstance.rotation.z);
-            mesh.rotation.set(-Math.PI/2,Math.PI,0);
+            mesh.rotation.set(-Math.PI / 2, Math.PI, 0);
             shipInstance.position = obj.position;
             obj.scale.set(scale, scale, scale);
             obj.add(mesh);
@@ -139,8 +201,8 @@ export class ShipModel3D {
             geometry.vertices.push(new Vector3(0, 0, 0));
 
             var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ transparent: true, opacity: 0.5, linewidth: 2 }));
-            line.scale.z = shipInstance.position.y/MAX_HEIGHT;
-            line.rotateX(Math.PI/2);
+            line.scale.z = shipInstance.position.y / MAX_HEIGHT;
+            line.rotateX(Math.PI / 2);
             var gyro = new Gyroscope();
             gyro.add(line);
             obj.add(gyro);

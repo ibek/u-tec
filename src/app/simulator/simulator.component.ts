@@ -67,6 +67,8 @@ export class SimulatorComponent implements AfterViewInit {
     rotation=false;
     cameraMode=1;
 
+    clock = new THREE.Clock();
+
     constructor(private sceneService: SceneService, private shipService: ShipService, private router: Router, public crewDialog: MdDialog) {
 
     }
@@ -161,8 +163,8 @@ export class SimulatorComponent implements AfterViewInit {
 
     configureLight() {
         this.directionalLight = new DirectionalLight(0xffffff);
-        this.directionalLight.position.set(0, 1000, 0);
-        this.directionalLight.lookAt(new Vector3(0, 0, 0));
+        this.directionalLight.position.set(0, 200, -50);
+        this.directionalLight.lookAt(new Vector3(0, 0, -50));
     }
 
     configureControls() {
@@ -206,6 +208,9 @@ export class SimulatorComponent implements AfterViewInit {
         this.renderer.render(this.gridScene, this.gridCamera);
         this.renderer.render(this.scene, this.camera);
         this.controls.updateAfter(this.screenWidth, this.screenHeight);
+
+        var delta = this.clock.getDelta();
+        ShipModel3D.time.value += delta;
     }
 
     start() {
