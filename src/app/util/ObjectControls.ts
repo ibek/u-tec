@@ -294,7 +294,8 @@ export class ObjectControls {
                 ids.push(id);
                 if (!this.selectedBoxes.has(id)) {
                     var size = new THREE.Box3().setFromObject(o).getSize();
-                    var boxHelper: any = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxBufferGeometry(size.x, size.y, size.z), 1), new THREE.LineBasicMaterial({ color: o.material.color, transparent: true, opacity: 0.3, linewidth: 1 }));
+                    var color = (o.parent.userData.shipData.instances[o.parent.userData.id].enemy)?0xdd0000:0x00dddd;
+                    var boxHelper: any = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxBufferGeometry(size.x, size.y, size.z), 1), new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.3, linewidth: 1 }));
                     boxHelper.position.set(o.parent.position.x, o.parent.position.y, o.parent.position.z);
                     this.scene.add(boxHelper);
                     this.selectedBoxes.set(id, boxHelper);
@@ -317,7 +318,8 @@ export class ObjectControls {
                 var id = this.selected.parent.name + "" + this.selected.parent.userData.id;
                 if (!this.selectedBoxes.has(id)) {
                     var size = new THREE.Box3().setFromObject(this.selected).getSize();
-                    var boxHelper = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxBufferGeometry(size.x, size.y, size.z), 1), new THREE.LineBasicMaterial({ color: this.selected.material.color, transparent: true, opacity: 0.3, linewidth: 1 }));
+                    var color = (this.selected.parent.userData.shipData.instances[this.selected.parent.userData.id].enemy)?0xdd0000:0x00dddd;
+                    var boxHelper = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxBufferGeometry(size.x, size.y, size.z), 1), new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.3, linewidth: 1 }));
                     boxHelper.position.set(this.selected.parent.position.x, this.selected.parent.position.y, this.selected.parent.position.z);
                     this.scene.add(boxHelper);
                     this.selectedBoxes.set(id, boxHelper);
