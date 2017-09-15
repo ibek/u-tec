@@ -219,3 +219,21 @@
     background: rgba(6, 70, 102, 0.4);
     color: #99e3f5;
 }
+
+.lock-button {
+    color: #99e3f5;
+}
+
+/deep/ .mat-menu-content {
+    background: rgba(6, 70, 102, 0.8) !important;
+}
+
+/deep/ .mat-menu-item, 
+/deep/ .mat-menu-item .mat-icon {
+    color: #99e3f5;
+}
+
+/deep/ .mat-dialog-container {
+    background: rgba(6, 70, 102, 0.8) !important;
+    color: #99e3f5;
+}

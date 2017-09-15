@@ -134,6 +134,7 @@ export class ShipModel3D {
         }
 
         var color = (shipInstance.enemy)?ShipModel3D.enemyShipColor:ShipModel3D.defaultShipColor;
+        var colorCode = (shipInstance.enemy)?0xdd0000:0x00dddd;
 
         var uniforms = {
             baseTexture: 	{ type: "t", value: color },
@@ -175,7 +176,7 @@ export class ShipModel3D {
             geometry.vertices.push(new Vector3(0, 0, MAX_HEIGHT / scale));
             geometry.vertices.push(new Vector3(0, 0, 0));
 
-            var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ transparent: true, opacity: 0.5, linewidth: 2 }));
+            var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color:colorCode, transparent: true, opacity: 0.3, linewidth: 1 }));
             line.scale.z = shipInstance.position.y / MAX_HEIGHT;
             line.rotateX(Math.PI / 2);
             var gyro = new Gyroscope();
@@ -200,7 +201,7 @@ export class ShipModel3D {
             geometry.vertices.push(new Vector3(0, 0, MAX_HEIGHT / scale));
             geometry.vertices.push(new Vector3(0, 0, 0));
 
-            var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ transparent: true, opacity: 0.5, linewidth: 2 }));
+            var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color:colorCode, transparent: true, opacity: 0.3, linewidth: 1 }));
             line.scale.z = shipInstance.position.y / MAX_HEIGHT;
             line.rotateX(Math.PI / 2);
             var gyro = new Gyroscope();

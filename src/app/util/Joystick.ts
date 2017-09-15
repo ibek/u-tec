@@ -1,5 +1,6 @@
+import { Injectable } from '@angular/core';
 
-
+@Injectable()
 export class Joystick {
 
     baseX = 200;
@@ -8,7 +9,7 @@ export class Joystick {
     stickY = 200;
     stickRadius = 25;
     container = document.body;
-    strokeStyle = "cyan";
+    strokeStyle = "#80CADC";
     baseEl;
     stickEl;
 

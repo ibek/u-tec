@@ -75,7 +75,7 @@ export class ObjectControls {
 
     updateAfter(screenWidth, screenHeight) {
         if (this.selected) {
-            this.pointer.update(this.selected.parent.position.clone(), this.selected.parent.userData.shipData, screenWidth, screenHeight);
+            this.pointer.update(this.selected.parent.position.clone(), this.selected.parent.rotation, this.selected.parent.userData.shipData, screenWidth, screenHeight);
         }
     }
 
@@ -236,18 +236,23 @@ export class ObjectControls {
             var intersectsMap = raycaster.intersectObject(this.projectionMap);
 
             if (intersectsMap.length > 0) {
-                var pos = new THREE.Vector3().copy(intersectsMap[0].point);
-                this.marqueeBox.position.set(this.lefttop.x - (this.lefttop.x - pos.x) / 2, 0, this.lefttop.z - (this.lefttop.z - pos.z) / 2);
-                this.marqueeBox.scale.set(Math.abs(this.lefttop.x - pos.x), Math.abs(this.lefttop.z - pos.z), 1);
-                var mbox = new THREE.Box3().setFromCenterAndSize(this.marqueeBox.position, new THREE.Vector3(this.marqueeBox.scale.x, 80, this.marqueeBox.scale.y));
-                var sobjs = [];
-                this.objects.forEach(o => {
-                    var obox = new THREE.Box3().setFromObject(o);
-                    if (mbox.intersectsBox(obox)) {
-                        sobjs.push(o);
-                    }
-                });
-                this.selectedObjects = sobjs;
+                var p = intersectsMap[0].point;
+                if (Math.abs(this.lefttop.x - p.x) > 2 || Math.abs(this.lefttop.z - p.z) > 2) {
+                    var pos = new THREE.Vector3().copy(intersectsMap[0].point);
+                    this.marqueeBox.position.set(this.lefttop.x - (this.lefttop.x - pos.x) / 2, 0, this.lefttop.z - (this.lefttop.z - pos.z) / 2);
+                    this.marqueeBox.scale.set(Math.abs(this.lefttop.x - pos.x), Math.abs(this.lefttop.z - pos.z), 1);
+                    var mbox = new THREE.Box3().setFromCenterAndSize(this.marqueeBox.position, new THREE.Vector3(this.marqueeBox.scale.x, 80, this.marqueeBox.scale.y));
+                    var sobjs = [];
+                    this.objects.forEach(o => {
+                        var obox = new THREE.Box3().setFromObject(o);
+                        if (mbox.intersectsBox(obox)) {
+                            sobjs.push(o);
+                        }
+                    });
+                    this.selectedObjects = sobjs;
+                } else {
+                    this.marqueeBox.scale.set(0.0, 0.0, 0.0);
+                }
             }
         }
         else {
@@ -303,7 +308,7 @@ export class ObjectControls {
                     var sb = this.selectedBoxes.get(id);
                     sb.position.set(o.parent.position.x, o.parent.position.y, o.parent.position.z);
                     if (o.parent.children.length > 1) {
-                        o.parent.children[1].scale.z = o.parent.position.y / Ship3D.MAX_HEIGHT;
+                        o.parent.children[1].children[0].scale.z = o.parent.position.y / Ship3D.MAX_HEIGHT;
                     }
                 }
             });
@@ -327,7 +332,7 @@ export class ObjectControls {
                     var sb = this.selectedBoxes.get(id);
                     sb.position.set(this.selected.parent.position.x, this.selected.parent.position.y, this.selected.parent.position.z);
                     if (this.selected.parent.children.length > 1) {
-                        this.selected.parent.children[1].scale.z = this.selected.parent.position.y / Ship3D.MAX_HEIGHT;
+                        this.selected.parent.children[1].children[0].scale.z = this.selected.parent.position.y / Ship3D.MAX_HEIGHT;
                     }
                 }
             }
@@ -535,12 +540,12 @@ export class ObjectControls {
         if (this.camera.zoom < 1.0) {
             this.camera.zoom = 1.0;
             resetView = true;
-            this.joystick.hide();
+            //this.joystick.hide();
         } else if (this.camera.zoom > 7.0) {
             this.camera.zoom = 7.0;
-            this.joystick.show();
+            //this.joystick.show();
         } else {
-            this.joystick.show();
+            //this.joystick.show();
         }
         this.camera.updateProjectionMatrix();
 

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 
 import { ShipService } from './ship.service';
+import { Joystick } from './util/Joystick';
 
 import './styles.scss';
 
@@ -13,7 +14,7 @@ import './styles.scss';
 })
 export class AppComponent {
 
-  constructor(private shipService: ShipService, private router: Router, public lockDialog: MdDialog) {
+  constructor(private shipService: ShipService, private router: Router, public lockDialog: MdDialog, private joystick: Joystick) {
 
   }
 
@@ -22,6 +23,7 @@ export class AppComponent {
   }
 
   inventory(): void {
+    this.joystick.hide();
     this.router.navigate(["inventory"], this.shipService.getNavigationExtras());
   }
 

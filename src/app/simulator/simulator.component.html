@@ -72,10 +72,15 @@
                             <button md-button [mdMenuTriggerFor]="simulatorMenu">
                                 <md-icon>more_horiz</md-icon>
                             </button>
-                            <md-menu #simulatorMenu>
-                                <button md-button (click)="manageCrew()">
+                            <md-menu #simulatorMenu [overlapTrigger]="false">
+                                <button md-menu-item (click)="manageCrew()" [disabled]="!shipService.isUnlocked()">
                                     <md-icon md-tooltip='Click here to add players.'>airline_seat_recline_extra</md-icon>
                                     <span>Crew Management</span>
+                                </button>
+                                <button md-menu-item (click)="toggleLines()">
+                                    <md-icon>border_style</md-icon>
+                                    <span *ngIf="!aidsVisible">Show Visual Aids</span>
+                                    <span *ngIf="aidsVisible">Hide Visual Aids</span>
                                 </button>
                                 <button md-menu-item (click)="toggleFullscreen()">
                                     <md-icon>photo_camera</md-icon>
@@ -85,21 +90,11 @@
                                     <md-icon>fullscreen</md-icon>
                                     <span>Fullscreen</span>
                                 </button>
+                                <button md-menu-item (click)="showControls()">
+                                    <md-icon>games</md-icon>
+                                    <span>Open Controls</span>
+                                </button>
                             </md-menu>
-                        </li>
-                        <li class="tools-divider">
-                        </li>
-                        <li>
-                            <md-button-toggle (change)="rotateTowards()" md-tooltip='Rotate selected ship towards mouse target.' [checked]="rotation" class="toggle-button mat-button-toggle-checked">
-                                <md-icon>rotate_90_degrees_ccw</md-icon>
-                            </md-button-toggle>
-                        </li>
-                        <li class="tools-divider">
-                        </li>
-                        <li>
-                            <button md-button (click)="rotateReset()" md-tooltip='Reset rotation of the selected ship(s).'>
-                                <md-icon>airplay</md-icon>
-                            </button>
                         </li>
                         <li class="tools-divider">
                         </li>
@@ -111,7 +106,21 @@
                         <li class="tools-divider">
                         </li>
                         <li>
-                            <button md-button (click)="switchSide()" md-tooltip='Switch allies and enemies of selected ships.'>
+                            <md-button-toggle (change)="rotateTowards()" md-tooltip='Rotate selected ship towards mouse target.' [checked]="rotation" class="toggle-button mat-button-toggle-checked mat-button-toggle-disabled" [disabled]="!controls.selected && controls.selectedObjects.length == 0 || !shipService.isUnlocked()">
+                                <md-icon>rotate_90_degrees_ccw</md-icon>
+                            </md-button-toggle>
+                        </li>
+                        <li class="tools-divider">
+                        </li>
+                        <li>
+                            <button md-button (click)="rotateReset()" md-tooltip='Reset rotation of the selected ship(s).' [disabled]="!controls.selected && controls.selectedObjects.length == 0 || !shipService.isUnlocked()">
+                                <md-icon>airplay</md-icon>
+                            </button>
+                        </li>
+                        <li class="tools-divider">
+                        </li>
+                        <li>
+                            <button md-button (click)="switchSide()" md-tooltip='Switch allies and enemies of selected ships.' [disabled]="!controls.selected && controls.selectedObjects.length == 0 || !shipService.isUnlocked()">
                                 <md-icon>invert_colors</md-icon>
                             </button>
                         </li>

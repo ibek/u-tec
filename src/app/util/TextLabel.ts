@@ -29,7 +29,7 @@ export class TextLabel {
             this.htmlElement.style.fontSize = this.camera.zoom * 16 + 'px';
             this.htmlElement.style.height = this.camera.zoom * 36 + 'px';
             if (!this.originalWidth) {
-                this.originalWidth = this.htmlElement.clientWidth;
+                this.originalWidth = this.htmlElement.clientWidth / this.camera.zoom + 20;
             }
             this.htmlElement.style.width = this.camera.zoom * this.originalWidth + 'px';
             this.coords2d = coords2d;
@@ -44,8 +44,12 @@ export class TextLabel {
 
         var widthHalf = 0.5 * screenWidth;
         var heightHalf = 0.5 * screenHeight;
-        vector.x = (vector.x * widthHalf) + widthHalf + 30 * camera.zoom;
-        vector.y = - (vector.y * heightHalf) + heightHalf - camera.zoom * (camera.zoom + 45) - position.z * 20;
+        var w = 0;
+        if (this.originalWidth) {
+            w = this.originalWidth;
+        }
+        vector.x = (vector.x * widthHalf) + widthHalf - camera.zoom*w/2;
+        vector.y = - (vector.y * heightHalf) + heightHalf + camera.zoom * (camera.zoom + 10) + 10;
         return vector;
     }
 

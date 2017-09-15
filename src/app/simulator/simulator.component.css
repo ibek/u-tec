@@ -31,6 +31,8 @@
 }
 
 #text-label {
+    background: rgba(6, 70, 102, 0.8);
+    color: #80CADC;
     display: none;
     position: absolute;
     z-index: 10;
@@ -40,7 +42,8 @@
 }
 
 #text-label:hover {
-    background-color: #888;
+    background-color: #80CADC;
+    color: rgba(6, 70, 102, 0.8);
 }
 
 .info {
@@ -53,14 +56,6 @@
     background: rgba(6, 70, 102, 0.4);
     color: #80CADC;
     padding: 0px;
-}
-
-.simulatorMenu {
-    color: white;
-    position: absolute;
-    right: 20px;
-    top: 84px;
-    z-index: 1;
 }
 
 .progress-bar {
@@ -158,4 +153,9 @@
 .mat-button-toggle-checked {
     background-color: #80CADC;
     color: rgba(6, 70, 102, 0.4);
+}
+
+.mat-button-toggle-disabled {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.6);
 }

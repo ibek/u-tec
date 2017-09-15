@@ -11,10 +11,11 @@ import { AppComponent, LockDialogComponent } from './app.component';
 import { InventoryComponent } from './inventory/inventory.component';
 import { ShipCardComponent } from './inventory/ship-card.component';
 import { AddShipComponent } from './inventory/add-ship.component';
-import { SimulatorComponent, CrewDialogComponent } from './simulator/simulator.component';
+import { SimulatorComponent, CrewDialogComponent, ControlsDialogComponent } from './simulator/simulator.component';
 
 import { SceneService } from './scene.service';
 import { ShipService } from './ship.service';
+import { Joystick } from './util/Joystick';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -53,16 +54,18 @@ export const environment = {
     AddShipComponent,
     SimulatorComponent,
     LockDialogComponent,
-    CrewDialogComponent
+    CrewDialogComponent,
+    ControlsDialogComponent
   ],
   entryComponents: [
     LockDialogComponent,
-    CrewDialogComponent
+    CrewDialogComponent,
+    ControlsDialogComponent
   ],
   providers: [{
     provide: LocationStrategy,
     useClass: HashLocationStrategy
-  }, SceneService, ShipService],
+  }, SceneService, ShipService, Joystick],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

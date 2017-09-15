@@ -9,7 +9,7 @@
 
         <div class="logo"></div>
 
-        <md-menu #menu="mdMenu">
+        <md-menu #menu="mdMenu" [overlapTrigger]="false">
           <button md-menu-item (click)="newTacticalPlan()">
           <md-icon>clear_all</md-icon>
           <span>New Tactical Plan</span>
@@ -18,7 +18,7 @@
           <md-icon>lock_outline</md-icon>
           <span>Lock</span>
         </button>
-          <button md-menu-item (click)="unlock()" *ngIf="shipService.isConnected()" [disabled]="shipService.isUnlocked()">
+          <button md-menu-item (click)="unlock()" *ngIf="shipService.isConnected() && shipService.tacticalPlan.passwordHash" [disabled]="shipService.isUnlocked()">
           <md-icon>lock_open</md-icon>
           <span>Unlock</span>
         </button>
@@ -26,8 +26,8 @@
         </md-menu>
 
         <span class="title">UEE Tactical Communications Interface</span>
-        <button md-button *ngIf="!shipService.isUnlocked()" (click)="unlock()">
-        <md-icon md-tooltip='Tactical plan is locked' style="cursor:pointer" class="button">lock_outline</md-icon>
+        <button md-tooltip='Tactical plan is locked' md-button *ngIf="!shipService.isUnlocked()" (click)="unlock()" class="lock-button">
+        <md-icon>lock_outline</md-icon>
       </button>
       </div>
     </div>

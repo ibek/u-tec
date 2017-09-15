@@ -37,6 +37,7 @@
     right: -5px;
     background: rgba(6, 70, 102, 0.4);
     color: #99e3f5;
+    cursor: default;
 }
 
 .card-corner {
