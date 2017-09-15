@@ -15,6 +15,7 @@
             <button md-fab color="none" (click)="addS()" [disabled]="!shipService.isUnlocked()" class="add-button"><md-icon>add</md-icon></button>
         </md-grid-tile>
     </md-grid-list>
+    <div class="horizontal-line"></div>
     <md-grid-list [cols]="cols | async" gutterSize="16px" rowHeight="300px" class="ships-medium">
         <md-grid-tile *ngFor="let s of filterSize('M')">
             <ship-card [ship]=s>
@@ -31,6 +32,7 @@
             <button md-fab color="none" (click)="addM()" [disabled]="!shipService.isUnlocked()" class="add-button"><md-icon>add</md-icon></button>
         </md-grid-tile>
     </md-grid-list>
+    <div class="horizontal-line"></div>
     <md-grid-list [cols]="cols | async" gutterSize="16px" rowHeight="300px" class="ships-large">
         <md-grid-tile *ngFor="let s of filterSize('L')">
             <ship-card [ship]=s>

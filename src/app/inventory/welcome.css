@@ -1,0 +1,84 @@
+.container {
+    margin-left: -24px;
+    max-width: 10000px;
+}
+
+.content {
+    padding: 24px;
+    text-align: center;
+}
+
+.inventory {
+    background-image: url("~/assets/images/inventory.png");
+    width: 600px;
+    height: 117px;
+    margin: 20px;
+}
+
+.simulation {
+    background-image: url("~/assets/images/simulation.png");
+    width: 600px;
+    height: 117px;
+    margin: 20px;
+}
+
+.add-button {
+    background-image: url("~/assets/images/add-button.png");
+    width: 35px;
+    height: 35px;
+    float: left;
+    margin-top: -5px;
+    margin-left: 10px;
+}
+
+.card-corner {
+    position: absolute;
+    width: 100%;
+}
+
+.card-corner::before {
+    left: 0px;
+}
+
+.card-corner::after {
+    right: 0px;
+}
+
+.card-corner-top {
+    top: 0px;
+}
+
+.card-corner-top::before {
+    border-width: 1px 0 0 1px;
+}
+
+.card-corner-top::after {
+    border-width: 1px 1px 0 0;
+}
+
+.card-corner::before,
+.card-corner::after {
+    top: 0;
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-color: #00edff;
+    border-style: solid;
+}
+
+.card-corner-bottom {
+    bottom: 9px;
+}
+
+.card-corner-bottom::before {
+    border-width: 0 0 1px 1px;
+}
+
+.card-corner-bottom::after {
+    border-width: 0 1px 1px 0;
+}
+
+.link {
+    color: #00edff;
+}

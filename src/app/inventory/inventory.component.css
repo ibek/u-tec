@@ -19,6 +19,14 @@
     padding: 0px;
 }
 
+.horizontal-line {
+    content: ' ';
+    background-color: #0c67a1;
+    width: auto;
+    height: 1px;
+    margin: 10px;
+}
+
 .card-content {
     padding: 24px;
 }

@@ -237,3 +237,9 @@
     background: rgba(6, 70, 102, 0.8) !important;
     color: #99e3f5;
 }
+
+/deep/ snack-bar-container {
+    background: rgba(6, 70, 102, 0.8) !important;
+    color: #99e3f5;
+    max-width: none !important;
+}

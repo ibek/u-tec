@@ -4,15 +4,15 @@
     left: 0px;
     right: 0px;
     bottom: 0px;
-    padding-top: 64px;
     background: url("~/assets/images/inventory-bg.jpg") repeat;
+    overflow: hidden;
 }
 
 .background {
     background: url("~/assets/images/grid-bg.png") repeat center top;
     background-color: rgba(6, 70, 102, 0.2);
     height: 100%;
-    padding: 30px;
+    padding-top: 30px;
 }
 
 .ship-card {

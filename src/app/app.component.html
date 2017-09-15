@@ -43,7 +43,7 @@
           Inventory
         </button>
         <button md-raised-button color="primary" routerLink="/simulator" routerLinkActive="simulatorActive" (click)="simulator()"
-              class="button primary-button" skipLocationChange>
+              class="button primary-button" skipLocationChange [disabled]="!shipService.isReady()">
           Simulate
           <i class="material-icons">play_circle_outline</i>
         </button>

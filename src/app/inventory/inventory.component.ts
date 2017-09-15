@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ObservableMedia } from '@angular/flex-layout';
 import { Observable } from "rxjs/Observable";
 import { Router, ActivatedRoute } from '@angular/router';
+import { MdSnackBar } from '@angular/material';
 
 import { Ship, ShipData, TacticalPlan } from '../data-model';
 import { ShipService } from '../ship.service';
@@ -18,7 +19,8 @@ export class InventoryComponent implements OnInit {
     shipsMedium;
     shipsLarge;
 
-    constructor(private shipService: ShipService, private observableMedia: ObservableMedia, private route: ActivatedRoute, private router: Router) {
+    constructor(private shipService: ShipService, private observableMedia: ObservableMedia,
+        private route: ActivatedRoute, private router: Router, public snackBar: MdSnackBar) {
 
     }
 
@@ -56,6 +58,15 @@ export class InventoryComponent implements OnInit {
                         return this.cols = Observable.of(7);
                 }
             });
+
+        setTimeout(() => {
+            if (!this.shipService.isReady()) {
+                this.snackBar.openFromComponent(WelcomeComponent, {
+                    duration: 0,
+                });
+            }
+        }, 1000);
+
     }
 
     filterSize(size: string) {
@@ -80,5 +91,18 @@ export class InventoryComponent implements OnInit {
 
     addL() {
         this.router.navigate(["inventory/add-ship/L"], this.shipService.getNavigationExtras());
+    }
+}
+
+@Component({
+    selector: 'welcome',
+    templateUrl: 'welcome.html',
+    styleUrls: ['welcome.css'],
+})
+export class WelcomeComponent {
+    constructor(public mdsnack: MdSnackBar) { }
+
+    close() {
+        this.mdsnack.dismiss();
     }
 }
