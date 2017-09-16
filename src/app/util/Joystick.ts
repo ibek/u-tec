@@ -16,15 +16,16 @@ export class Joystick {
     pressed = false;
     touchIdx = null;
     visible = false;
+    added = false;
 
     constructor() {
         this.baseEl = this.buildJoystickBase();
         this.stickEl = this.buildJoystickStick();
-        this.container.appendChild(this.baseEl);
         this.baseEl.style.position = "absolute";
+        this.baseEl.style.zIndex = "5";
         this.baseEl.style.display = "none";
-        this.container.appendChild(this.stickEl);
         this.stickEl.style.position = "absolute";
+        this.stickEl.style.zIndex = "5";
         this.stickEl.style.display = "none";
 
         this.container.addEventListener('touchstart', this.onTouchStart, false);
@@ -55,6 +56,12 @@ export class Joystick {
     show() {
         this.baseEl.style.display = "";
         this.visible = true;
+        if (!this.added) {
+            this.added = true;
+            var c = document.getElementById("container");
+            c.appendChild(this.baseEl);
+            c.appendChild(this.stickEl);
+        }
     }
 
     hide() {

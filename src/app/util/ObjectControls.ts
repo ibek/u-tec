@@ -184,9 +184,12 @@ export class ObjectControls {
         var intersects = raycaster.intersectObjects(this.objects, true);
 
         if (!this.simulator.rotation && this.selected && this.shipService.isUnlocked() && intersects.length > 0) {
-            this.setFocus(intersects[0].object);
-            this.projectionMap.position.y = this.selected.parent.position.y;
-            this.onclick();
+            var obj = intersects[0].object;
+            if (this.selected == obj) {
+                this.setFocus(obj);
+                this.projectionMap.position.y = this.selected.parent.position.y;
+                this.onclick();
+            }
         } else if (!this.simulator.rotation && this.selectedObjects.length > 0 && this.shipService.isUnlocked() && intersects.length > 0 && this.selectedObjects.includes(intersects[0].object)) {
             this.multifocus = true;
             this.multiSelectedObj = intersects[0].object;
@@ -484,7 +487,7 @@ export class ObjectControls {
     }
 
     private onDocumentMouseWheel = (event) => {
-        if (!this.router.url.startsWith("/simulator")) {
+        if (!this.router.url.startsWith("/simulator") || !this.enabled) {
             return;
         }
         event.preventDefault();

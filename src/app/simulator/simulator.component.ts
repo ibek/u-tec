@@ -258,10 +258,14 @@ export class SimulatorComponent implements AfterViewInit {
         var userData = this.controls.selected.parent.userData;
         this.selectedShip = userData.shipModel;
         this.selectedShipInstance = userData.shipData.instances[userData.id];
+        this.joystick.hide();
+        this.controls.enabled = false;
         this.shipInfoBar.toggle();
     }
 
     onCloseShipInfo() {
+        this.controls.enabled = true;
+        this.joystick.show();
         this.controls.hideSelected();
     }
 
