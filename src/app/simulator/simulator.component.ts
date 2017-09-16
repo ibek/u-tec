@@ -276,7 +276,12 @@ export class SimulatorComponent implements AfterViewInit {
         var a: any = document.createElement("a");
         a.href = imgData.replace('image/png', 'image/octet-stream');
         a.download = "tactical-plan.png";
-        a.click();
+        var clickEvent = new MouseEvent("click", {
+            "view": window,
+            "bubbles": true,
+            "cancelable": false
+        });
+        a.dispatchEvent(clickEvent);
     }
 
     toggleFullscreen() {
@@ -351,6 +356,7 @@ export class SimulatorComponent implements AfterViewInit {
             this.controls.selected.rotation.set(-Math.PI / 2, Math.PI, 0);
             this.controls.selected.parent.rotation.set(0, 0, 0);
         }
+        this.controls.saveRotation();
         this.shipService.updateTacticalPlan();
     }
 

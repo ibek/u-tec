@@ -8,10 +8,11 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 import { AppComponent, LockDialogComponent } from './app.component';
-import { InventoryComponent, WelcomeComponent } from './inventory/inventory.component';
+import { InventoryComponent } from './inventory/inventory.component';
 import { ShipCardComponent } from './inventory/ship-card.component';
 import { AddShipComponent } from './inventory/add-ship.component';
 import { SimulatorComponent, CrewDialogComponent, ControlsDialogComponent } from './simulator/simulator.component';
+import { WelcomeComponent } from './welcome.component';
 
 import { SceneService } from './scene.service';
 import { ShipService } from './ship.service';
@@ -61,8 +62,7 @@ export const environment = {
   entryComponents: [
     LockDialogComponent,
     CrewDialogComponent,
-    ControlsDialogComponent,
-    WelcomeComponent
+    ControlsDialogComponent
   ],
   providers: [{
     provide: LocationStrategy,

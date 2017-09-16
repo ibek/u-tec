@@ -299,7 +299,7 @@ export class ObjectControls {
                 ids.push(id);
                 if (!this.selectedBoxes.has(id)) {
                     var size = new THREE.Box3().setFromObject(o).getSize();
-                    var color = (o.parent.userData.shipData.instances[o.parent.userData.id].enemy)?0xdd0000:0x00dddd;
+                    var color = (o.parent.userData.shipData.instances[o.parent.userData.id].enemy) ? 0xdd0000 : 0x00dddd;
                     var boxHelper: any = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxBufferGeometry(size.x, size.y, size.z), 1), new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.3, linewidth: 1 }));
                     boxHelper.position.set(o.parent.position.x, o.parent.position.y, o.parent.position.z);
                     this.scene.add(boxHelper);
@@ -323,7 +323,7 @@ export class ObjectControls {
                 var id = this.selected.parent.name + "" + this.selected.parent.userData.id;
                 if (!this.selectedBoxes.has(id)) {
                     var size = new THREE.Box3().setFromObject(this.selected).getSize();
-                    var color = (this.selected.parent.userData.shipData.instances[this.selected.parent.userData.id].enemy)?0xdd0000:0x00dddd;
+                    var color = (this.selected.parent.userData.shipData.instances[this.selected.parent.userData.id].enemy) ? 0xdd0000 : 0x00dddd;
                     var boxHelper = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxBufferGeometry(size.x, size.y, size.z), 1), new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.3, linewidth: 1 }));
                     boxHelper.position.set(this.selected.parent.position.x, this.selected.parent.position.y, this.selected.parent.position.z);
                     this.scene.add(boxHelper);
@@ -390,37 +390,41 @@ export class ObjectControls {
         }
     }
 
+    saveRotation() {
+        if (this.selectedObjects.length > 0) {
+            this.selectedObjects.forEach(o => {
+                var userData = o.parent.userData;
+                var x = Math.round(o.parent.rotation.x * 1000) / 1000;
+                o.parent.rotation.x = x;
+                userData.shipData.instances[userData.id].rotation.x = x;
+                var y = Math.round(o.parent.rotation.y * 1000) / 1000;
+                o.parent.rotation.y = y;
+                userData.shipData.instances[userData.id].rotation.y = y;
+                var z = Math.round(o.parent.rotation.z * 1000) / 1000;
+                o.parent.rotation.z = z;
+                userData.shipData.instances[userData.id].rotation.z = z;
+            });
+        } else if (this.selected) {
+            var userData = this.selected.parent.userData;
+            var x = Math.round(this.selected.parent.rotation.x * 1000) / 1000;
+            this.selected.parent.rotation.x = x;
+            userData.shipData.instances[userData.id].rotation.x = x;
+            var y = Math.round(this.selected.parent.rotation.y * 1000) / 1000;
+            this.selected.parent.rotation.y = y;
+            userData.shipData.instances[userData.id].rotation.y = y;
+            var z = Math.round(this.selected.parent.rotation.z * 1000) / 1000;
+            this.selected.parent.rotation.z = z;
+            userData.shipData.instances[userData.id].rotation.z = z;
+        }
+    }
+
     private onContainerMouseUp = (event) => {
         event.preventDefault();
         this.down = false;
 
         if (this.simulator.rotation) {
             this.simulator.rotation = false;
-            if (this.selectedObjects.length > 0) {
-                this.selectedObjects.forEach(o => {
-                    var userData = o.parent.userData;
-                    var x = Math.round(o.parent.rotation.x * 1000) / 1000;
-                    o.parent.rotation.x = x;
-                    userData.shipData.instances[userData.id].rotation.x = x;
-                    var y = Math.round(o.parent.rotation.y * 1000) / 1000;
-                    o.parent.rotation.y = y;
-                    userData.shipData.instances[userData.id].rotation.y = y;
-                    var z = Math.round(o.parent.rotation.z * 1000) / 1000;
-                    o.parent.rotation.z = z;
-                    userData.shipData.instances[userData.id].rotation.z = z;
-                });
-            } else if (this.selected) {
-                var userData = this.selected.parent.userData;
-                var x = Math.round(this.selected.parent.rotation.x * 1000) / 1000;
-                this.selected.parent.rotation.x = x;
-                userData.shipData.instances[userData.id].rotation.x = x;
-                var y = Math.round(this.selected.parent.rotation.y * 1000) / 1000;
-                this.selected.parent.rotation.y = y;
-                userData.shipData.instances[userData.id].rotation.y = y;
-                var z = Math.round(this.selected.parent.rotation.z * 1000) / 1000;
-                this.selected.parent.rotation.z = z;
-                userData.shipData.instances[userData.id].rotation.z = z;
-            }
+            this.saveRotation();
             this.mouseup();
             this.hideSelected();
         } else if (this.focused) {

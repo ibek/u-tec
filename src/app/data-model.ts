@@ -8,6 +8,7 @@ export class TacticalPlan {
     passwordHash: string = null;
     players: string[] = ["?"];
     updated: string = null; // date yyyy/mm/dd
+    viewed: string = null; // date yyyy/mm/dd
 
     verify(shipService: ShipService) {
         if (this.passwordHash == undefined) {
@@ -18,6 +19,9 @@ export class TacticalPlan {
         }
         if (this.updated == undefined) {
             this.updated = null;
+        }
+        if (this.viewed == undefined) {
+            this.viewed = null;
         }
 
         this.ships.forEach(s => {
@@ -52,6 +56,7 @@ export class TacticalPlan {
         this.passwordHash = tacticalPlan.passwordHash;
         this.players = tacticalPlan.players;
         this.updated = tacticalPlan.updated;
+        this.viewed = tacticalPlan.viewed;
 
         let tl = (tacticalPlan && tacticalPlan.ships) ? tacticalPlan.ships.length : 0;
         var diff = this.ships.length - tl;

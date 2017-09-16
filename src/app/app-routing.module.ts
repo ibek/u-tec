@@ -4,9 +4,11 @@ import { RouterModule, Routes } from '@angular/router';
 import { InventoryComponent } from './inventory/inventory.component';
 import { AddShipComponent } from './inventory/add-ship.component';
 import { SimulatorComponent } from './simulator/simulator.component';
+import { WelcomeComponent } from './welcome.component';
 
 const routes: Routes = [
-    { path: '', redirectTo: '/inventory', pathMatch: 'full' },
+    { path: '', redirectTo: '/welcome', pathMatch: 'full' },
+    { path: 'welcome', component: WelcomeComponent },
     {
         path: 'inventory',
         children: [
@@ -20,6 +22,7 @@ const routes: Routes = [
             }
         ]
     },
+    { path: 'welcome', component: WelcomeComponent },
     { path: 'simulator', component: SimulatorComponent },
     { path: '**', component: InventoryComponent }
 ];

@@ -4,6 +4,7 @@
 
 .main {
   background: url("~/assets/images/inventory-bg.jpg") repeat;
+  min-width: 700px;
 }
 
 .toolbar {
@@ -32,13 +33,15 @@
     padding-top: 64px;
     background: url("~/assets/images/grid-bg.png") repeat center top;
     background-color: rgba(6, 70, 102, 0.2);
+    min-width: 700px;
 }
 
 .title {
     overflow: hidden;
     color: #80CADC;
-    cursor: default;
     padding-top: 10px;
+    font: 24px/30px Electrolize;
+    text-decoration: none;
 }
 
 .toolbar-left {
@@ -242,4 +245,26 @@
     background: rgba(6, 70, 102, 0.8) !important;
     color: #99e3f5;
     max-width: none !important;
+}
+
+/deep/ .mat-select-content {
+    background: rgba(6, 70, 102, 0.8) !important;
+    color: #99e3f5;
+}
+
+/deep/ .mat-button, 
+/deep/ .mat-raised-button, 
+/deep/ .mat-icon-button {
+    font: 20px/24px Electrolize;
+}
+
+/deep/ .mat-card,
+/deep/ .mat-list-item,
+/deep/ .mat-slide-toggle-content,
+/deep/ .mat-menu-item,
+/deep/ .mat-option,
+/deep/ .mat-select,
+/deep/ .mat-dialog-title,
+/deep/ .mat-tooltip {
+    font: 16px/20px Electrolize;
 }

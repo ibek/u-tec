@@ -6,6 +6,9 @@ import { TacticalPlan, ShipData, Ship } from './data-model';
 import { SceneService } from './scene.service';
 
 import { AngularFireDatabase, FirebaseObjectObservable, FirebaseListObservable } from 'angularfire2/database';
+import * as sha256 from 'crypto-js/sha256';
+import * as hmacSHA512 from 'crypto-js/hmac-sha512';
+import * as Base64 from 'crypto-js/enc-base64';
 
 var list = require('../assets/ships/list.json');
 
@@ -53,6 +56,11 @@ export class ShipService {
             this.tacticalPlan.update(item[0], scope, (shipName) => {
                 this.sceneService.removeShipModelFor(shipName);
             });
+            if (this.tacticalPlan.viewed !== this._getToday()) {
+                this.tacticalPlan.viewed = this._getToday();
+                this.updateTacticalPlan();
+                return;
+            }
             this.tacticalPlan.ships.forEach(ship => {
                 var shipModel = this.getModel(ship.name);
                 this.sceneService.addShipModelFor(this.getModel3d(shipModel), ship, shipModel);
@@ -96,6 +104,7 @@ export class ShipService {
             if (!this.plans) {
                 this.plans = this.db.list('/tactical-plans');
                 this.tacticalPlan.updated = this._getToday();
+                this.tacticalPlan.viewed = this._getToday();
                 this.plans.push(this.tacticalPlan).then(item => {
                     this.id = item.key;
                     this.ready = true;
@@ -159,7 +168,7 @@ export class ShipService {
 
     setPassword(password: string) {
         if (this.tacticalPlan.passwordHash == null) {
-            this.tacticalPlan.passwordHash = btoa(password);
+            this.tacticalPlan.passwordHash = Base64.stringify(hmacSHA512(sha256(password), password));
             this.passwordHash = this.tacticalPlan.passwordHash;
             this.updateTacticalPlan();
         }

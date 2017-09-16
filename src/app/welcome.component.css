@@ -1,6 +1,15 @@
+.border {
+    padding: 20px;
+}
+
 .container {
-    margin-left: -24px;
-    max-width: 10000px;
+    padding: 0px;
+    background: rgba(6, 70, 102, 0.4);
+    color: #99e3f5;
+    margin: 0;
+    margin-left: 20px;
+    margin-right: 20px;
+    min-width: 660px;
 }
 
 .content {
