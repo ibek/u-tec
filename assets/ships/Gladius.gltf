@@ -5,7 +5,7 @@
             "componentType" : 5123, 
             "count" : 97425, 
             "max" : [
-                37359
+                32080
             ], 
             "min" : [
                 0
@@ -15,7 +15,7 @@
         {
             "bufferView" : 1, 
             "componentType" : 5126, 
-            "count" : 37360, 
+            "count" : 32081, 
             "max" : [
                 847.6830444335938, 
                 987.5797119140625, 
@@ -31,7 +31,7 @@
         {
             "bufferView" : 2, 
             "componentType" : 5126, 
-            "count" : 37360, 
+            "count" : 32081, 
             "max" : [
                 1.0, 
                 1.0, 
@@ -47,17 +47,17 @@
         {
             "bufferView" : 3, 
             "componentType" : 5126, 
-            "count" : 37360, 
+            "count" : 32081, 
             "max" : [
-                1.0, 
-                1.0, 
-                1.0, 
+                0.9999986886978149, 
+                0.999994158744812, 
+                0.9999980926513672, 
                 1.0
             ], 
             "min" : [
-                -1.0, 
-                -1.0, 
-                -1.0, 
+                -0.9893591403961182, 
+                -0.9999731779098511, 
+                -0.9998688697814941, 
                 1.0
             ], 
             "type" : "VEC4"
@@ -65,14 +65,14 @@
         {
             "bufferView" : 4, 
             "componentType" : 5126, 
-            "count" : 37360, 
+            "count" : 32081, 
             "max" : [
-                8.19287109375, 
-                8.46533203125
+                0.7312536239624023, 
+                0.7328549325466156
             ], 
             "min" : [
-                -7.46533203125, 
-                -7.19287109375
+                0.2709103226661682, 
+                0.397499680519104
             ], 
             "type" : "VEC2"
         }
@@ -90,32 +90,32 @@
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 448320, 
+            "byteLength" : 384972, 
             "byteOffset" : 194852, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 448320, 
-            "byteOffset" : 643172, 
+            "byteLength" : 384972, 
+            "byteOffset" : 579824, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 597760, 
-            "byteOffset" : 1091492, 
+            "byteLength" : 513296, 
+            "byteOffset" : 964796, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 298880, 
-            "byteOffset" : 1689252, 
+            "byteLength" : 256648, 
+            "byteOffset" : 1478092, 
             "target" : 34962
         }
     ], 
     "buffers" : [
         {
-            "byteLength" : 1988132, 
+            "byteLength" : 1734740, 
             "uri" : "Gladius.bin"
         }
     ], 

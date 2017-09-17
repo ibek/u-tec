@@ -5,7 +5,7 @@
             "componentType" : 5123, 
             "count" : 97974, 
             "max" : [
-                46117
+                40205
             ], 
             "min" : [
                 0
@@ -15,7 +15,7 @@
         {
             "bufferView" : 1, 
             "componentType" : 5126, 
-            "count" : 46118, 
+            "count" : 40206, 
             "max" : [
                 474.57366943359375, 
                 892.757080078125, 
@@ -31,7 +31,7 @@
         {
             "bufferView" : 2, 
             "componentType" : 5126, 
-            "count" : 46118, 
+            "count" : 40206, 
             "max" : [
                 1.0, 
                 1.0, 
@@ -47,17 +47,17 @@
         {
             "bufferView" : 3, 
             "componentType" : 5126, 
-            "count" : 46118, 
+            "count" : 40206, 
             "max" : [
-                1.0, 
-                0.9999990463256836, 
-                0.9999997615814209, 
+                0.9882134199142456, 
+                0.9999810457229614, 
+                0.9999369978904724, 
                 1.0
             ], 
             "min" : [
-                -0.9999999403953552, 
-                -0.9999992251396179, 
-                -0.9999995827674866, 
+                -0.999978244304657, 
+                -0.9999990463256836, 
+                -0.9999087452888489, 
                 1.0
             ], 
             "type" : "VEC4"
@@ -65,14 +65,14 @@
         {
             "bufferView" : 4, 
             "componentType" : 5126, 
-            "count" : 46118, 
+            "count" : 40206, 
             "max" : [
-                2.0, 
-                1.0
+                0.5058174729347229, 
+                0.8035271763801575
             ], 
             "min" : [
-                -1.0, 
-                -9.333251953125
+                0.3504182994365692, 
+                0.3741963505744934
             ], 
             "type" : "VEC2"
         }
@@ -90,32 +90,32 @@
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 553416, 
+            "byteLength" : 482472, 
             "byteOffset" : 195948, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 553416, 
-            "byteOffset" : 749364, 
+            "byteLength" : 482472, 
+            "byteOffset" : 678420, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 737888, 
-            "byteOffset" : 1302780, 
+            "byteLength" : 643296, 
+            "byteOffset" : 1160892, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 368944, 
-            "byteOffset" : 2040668, 
+            "byteLength" : 321648, 
+            "byteOffset" : 1804188, 
             "target" : 34962
         }
     ], 
     "buffers" : [
         {
-            "byteLength" : 2409612, 
+            "byteLength" : 2125836, 
             "uri" : "Reliant Kore.bin"
         }
     ], 

@@ -5,7 +5,7 @@
             "componentType" : 5123, 
             "count" : 119112, 
             "max" : [
-                43188
+                50174
             ], 
             "min" : [
                 0
@@ -15,7 +15,7 @@
         {
             "bufferView" : 1, 
             "componentType" : 5126, 
-            "count" : 43189, 
+            "count" : 50175, 
             "max" : [
                 1307.2374267578125, 
                 1785.8399658203125, 
@@ -31,7 +31,7 @@
         {
             "bufferView" : 2, 
             "componentType" : 5126, 
-            "count" : 43189, 
+            "count" : 50175, 
             "max" : [
                 1.0, 
                 1.0, 
@@ -47,17 +47,17 @@
         {
             "bufferView" : 3, 
             "componentType" : 5126, 
-            "count" : 43189, 
+            "count" : 50175, 
             "max" : [
                 1.0, 
-                0.0, 
-                -0.0, 
+                0.9998258948326111, 
+                0.9991858601570129, 
                 1.0
             ], 
             "min" : [
-                1.0, 
-                0.0, 
-                -0.0, 
+                -0.9943621158599854, 
+                -0.9999999403953552, 
+                -0.9992825984954834, 
                 1.0
             ], 
             "type" : "VEC4"
@@ -65,14 +65,14 @@
         {
             "bufferView" : 4, 
             "componentType" : 5126, 
-            "count" : 43189, 
+            "count" : 50175, 
             "max" : [
-                0.0, 
-                1.0
+                0.8943533897399902, 
+                0.7951948046684265
             ], 
             "min" : [
-                0.0, 
-                1.0
+                0.10401526093482971, 
+                0.36846625804901123
             ], 
             "type" : "VEC2"
         }
@@ -90,32 +90,32 @@
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 518268, 
+            "byteLength" : 602100, 
             "byteOffset" : 238224, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 518268, 
-            "byteOffset" : 756492, 
+            "byteLength" : 602100, 
+            "byteOffset" : 840324, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 691024, 
-            "byteOffset" : 1274760, 
+            "byteLength" : 802800, 
+            "byteOffset" : 1442424, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 345512, 
-            "byteOffset" : 1965784, 
+            "byteLength" : 401400, 
+            "byteOffset" : 2245224, 
             "target" : 34962
         }
     ], 
     "buffers" : [
         {
-            "byteLength" : 2311296, 
+            "byteLength" : 2646624, 
             "uri" : "Cutlass Black.bin"
         }
     ], 
@@ -133,7 +133,7 @@
     ], 
     "meshes" : [
         {
-            "name" : "cutlass Black", 
+            "name" : "cutlass", 
             "primitives" : [
                 {
                     "attributes" : {
@@ -177,7 +177,7 @@
         }, 
         {
             "mesh" : 0, 
-            "name" : "cutlass Black", 
+            "name" : "cutlass", 
             "rotation" : [
                 0.7071068286895752, 
                 0.0, 

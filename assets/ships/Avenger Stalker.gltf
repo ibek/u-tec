@@ -5,7 +5,7 @@
             "componentType" : 5123, 
             "count" : 107145, 
             "max" : [
-                40447
+                35095
             ], 
             "min" : [
                 0
@@ -15,7 +15,7 @@
         {
             "bufferView" : 1, 
             "componentType" : 5126, 
-            "count" : 40448, 
+            "count" : 35096, 
             "max" : [
                 69.96967315673828, 
                 95.25554656982422, 
@@ -31,7 +31,7 @@
         {
             "bufferView" : 2, 
             "componentType" : 5126, 
-            "count" : 40448, 
+            "count" : 35096, 
             "max" : [
                 1.0, 
                 1.0, 
@@ -47,17 +47,17 @@
         {
             "bufferView" : 3, 
             "componentType" : 5126, 
-            "count" : 40448, 
+            "count" : 35096, 
             "max" : [
-                1.0, 
-                1.0, 
-                1.0, 
+                0.9999990463256836, 
+                0.9999962449073792, 
+                0.9997720718383789, 
                 1.0
             ], 
             "min" : [
-                -1.0, 
-                -1.0, 
-                -1.0, 
+                -0.9420522451400757, 
+                -0.9998983144760132, 
+                -0.9998735189437866, 
                 1.0
             ], 
             "type" : "VEC4"
@@ -65,14 +65,14 @@
         {
             "bufferView" : 4, 
             "componentType" : 5126, 
-            "count" : 40448, 
+            "count" : 35096, 
             "max" : [
-                3.22021484375, 
-                3.44775390625
+                0.7885543704032898, 
+                0.6482991278171539
             ], 
             "min" : [
-                -4.2275390625, 
-                -2.2314453125
+                0.22222581505775452, 
+                0.43398380279541016
             ], 
             "type" : "VEC2"
         }
@@ -90,32 +90,32 @@
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 485376, 
+            "byteLength" : 421152, 
             "byteOffset" : 214292, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 485376, 
-            "byteOffset" : 699668, 
+            "byteLength" : 421152, 
+            "byteOffset" : 635444, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 647168, 
-            "byteOffset" : 1185044, 
+            "byteLength" : 561536, 
+            "byteOffset" : 1056596, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 323584, 
-            "byteOffset" : 1832212, 
+            "byteLength" : 280768, 
+            "byteOffset" : 1618132, 
             "target" : 34962
         }
     ], 
     "buffers" : [
         {
-            "byteLength" : 2155796, 
+            "byteLength" : 1898900, 
             "uri" : "Avenger Stalker.bin"
         }
     ], 

@@ -5,7 +5,7 @@
             "componentType" : 5123, 
             "count" : 93177, 
             "max" : [
-                52707
+                44738
             ], 
             "min" : [
                 0
@@ -15,7 +15,7 @@
         {
             "bufferView" : 1, 
             "componentType" : 5126, 
-            "count" : 52708, 
+            "count" : 44739, 
             "max" : [
                 1313.4901123046875, 
                 3040.363525390625, 
@@ -31,7 +31,7 @@
         {
             "bufferView" : 2, 
             "componentType" : 5126, 
-            "count" : 52708, 
+            "count" : 44739, 
             "max" : [
                 1.0, 
                 1.0, 
@@ -47,17 +47,17 @@
         {
             "bufferView" : 3, 
             "componentType" : 5126, 
-            "count" : 52708, 
+            "count" : 44739, 
             "max" : [
-                1.0, 
-                1.0, 
-                1.0, 
+                0.9999952912330627, 
+                0.999966025352478, 
+                0.9990947842597961, 
                 1.0
             ], 
             "min" : [
-                -1.0, 
-                -1.0, 
-                -1.0, 
+                -0.9173845052719116, 
+                -0.9997826218605042, 
+                -0.9997437000274658, 
                 1.0
             ], 
             "type" : "VEC4"
@@ -65,14 +65,14 @@
         {
             "bufferView" : 4, 
             "componentType" : 5126, 
-            "count" : 52708, 
+            "count" : 44739, 
             "max" : [
-                572.32568359375, 
-                134.57373046875
+                0.7114220261573792, 
+                0.8700115382671356
             ], 
             "min" : [
-                -10.872802734375, 
-                -8.31689453125
+                0.3767121434211731, 
+                0.3267567753791809
             ], 
             "type" : "VEC2"
         }
@@ -90,32 +90,32 @@
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 632496, 
+            "byteLength" : 536868, 
             "byteOffset" : 186356, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 632496, 
-            "byteOffset" : 818852, 
+            "byteLength" : 536868, 
+            "byteOffset" : 723224, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 843328, 
-            "byteOffset" : 1451348, 
+            "byteLength" : 715824, 
+            "byteOffset" : 1260092, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 421664, 
-            "byteOffset" : 2294676, 
+            "byteLength" : 357912, 
+            "byteOffset" : 1975916, 
             "target" : 34962
         }
     ], 
     "buffers" : [
         {
-            "byteLength" : 2716340, 
+            "byteLength" : 2333828, 
             "uri" : "Constellation Andromeda.bin"
         }
     ], 

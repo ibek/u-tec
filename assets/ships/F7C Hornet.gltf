@@ -3,9 +3,9 @@
         {
             "bufferView" : 0, 
             "componentType" : 5123, 
-            "count" : 102384, 
+            "count" : 87063, 
             "max" : [
-                49172
+                42701
             ], 
             "min" : [
                 0
@@ -15,7 +15,7 @@
         {
             "bufferView" : 1, 
             "componentType" : 5126, 
-            "count" : 49173, 
+            "count" : 42702, 
             "max" : [
                 1088.658935546875, 
                 1129.2015380859375, 
@@ -31,7 +31,7 @@
         {
             "bufferView" : 2, 
             "componentType" : 5126, 
-            "count" : 49173, 
+            "count" : 42702, 
             "max" : [
                 1.0, 
                 1.0, 
@@ -47,17 +47,17 @@
         {
             "bufferView" : 3, 
             "componentType" : 5126, 
-            "count" : 49173, 
+            "count" : 42702, 
             "max" : [
                 1.0, 
-                1.0, 
-                1.0, 
+                0.9533329010009766, 
+                0.9999993443489075, 
                 1.0
             ], 
             "min" : [
-                -1.0, 
-                -1.0, 
-                -1.0, 
+                -0.9331275224685669, 
+                -0.954059362411499, 
+                -0.9999998807907104, 
                 1.0
             ], 
             "type" : "VEC4"
@@ -65,14 +65,14 @@
         {
             "bufferView" : 4, 
             "componentType" : 5126, 
-            "count" : 49173, 
+            "count" : 42702, 
             "max" : [
-                2.9951171875, 
-                3.265625
+                0.714773952960968, 
+                0.7609725743532181
             ], 
             "min" : [
-                -2.391845703125, 
-                -1.98974609375
+                0.28634774684906006, 
+                0.28250133991241455
             ], 
             "type" : "VEC2"
         }
@@ -84,38 +84,38 @@
     "bufferViews" : [
         {
             "buffer" : 0, 
-            "byteLength" : 204768, 
+            "byteLength" : 174126, 
             "byteOffset" : 0, 
             "target" : 34963
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 590076, 
-            "byteOffset" : 204768, 
+            "byteLength" : 512424, 
+            "byteOffset" : 174128, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 590076, 
-            "byteOffset" : 794844, 
+            "byteLength" : 512424, 
+            "byteOffset" : 686552, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 786768, 
-            "byteOffset" : 1384920, 
+            "byteLength" : 683232, 
+            "byteOffset" : 1198976, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 393384, 
-            "byteOffset" : 2171688, 
+            "byteLength" : 341616, 
+            "byteOffset" : 1882208, 
             "target" : 34962
         }
     ], 
     "buffers" : [
         {
-            "byteLength" : 2565072, 
+            "byteLength" : 2223824, 
             "uri" : "F7C Hornet.bin"
         }
     ], 
@@ -185,9 +185,9 @@
                 0.7071068286895752
             ], 
             "scale" : [
-                0.007390572223812342, 
-                0.007390572223812342, 
-                0.007390572223812342
+                0.0047644926235079765, 
+                0.0047644926235079765, 
+                0.0047644926235079765
             ]
         }, 
         {

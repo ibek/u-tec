@@ -5,7 +5,7 @@
             "componentType" : 5123, 
             "count" : 89751, 
             "max" : [
-                40234
+                37100
             ], 
             "min" : [
                 0
@@ -15,7 +15,7 @@
         {
             "bufferView" : 1, 
             "componentType" : 5126, 
-            "count" : 40235, 
+            "count" : 37101, 
             "max" : [
                 773.2874755859375, 
                 889.6768188476562, 
@@ -31,7 +31,7 @@
         {
             "bufferView" : 2, 
             "componentType" : 5126, 
-            "count" : 40235, 
+            "count" : 37101, 
             "max" : [
                 1.0, 
                 1.0, 
@@ -47,17 +47,17 @@
         {
             "bufferView" : 3, 
             "componentType" : 5126, 
-            "count" : 40235, 
+            "count" : 37101, 
             "max" : [
                 1.0, 
-                1.0, 
-                1.0, 
+                0.9942359328269958, 
+                0.9996085166931152, 
                 1.0
             ], 
             "min" : [
-                -1.0, 
-                -1.0, 
-                -1.0, 
+                -0.8617523908615112, 
+                -0.9873526096343994, 
+                -0.9994892477989197, 
                 1.0
             ], 
             "type" : "VEC4"
@@ -65,14 +65,14 @@
         {
             "bufferView" : 4, 
             "componentType" : 5126, 
-            "count" : 40235, 
+            "count" : 37101, 
             "max" : [
-                4.903076171875, 
-                3.2001953125
+                0.6791043877601624, 
+                0.6779739856719971
             ], 
             "min" : [
-                -5.5419921875, 
-                -4.153076171875
+                0.33618319034576416, 
+                0.38470369577407837
             ], 
             "type" : "VEC2"
         }
@@ -90,32 +90,32 @@
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 482820, 
+            "byteLength" : 445212, 
             "byteOffset" : 179504, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 482820, 
-            "byteOffset" : 662324, 
+            "byteLength" : 445212, 
+            "byteOffset" : 624716, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 643760, 
-            "byteOffset" : 1145144, 
+            "byteLength" : 593616, 
+            "byteOffset" : 1069928, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 321880, 
-            "byteOffset" : 1788904, 
+            "byteLength" : 296808, 
+            "byteOffset" : 1663544, 
             "target" : 34962
         }
     ], 
     "buffers" : [
         {
-            "byteLength" : 2110784, 
+            "byteLength" : 1960352, 
             "uri" : "Mustang Alpha.bin"
         }
     ], 

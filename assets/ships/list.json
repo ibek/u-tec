@@ -4,7 +4,7 @@
             "name": "F7C Hornet",
             "role": "Fighter",
             "size": "S",
-            "scale": 0.003,
+            "scale": 0.004,
             "maxcrew": 1,
             "cargo": 13
         },
@@ -12,7 +12,7 @@
             "name": "Caterpillar",
             "role": "Cargo",
             "size": "M",
-            "scale": 0.0025,
+            "scale": 0.003,
             "maxcrew": 5,
             "cargo": 512
         },
@@ -20,7 +20,7 @@
             "name": "Reclaimer",
             "role": "Salvage",
             "size": "L",
-            "scale": 0.003,
+            "scale": 0.0025,
             "maxcrew": 5,
             "cargo": 6555
         },
@@ -28,7 +28,7 @@
             "name": "Aurora LN",
             "role": "Fighter",
             "size": "S",
-            "scale": 0.003,
+            "scale": 0.005,
             "maxcrew": 1,
             "cargo": 13
         },
@@ -36,7 +36,7 @@
             "name": "Sabre",
             "role": "Fighter",
             "size": "S",
-            "scale": 0.003,
+            "scale": 0.004,
             "maxcrew": 1,
             "cargo": 0
         },
@@ -44,7 +44,7 @@
             "name": "Avenger Stalker",
             "role": "Bounty Hunter",
             "size": "S",
-            "scale": 0.03,
+            "scale": 0.05,
             "maxcrew": 1,
             "cargo": 4
         },
@@ -52,7 +52,7 @@
             "name": "Herald",
             "role": "Information Runner",
             "size": "S",
-            "scale": 0.003,
+            "scale": 0.005,
             "maxcrew": 2,
             "cargo": 0
         },
@@ -60,7 +60,7 @@
             "name": "Constellation Andromeda",
             "role": "Versatile",
             "size": "M",
-            "scale": 0.003,
+            "scale": 0.0035,
             "maxcrew": 5,
             "cargo": 134
         },
@@ -68,7 +68,7 @@
             "name": "Prospector",
             "role": "Mining",
             "size": "S",
-            "scale": 0.003,
+            "scale": 0.004,
             "maxcrew": 1,
             "cargo": 128
         },
@@ -76,7 +76,7 @@
             "name": "Gladius",
             "role": "Fighter",
             "size": "S",
-            "scale": 0.003,
+            "scale": 0.0045,
             "maxcrew": 1,
             "cargo": 0
         },
@@ -84,7 +84,7 @@
             "name": "Cutlass Black",
             "role": "Search & Rescue",
             "size": "M",
-            "scale": 0.003,
+            "scale": 0.0035,
             "maxcrew": 3,
             "cargo": 150
         },
@@ -92,7 +92,7 @@
             "name": "Constellation Aquila",
             "role": "Explorer",
             "size": "M",
-            "scale": 0.003,
+            "scale": 0.0035,
             "maxcrew": 4,
             "cargo": 134
         },
@@ -100,7 +100,7 @@
             "name": "Starfarer",
             "role": "Refuel",
             "size": "L",
-            "scale": 0.003,
+            "scale": 0.0035,
             "maxcrew": 7,
             "cargo": 3321
         },
@@ -108,7 +108,7 @@
             "name": "Crucible",
             "role": "Repair",
             "size": "L",
-            "scale": 0.25,
+            "scale": 0.3,
             "maxcrew": 4,
             "cargo": 300
         },
@@ -116,7 +116,7 @@
             "name": "P-52 Merlin",
             "role": "Fighter",
             "size": "S",
-            "scale": 0.003,
+            "scale": 0.008,
             "maxcrew": 1,
             "cargo": 0
         },
@@ -132,7 +132,7 @@
             "name": "Mustang Alpha",
             "role": "Personal Transport",
             "size": "S",
-            "scale": 0.003,
+            "scale": 0.005,
             "maxcrew": 1,
             "cargo": 0
         },
@@ -140,7 +140,7 @@
             "name": "Orion",
             "role": "Mining",
             "size": "L",
-            "scale": 0.3,
+            "scale": 0.25,
             "maxcrew": 6,
             "cargo": 216
         },
@@ -148,7 +148,7 @@
             "name": "Reliant Kore",
             "role": "Light Cargo",
             "size": "S",
-            "scale": 0.003,
+            "scale": 0.006,
             "maxcrew": 2,
             "cargo": 30
         },
@@ -156,8 +156,120 @@
             "name": "Vanguard Warden",
             "role": "Long-range Fighter",
             "size": "M",
-            "scale": 0.003,
+            "scale": 0.0035,
             "maxcrew": 2,
+            "cargo": 0
+        },
+        {
+            "name": "Genesis",
+            "role": "Passenger Transport",
+            "size": "L",
+            "scale": 0.65,
+            "maxcrew": 8,
+            "cargo": 403
+        },
+        {
+            "name": "Polaris",
+            "role": "Corvette",
+            "size": "L",
+            "scale": 0.0055,
+            "maxcrew": 24,
+            "cargo": 216
+        },
+        {
+            "name": "Buccaneer",
+            "role": "Interdiction",
+            "size": "S",
+            "scale": 0.006,
+            "maxcrew": 1,
+            "cargo": 0
+        },
+        {
+            "name": "Defender",
+            "role": "Escort Fighter",
+            "size": "M",
+            "scale": 0.0055,
+            "maxcrew": 2,
+            "cargo": 0
+        },
+        {
+            "name": "Eclipse",
+            "role": "Stealth Bomber",
+            "size": "S",
+            "scale": 0.004,
+            "maxcrew": 1,
+            "cargo": 0
+        },
+        {
+            "name": "Prowler",
+            "role": "Dropship",
+            "size": "M",
+            "scale": 0.005,
+            "maxcrew": 16,
+            "cargo": 0
+        },
+        {
+            "name": "Hull C",
+            "role": "Transport",
+            "size": "L",
+            "scale": 0.005,
+            "maxcrew": 3,
+            "cargo": 4608
+        },
+        {
+            "name": "Redeemer",
+            "role": "Gunship",
+            "size": "M",
+            "scale": 0.006,
+            "maxcrew": 9,
+            "cargo": 24
+        },
+        {
+            "name": "Gladiator",
+            "role": "Torpedo Bomber",
+            "size": "S",
+            "scale": 0.005,
+            "maxcrew": 2,
+            "cargo": 0
+        },
+        {
+            "name": "Retaliator Base",
+            "role": "Versatile Fighter",
+            "size": "L",
+            "scale": 0.005,
+            "maxcrew": 6,
+            "cargo": 128
+        },
+        {
+            "name": "MPUV Cargo",
+            "role": "Short-range Cargo",
+            "size": "S",
+            "scale": 0.008,
+            "maxcrew": 1,
+            "cargo": 2
+        },
+        {
+            "name": "Hurricane",
+            "role": "Heavy Fighter",
+            "size": "S",
+            "scale": 0.5,
+            "maxcrew": 2,
+            "cargo": 0
+        },
+        {
+            "name": "Glaive",
+            "role": "Medium Fighter",
+            "size": "M",
+            "scale": 0.005,
+            "maxcrew": 1,
+            "cargo": 0
+        },
+        {
+            "name": "Scythe",
+            "role": "Medium Fighter",
+            "size": "M",
+            "scale": 0.005,
+            "maxcrew": 1,
             "cargo": 0
         }
     ]

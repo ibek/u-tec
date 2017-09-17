@@ -5,7 +5,7 @@
             "componentType" : 5123, 
             "count" : 126588, 
             "max" : [
-                41988
+                49933
             ], 
             "min" : [
                 0
@@ -15,7 +15,7 @@
         {
             "bufferView" : 1, 
             "componentType" : 5126, 
-            "count" : 41989, 
+            "count" : 49934, 
             "max" : [
                 606.3361206054688, 
                 1175.5714111328125, 
@@ -31,7 +31,7 @@
         {
             "bufferView" : 2, 
             "componentType" : 5126, 
-            "count" : 41989, 
+            "count" : 49934, 
             "max" : [
                 1.0, 
                 1.0, 
@@ -43,6 +43,38 @@
                 -1.0
             ], 
             "type" : "VEC3"
+        }, 
+        {
+            "bufferView" : 3, 
+            "componentType" : 5126, 
+            "count" : 49934, 
+            "max" : [
+                1.0, 
+                0.9999849796295166, 
+                0.9999937415122986, 
+                1.0
+            ], 
+            "min" : [
+                -0.976499617099762, 
+                -0.9999500513076782, 
+                -0.9999940991401672, 
+                1.0
+            ], 
+            "type" : "VEC4"
+        }, 
+        {
+            "bufferView" : 4, 
+            "componentType" : 5126, 
+            "count" : 49934, 
+            "max" : [
+                0.6372915506362915, 
+                0.7171409726142883
+            ], 
+            "min" : [
+                0.3973661959171295, 
+                0.41191530227661133
+            ], 
+            "type" : "VEC2"
         }
     ], 
     "asset" : {
@@ -58,20 +90,32 @@
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 503868, 
+            "byteLength" : 599208, 
             "byteOffset" : 253176, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 503868, 
-            "byteOffset" : 757044, 
+            "byteLength" : 599208, 
+            "byteOffset" : 852384, 
+            "target" : 34962
+        }, 
+        {
+            "buffer" : 0, 
+            "byteLength" : 798944, 
+            "byteOffset" : 1451592, 
+            "target" : 34962
+        }, 
+        {
+            "buffer" : 0, 
+            "byteLength" : 399472, 
+            "byteOffset" : 2250536, 
             "target" : 34962
         }
     ], 
     "buffers" : [
         {
-            "byteLength" : 1260912, 
+            "byteLength" : 2650008, 
             "uri" : "Herald.bin"
         }
     ], 
@@ -94,7 +138,9 @@
                 {
                     "attributes" : {
                         "NORMAL" : 2, 
-                        "POSITION" : 1
+                        "POSITION" : 1, 
+                        "TANGENT" : 3, 
+                        "TEXCOORD_0" : 4
                     }, 
                     "indices" : 0
                 }

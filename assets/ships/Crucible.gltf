@@ -43,6 +43,38 @@
                 -1.0
             ], 
             "type" : "VEC3"
+        }, 
+        {
+            "bufferView" : 3, 
+            "componentType" : 5126, 
+            "count" : 49655, 
+            "max" : [
+                0.7479346394538879, 
+                0.777449831366539
+            ], 
+            "min" : [
+                0.2548259198665619, 
+                0.40863651037216187
+            ], 
+            "type" : "VEC2"
+        }, 
+        {
+            "bufferView" : 4, 
+            "componentType" : 5126, 
+            "count" : 49655, 
+            "max" : [
+                1.0, 
+                1.0, 
+                1.0, 
+                1.0
+            ], 
+            "min" : [
+                1.0, 
+                1.0, 
+                1.0, 
+                1.0
+            ], 
+            "type" : "VEC4"
         }
     ], 
     "asset" : {
@@ -67,11 +99,23 @@
             "byteLength" : 595860, 
             "byteOffset" : 839600, 
             "target" : 34962
+        }, 
+        {
+            "buffer" : 0, 
+            "byteLength" : 397240, 
+            "byteOffset" : 1435460, 
+            "target" : 34962
+        }, 
+        {
+            "buffer" : 0, 
+            "byteLength" : 794480, 
+            "byteOffset" : 1832700, 
+            "target" : 34962
         }
     ], 
     "buffers" : [
         {
-            "byteLength" : 1435460, 
+            "byteLength" : 2627180, 
             "uri" : "Crucible.bin"
         }
     ], 
@@ -93,8 +137,10 @@
             "primitives" : [
                 {
                     "attributes" : {
+                        "COLOR_0" : 4, 
                         "NORMAL" : 2, 
-                        "POSITION" : 1
+                        "POSITION" : 1, 
+                        "TEXCOORD_0" : 3
                     }, 
                     "indices" : 0
                 }

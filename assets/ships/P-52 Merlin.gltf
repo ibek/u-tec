@@ -5,7 +5,7 @@
             "componentType" : 5123, 
             "count" : 54729, 
             "max" : [
-                21963
+                19768
             ], 
             "min" : [
                 0
@@ -15,7 +15,7 @@
         {
             "bufferView" : 1, 
             "componentType" : 5126, 
-            "count" : 21964, 
+            "count" : 19769, 
             "max" : [
                 384.8210754394531, 
                 597.697265625, 
@@ -31,7 +31,7 @@
         {
             "bufferView" : 2, 
             "componentType" : 5126, 
-            "count" : 21964, 
+            "count" : 19769, 
             "max" : [
                 1.0, 
                 1.0, 
@@ -47,17 +47,17 @@
         {
             "bufferView" : 3, 
             "componentType" : 5126, 
-            "count" : 21964, 
+            "count" : 19769, 
             "max" : [
-                1.0, 
-                0.9999998211860657, 
-                0.9999539852142334, 
+                0.9999985694885254, 
+                0.998772919178009, 
+                0.9997291564941406, 
                 1.0
             ], 
             "min" : [
-                -0.9999899864196777, 
-                -0.9999884963035583, 
-                -0.9999887943267822, 
+                -0.9779890775680542, 
+                -0.9997240304946899, 
+                -0.9993005990982056, 
                 1.0
             ], 
             "type" : "VEC4"
@@ -65,14 +65,14 @@
         {
             "bufferView" : 4, 
             "componentType" : 5126, 
-            "count" : 21964, 
+            "count" : 19769, 
             "max" : [
-                7.1123046875, 
-                2.59375
+                0.650084912776947, 
+                0.7151477038860321
             ], 
             "min" : [
-                -3.03857421875, 
-                -5.901611328125
+                0.3470214307308197, 
+                0.3735383152961731
             ], 
             "type" : "VEC2"
         }
@@ -90,32 +90,32 @@
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 263568, 
+            "byteLength" : 237228, 
             "byteOffset" : 109460, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 263568, 
-            "byteOffset" : 373028, 
+            "byteLength" : 237228, 
+            "byteOffset" : 346688, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 351424, 
-            "byteOffset" : 636596, 
+            "byteLength" : 316304, 
+            "byteOffset" : 583916, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 175712, 
-            "byteOffset" : 988020, 
+            "byteLength" : 158152, 
+            "byteOffset" : 900220, 
             "target" : 34962
         }
     ], 
     "buffers" : [
         {
-            "byteLength" : 1163732, 
+            "byteLength" : 1058372, 
             "uri" : "P-52 Merlin.bin"
         }
     ], 
