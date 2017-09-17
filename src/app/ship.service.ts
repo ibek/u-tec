@@ -16,7 +16,7 @@ var list = require('../assets/ships/list.json');
 export class ShipService {
 
     id: string;
-    plans: FirebaseListObservable<TacticalPlan[]>;
+    plan: any;
     tacticalPlanFO: FirebaseObjectObservable<TacticalPlan>;
     tacticalPlan: TacticalPlan = new TacticalPlan();
 
@@ -44,31 +44,26 @@ export class ShipService {
     }
 
     initPlans() {
-        this.plans = this.db.list('/tactical-plans',
-            {
-                query: {
-                    orderByKey: true,
-                    equalTo: this.id
-                }
-            });
+        this.plan = this.db.database.ref('tactical-plans/' + this.id);
         var scope = this;
-        this.plans.subscribe(item => {
-            this.tacticalPlan.update(item[0], scope, (shipName) => {
-                this.sceneService.removeShipModelFor(shipName);
+        this.plan.once('value').then(function(snapshot) {
+            var plan = snapshot.val();
+            scope.tacticalPlan.update(plan, scope, (shipName) => {
+                scope.sceneService.removeShipModelFor(shipName);
             });
-            if (this.tacticalPlan.viewed !== this._getToday()) {
-                this.tacticalPlan.viewed = this._getToday();
-                this.updateTacticalPlan();
+            if (scope.tacticalPlan.viewed !== scope._getToday()) {
+                scope.tacticalPlan.viewed = scope._getToday();
+                scope.updateTacticalPlan();
                 return;
             }
-            this.tacticalPlan.ships.forEach(ship => {
-                var shipModel = this.getModel(ship.name);
-                this.sceneService.addShipModelFor(this.getModel3d(shipModel), ship, shipModel);
+            scope.tacticalPlan.ships.forEach(ship => {
+                var shipModel = scope.getModel(ship.name);
+                scope.sceneService.addShipModelFor(scope.getModel3d(shipModel), ship, shipModel);
             });
-            if (this.sceneService.updateCallback) {
-                this.sceneService.updateCallback();
+            if (scope.sceneService.updateCallback) {
+                scope.sceneService.updateCallback();
             }
-            this.ready = true;
+            scope.ready = true;
         });
     }
 
@@ -101,13 +96,14 @@ export class ShipService {
         } else {
             var data = new ShipData(shipModel.name);
             this.tacticalPlan.ships.push(data);
-            if (!this.plans) {
-                this.plans = this.db.list('/tactical-plans');
+            if (!this.plan) {
+                var plans = this.db.list('/tactical-plans');
                 this.tacticalPlan.updated = this._getToday();
                 this.tacticalPlan.viewed = this._getToday();
-                this.plans.push(this.tacticalPlan).then(item => {
+                plans.push(this.tacticalPlan).then(item => {
                     this.id = item.key;
                     this.ready = true;
+                    this.plan = item;
                     this.router.navigate([this.router.url], this.getNavigationExtras());
                 });
             } else {
@@ -121,7 +117,14 @@ export class ShipService {
     updateTacticalPlan() {
         if (this.id) {
             this.tacticalPlan.updated = this._getToday();
-            this.plans.set(this.id, this.tacticalPlan);
+            this.plan.set(this.tacticalPlan);
+            this.tacticalPlan.ships.forEach(ship => {
+                var shipModel = this.getModel(ship.name);
+                this.sceneService.addShipModelFor(this.getModel3d(shipModel), ship, shipModel);
+            });
+            if (this.sceneService.updateCallback) {
+                this.sceneService.updateCallback();
+            }
         }
     }
 
