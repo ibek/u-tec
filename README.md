@@ -1,8 +1,16 @@
 # UEE Tactical Communications Interface
 
+First configuration:
+
+* Copy assets from gh-pages to src to add the ship models
+
 ```sh
 npm install
-npm run build
+```
+
+Everyday development:
+
+```sh
 npm run start
 ```
 
