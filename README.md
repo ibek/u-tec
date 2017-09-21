@@ -1,4 +1,5 @@
 # UEE Tactical Communications Interface
+UEE Tactical Communications Interface is a tool and fan project for tactical planning in Star Citizen, the game from CIG.
 
 1. UEE Tactical Communications Interface is an Open Source project and your contribution as developers is more than welcome through Pull Requests however I encourage you to discuss it with me first so that we wouldn't waste the time (@Aivii in Star Citizen Spectrum)
 
