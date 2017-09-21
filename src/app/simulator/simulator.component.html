@@ -106,13 +106,6 @@
                         <li class="tools-divider">
                         </li>
                         <li>
-                            <md-button-toggle (change)="rotateTowards()" md-tooltip='Rotate selected ship towards mouse target.' [checked]="rotation" class="toggle-button mat-button-toggle-checked mat-button-toggle-disabled" [disabled]="!controls.selected && controls.selectedObjects.length == 0 || !shipService.isUnlocked()">
-                                <md-icon>rotate_90_degrees_ccw</md-icon>
-                            </md-button-toggle>
-                        </li>
-                        <li class="tools-divider">
-                        </li>
-                        <li>
                             <button md-button (click)="rotateReset()" md-tooltip='Reset rotation of the selected ship(s).' [disabled]="!controls.selected && controls.selectedObjects.length == 0 || !shipService.isUnlocked()">
                                 <md-icon>airplay</md-icon>
                             </button>

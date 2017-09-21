@@ -35,12 +35,13 @@ export class ObjectControls {
     multiSelectedObj = null;
 
     ctrl = false;
+    rightClick = false;
 
     updateNeeded = false;
 
     constructor(private camera, private gridCamera, private container, private htmlContainer, private objects: THREE.Object3D[],
         private projectionMap, private scene: THREE.Scene, private shipService: ShipService, private router: Router, private marqueeBox: THREE.Mesh,
-        private joystick: Joystick, private resetCameraView, private simulator) {
+        private joystick: Joystick, private resetCameraView) {
 
     }
 
@@ -48,6 +49,7 @@ export class ObjectControls {
         this.container.addEventListener('mousedown', this.onContainerMouseDown, false);
         this.container.addEventListener('mousemove', this.getMousePos, false);
         this.container.addEventListener('mouseup', this.onContainerMouseUp, false);
+        this.container.addEventListener('contextmenu', this.onContainerRightClick, false);
         this.mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x
 
         var document: any = window.document;
@@ -61,6 +63,7 @@ export class ObjectControls {
         this.container.removeEventListener('mousedown', this.onContainerMouseDown, false);
         this.container.removeEventListener('mousemove', this.getMousePos, false);
         this.container.removeEventListener('mouseup', this.onContainerMouseUp, false);
+        this.container.removeEventListener('contextmenu', this.onContainerRightClick, false);
         var document: any = document;
         if (document.detachEvent) //if IE (and Opera depending on user setting)
             document.detachEvent("on" + this.mousewheelevt, this.onDocumentMouseWheel)
@@ -180,48 +183,83 @@ export class ObjectControls {
     }
 
     private onContainerMouseDown = (event) => {
+        this.rightClick = false;
         var raycaster = this._rayGet();
         var intersects = raycaster.intersectObjects(this.objects, true);
 
-        if (!this.simulator.rotation && this.selected && this.shipService.isUnlocked() && intersects.length > 0) {
+        if (this.selected && this.shipService.isUnlocked() && intersects.length > 0) {
             var obj = intersects[0].object;
             if (this.selected == obj) {
                 this.setFocus(obj);
                 this.projectionMap.position.y = this.selected.parent.position.y;
                 this.onclick();
             }
-        } else if (!this.simulator.rotation && this.selectedObjects.length > 0 && this.shipService.isUnlocked() && intersects.length > 0 && this.selectedObjects.includes(intersects[0].object)) {
+        } else if (this.selectedObjects.length > 0 && this.shipService.isUnlocked() && intersects.length > 0 && this.selectedObjects.includes(intersects[0].object)) {
             this.multifocus = true;
             this.multiSelectedObj = intersects[0].object;
             this.projectionMap.position.y = this.multiSelectedObj.parent.position.y;
         }
 
-        if (!this.simulator.rotation && intersects.length == 0) {
-            this.selectedObjects = [];
-            this.selectedBoxes.forEach((value: any, key: string) => {
-                this.scene.remove(value);
-                this.selectedBoxes.delete(key);
-            });
+        if (intersects.length == 0) {
             this.down = true;
             var intersectsMap = raycaster.intersectObject(this.projectionMap);
             if (intersectsMap.length > 0) {
                 this.lefttop = new THREE.Vector3().copy(intersectsMap[0].point);
             }
-        } else if (this.simulator.rotation) {
-            var raycaster = this._rayGet();
+        }
+    }
+
+    private onContainerRightClick = (event) => {
+        event.preventDefault();
+        if (this.selectedObjects.length == 0 && !this.selected) {
+            return;
+        }
+        this.rightClick = true;
+        if (this.down) {
+            this.down = false;
+        }
+        var raycaster = this._rayGet();
+        var intersects = raycaster.intersectObjects(this.objects, true);
+        var dpoint = null;
+        if (intersects.length > 0) {
+            dpoint = intersects[0].object.parent.position;
+        } else {
             var intersectsMap = raycaster.intersectObject(this.projectionMap);
-            if (intersects.length == 0 && intersectsMap.length == 0) {
-                this.simulator.rotation = false;
-                this.resetRotation();
+            if (intersectsMap.length > 0) {
+                dpoint = intersectsMap[0].point;
+            } else {
+                return;
             }
         }
+        var dir = new THREE.Vector3().copy(dpoint);
+
+        if (this.selectedObjects.length > 0) {
+            this.selectedObjects.forEach(o => {
+                o.rotation.x = -Math.PI / 2;
+                o.rotation.y = Math.PI;
+                if (!this.ctrl) {
+                    dir.y = o.parent.position.y;
+                }
+                o.parent.lookAt(dir);
+            });
+        } else if (this.selected) {
+            this.selected.rotation.x = -Math.PI / 2;
+            this.selected.rotation.y = Math.PI;
+            if (!this.ctrl) {
+                dir.y = this.selected.parent.position.y;
+            }
+            this.selected.parent.lookAt(dir);
+        }
+
+        this.saveRotation();
+        this.mouseup();
     }
 
     onContainerMouseMove() {
 
         var raycaster = this._rayGet();
 
-        if (this.focused && !this.simulator.rotation) {
+        if (this.focused) {
             if (this.displacing) {
                 var intersectsMap = raycaster.intersectObject(this.projectionMap);
 
@@ -292,7 +330,7 @@ export class ObjectControls {
             }
         }
 
-        if (!this.simulator.rotation && (this.selected || this.down || this.multifocus || this.updateNeeded)) {
+        if (this.selected || this.down || this.multifocus || this.updateNeeded) {
             var ids = [];
             if (this.selected) {
                 ids.push(this.selected.parent.name + "" + this.selected.parent.userData.id);
@@ -338,41 +376,6 @@ export class ObjectControls {
                         this.selected.parent.children[1].children[0].scale.z = this.selected.parent.position.y / Ship3D.MAX_HEIGHT;
                     }
                 }
-            }
-        }
-
-        if (this.simulator.rotation) {
-
-            var intersects = raycaster.intersectObjects(this.objects, true);
-            var dpoint = null;
-            if (intersects.length > 0) {
-                dpoint = intersects[0].object.parent.position;
-            } else {
-                var intersectsMap = raycaster.intersectObject(this.projectionMap);
-                if (intersectsMap.length > 0) {
-                    dpoint = intersectsMap[0].point;
-                } else {
-                    return;
-                }
-            }
-            var dir = new THREE.Vector3().copy(dpoint);
-
-            if (this.selectedObjects.length > 0) {
-                this.selectedObjects.forEach(o => {
-                    o.rotation.x = -Math.PI / 2;
-                    o.rotation.y = Math.PI;
-                    if (!this.ctrl) {
-                        dir.y = o.parent.position.y;
-                    }
-                    o.parent.lookAt(dir);
-                });
-            } else if (this.selected) {
-                this.selected.rotation.x = -Math.PI / 2;
-                this.selected.rotation.y = Math.PI;
-                if (!this.ctrl) {
-                    dir.y = this.selected.parent.position.y;
-                }
-                this.selected.parent.lookAt(dir);
             }
         }
     }
@@ -423,14 +426,8 @@ export class ObjectControls {
 
     private onContainerMouseUp = (event) => {
         event.preventDefault();
-        this.down = false;
 
-        if (this.simulator.rotation) {
-            this.simulator.rotation = false;
-            this.saveRotation();
-            this.mouseup();
-            this.hideSelected();
-        } else if (this.focused) {
+        if (this.focused) {
             var userData = this.focused.parent.userData;
             var x = Math.round(this.focused.parent.position.x * 10) / 10;
             this.focused.parent.position.x = x;
@@ -441,7 +438,7 @@ export class ObjectControls {
             this._DisplaceFocused = null;
             this.focused = null;
             this.mouseup();
-        } else if (this.multifocus) {
+        } else if (this.multifocus && !this.rightClick) {
             this.multifocus = false;
             this.selectedObjects.forEach(o => {
                 var userData = o.parent.userData;
@@ -453,8 +450,9 @@ export class ObjectControls {
                 userData.shipData.instances[userData.id].position.z = z;
             });
             this.mouseup();
-        } else if (!this.focused) { // selection
-            if (this.selectedObjects.length == 1) {
+        } else if (!this.rightClick) { // selection
+            var multi = !(this.marqueeBox.scale.x == 0 && this.marqueeBox.scale.y == 0 && this.marqueeBox.scale.z == 0);
+            if (multi && this.selectedObjects.length == 1) {
                 this.selected = this.selectedObjects[0];
                 this.pointer.show(this.htmlContainer, this.scene, this.selected.parent.userData.shipData);
             } else {
@@ -465,9 +463,16 @@ export class ObjectControls {
                     this.pointer.show(this.htmlContainer, this.scene, this.selected.parent.userData.shipData);
                 } else if (this.selected) {
                     this.hideSelected();
+                } else if (!multi && this.selectedObjects.length > 0) {
+                    this.selectedObjects = [];
+                    this.selectedBoxes.forEach((value: any, key: string) => {
+                        this.scene.remove(value);
+                        this.selectedBoxes.delete(key);
+                    });
                 }
             }
         }
+        this.down = false;
     }
 
     hideSelected() {

@@ -1,8 +1,17 @@
 # UEE Tactical Communications Interface
 
-First configuration:
+1. UEE Tactical Communications Interface is an Open Source project and your contribution as developers is more than welcome through Pull Requests however I encourage you to discuss it with me first so that we wouldn't waste the time (@Aivii in Star Citizen Spectrum)
 
-* Copy assets from gh-pages to src to add the ship models
+2. To cultivate the ideas into designs, go to the [board of InVision](https://projects.invisionapp.com/boards/6B3D5QRKT2ZYM/). Don't hesitate to request the access to add all the ideas and designs describing how the vision of the best tactical tool should look like and operate.
+
+3. To follow the project's progress, keep an eye on [Trello board](https://trello.com/b/yriIKmf7/u-tec-progress-board).
+
+"Take time to deliberate, but when the time for action comes, stop thinking and go in." Napoléon Bonaparte
+
+The first project configuration:
+
+* Clone this repository
+* Copy the assets from gh-pages to src to add the ship models
 
 ```sh
 npm install
@@ -17,3 +26,4 @@ npm run start
 [Running Holocom at localhost:8000](http://localhost:8000)
 
 [![Donate](https://raw.githubusercontent.com/ibek/u-tec/master/src/assets/images/donate.png)](https://donorbox.org/uee-tactical-communications-interface)
+

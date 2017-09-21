@@ -63,7 +63,6 @@ export class SimulatorComponent implements AfterViewInit {
 
     Arr = Array; // helper property for multiple crewmen
 
-    rotation = false;
     cameraMode = 1;
     aidsVisible = true;
 
@@ -189,11 +188,12 @@ export class SimulatorComponent implements AfterViewInit {
             scope.gridCamera.lookAt(new Vector3(0, 0, -50));
         }
         this.joystick.updateLocation(window.innerWidth, window.innerHeight);
+        this.joystick.added = false;
         this.joystick.show();
 
         this.controls = new ObjectControls(this.camera, this.gridCamera, this.renderer.domElement,
             this.container, this.objects, this.virtualGrid, this.scene, this.shipService, this.router, this.marqueeBox,
-            this.joystick, this.resetCameraView, this);
+            this.joystick, this.resetCameraView);
         this.controls.fixed.y = 1;
         var scope = this;
         this.controls.mouseup = function () {
@@ -341,13 +341,6 @@ export class SimulatorComponent implements AfterViewInit {
                 this.shipService.updateTacticalPlan();
             }
         });
-    }
-
-    rotateTowards() {
-        if (this.rotation) { // cancel rotation
-            this.controls.resetRotation();
-        }
-        this.rotation = !this.rotation;
     }
 
     rotateReset() {
