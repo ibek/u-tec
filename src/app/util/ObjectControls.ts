@@ -96,6 +96,17 @@ export class ObjectControls {
             }
         });
         this.selectedObjects = updatedObjects;
+        if (this.selected) {
+            var sid = this.selected.parent.name + "" + this.selected.parent.userData.id;
+            for (var i = 0; i < this.objects.length; i++) {
+                var nobj = this.objects[i];
+                var id2 = nobj.parent.name + "" + nobj.parent.userData.id;
+                if (sid == id2) {
+                    this.selected = nobj;
+                    break;
+                }
+            }
+        }
     }
 
     move = function () {
