@@ -108,16 +108,9 @@ export class SimulatorComponent implements AfterViewInit {
     }
 
     addGrid() {
-        var texture, material;
+        var material;
 
-        texture = new THREE.TextureLoader().load("assets/images/grid.png");
-
-        texture.wrapS = THREE.RepeatWrapping;
-        texture.wrapT = THREE.RepeatWrapping;
-
-        texture.repeat.set(40, 40);
-
-        material = new THREE.MeshLambertMaterial({ map: texture, transparent: true, opacity: 1.0, side: THREE.BackSide });
+        material = new THREE.MeshLambertMaterial({ color: 0x99e3f5, transparent: true, opacity: 0.1, side: THREE.BackSide });
         this.grid = new THREE.Mesh(new THREE.CircleGeometry(100, 100, 0, Math.PI * 2), material);
         this.grid.rotation.x = Math.PI / 2;
         this.grid.position.y = -1;
@@ -128,11 +121,7 @@ export class SimulatorComponent implements AfterViewInit {
             new THREE.Vector3(0, 60, 0),
         ]);
         var panel3dgeom = new THREE.TubeGeometry(path, 30, 100, 60, false);
-        var ptex = new THREE.TextureLoader().load("assets/images/grid.png");
-        ptex.wrapS = THREE.RepeatWrapping;
-        ptex.wrapT = THREE.RepeatWrapping;
-        ptex.repeat.set(20, 120);
-        var panel3d = new THREE.Mesh(panel3dgeom, new THREE.MeshLambertMaterial({ map: ptex, side: THREE.BackSide, transparent: true, opacity: 1.0 }));
+        var panel3d = new THREE.Mesh(panel3dgeom, new THREE.MeshLambertMaterial({ color: 0x99e3f5, side: THREE.BackSide, transparent: true, opacity: 0.1 }));
         panel3d.rotation.x = Math.PI;
         panel3d.position.y = 60;
         panel3d.position.z = -50;
@@ -161,7 +150,10 @@ export class SimulatorComponent implements AfterViewInit {
         indicator.rotation.x = Math.PI / 2;
         indicator.position.y = 0;
         indicator.position.z = -50;
+        var indicator2 = indicator.clone(true);
+        indicator2.scale.set(0.5, 0.5, 1.0);
         this.gridScene.add(indicator);
+        this.gridScene.add(indicator2);
 
         this.gridScene.add(this.marqueeBox);
         this.gridScene.add(this.grid);
@@ -336,7 +328,7 @@ export class SimulatorComponent implements AfterViewInit {
             data: { "players": this.shipService.tacticalPlan.players.join("\n") },
         });
         dialogRef.afterClosed().subscribe(players => {
-            if (players !== "Cancel") {
+            if (players && players !== "Cancel") {
                 this.shipService.tacticalPlan.players = players.split("\n").filter(Boolean);
                 this.shipService.updateTacticalPlan();
             }

@@ -33,6 +33,10 @@
     width: 200px;
 }
 
+.slider {
+    touch-action: none;
+}
+
 .amount-number {
     right: -5px;
     background: rgba(6, 70, 102, 0.4);
@@ -119,5 +123,6 @@
 .slider {
     width: 145px;
     min-width: 145px;
+    touch-action: none;
 }
 }

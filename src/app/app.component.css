@@ -4,7 +4,7 @@
 
 .main {
   background: url("~/assets/images/inventory-bg.jpg") repeat;
-  min-width: 700px;
+  min-width: 375px;
 }
 
 .toolbar {
@@ -33,7 +33,7 @@
     padding-top: 64px;
     background: url("~/assets/images/grid-bg.png") repeat center top;
     background-color: rgba(6, 70, 102, 0.2);
-    min-width: 700px;
+    min-width: 375px;
 }
 
 .title {
@@ -267,4 +267,10 @@
 /deep/ .mat-dialog-title,
 /deep/ .mat-tooltip {
     font: 16px/20px Electrolize;
+}
+
+@media (max-width: 480px) {
+    .title {
+        display: none;
+    }
 }

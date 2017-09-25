@@ -36,6 +36,7 @@ export class ObjectControls {
 
     ctrl = false;
     rightClick = false;
+    scaling = false;
 
     updateNeeded = false;
 
@@ -46,20 +47,34 @@ export class ObjectControls {
     }
 
     activate() {
+        this.container.addEventListener('touchstart', this.onContainerMouseDown, false);
+        this.container.addEventListener('touchend', this.onContainerMouseUp, false);
+        this.container.addEventListener('touchmove', this.getMousePos, false);
         this.container.addEventListener('mousedown', this.onContainerMouseDown, false);
         this.container.addEventListener('mousemove', this.getMousePos, false);
         this.container.addEventListener('mouseup', this.onContainerMouseUp, false);
         this.container.addEventListener('contextmenu', this.onContainerRightClick, false);
         this.mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x
+        this.container.addEventListener('gestureend', function (e) {
+            if (e.scale < 1.0) {
+                // User moved fingers closer together
+            } else if (e.scale > 1.0) {
+                // User moved fingers further apart
+            }
+        }, false);
 
         var document: any = window.document;
-        if (document.attachEvent) //if IE (and Opera depending on user setting)
-            document.attachEvent("on" + this.mousewheelevt, this.onDocumentMouseWheel)
-        else if (document.addEventListener) //WC3 browsers
-            document.addEventListener(this.mousewheelevt, this.onDocumentMouseWheel, false)
+        if (document.attachEvent) { //if IE (and Opera depending on user setting)
+            document.attachEvent("on" + this.mousewheelevt, this.onDocumentMouseWheel);
+        } else if (document.addEventListener) {//WC3 browsers
+            document.addEventListener(this.mousewheelevt, this.onDocumentMouseWheel, false);
+        }
     }
 
     deactivate() {
+        this.container.removeEventListener('touchstart', this.onContainerMouseDown, false);
+        this.container.removeEventListener('touchend', this.onContainerMouseUp, false);
+        this.container.removeEventListener('touchmove', this.getMousePos, false);
         this.container.removeEventListener('mousedown', this.onContainerMouseDown, false);
         this.container.removeEventListener('mousemove', this.getMousePos, false);
         this.container.removeEventListener('mouseup', this.onContainerMouseUp, false);
@@ -181,8 +196,21 @@ export class ObjectControls {
     }
 
     private getMousePos = (event) => {
-        var x = event.offsetX == undefined ? event.layerX : event.offsetX;
-        var z = event.offsetY == undefined ? event.layerY : event.offsetY;
+        event.preventDefault();
+        if (this.scaling) {
+            this.onDocumentMouseWheel(event);
+            return;
+        }
+        var x = 0;
+        var z = 0;
+        if (event.offsetX !== undefined || event.layerX !== undefined) {
+            x = event.offsetX == undefined ? event.layerX : event.offsetX;
+            z = event.offsetY == undefined ? event.layerY : event.offsetY;
+        } else {
+            var rect = event.target.getBoundingClientRect();
+            x = event.targetTouches[0].pageX - rect.left;
+            z = event.targetTouches[0].pageY - rect.top;
+        }
 
         var rect = this.container.getBoundingClientRect();
         this._mouse.x = ((x) / rect.width) * 2 - 1;
@@ -195,6 +223,12 @@ export class ObjectControls {
 
     private onContainerMouseDown = (event) => {
         this.rightClick = false;
+        if (event.touches && event.touches.length == 2) {
+            this.scaling = true;
+            return;
+        }
+
+        this.getMousePos(event);
         var raycaster = this._rayGet();
         var intersects = raycaster.intersectObjects(this.objects, true);
 
@@ -216,6 +250,7 @@ export class ObjectControls {
             var intersectsMap = raycaster.intersectObject(this.projectionMap);
             if (intersectsMap.length > 0) {
                 this.lefttop = new THREE.Vector3().copy(intersectsMap[0].point);
+                event.preventDefault();
             }
         }
     }
@@ -267,7 +302,6 @@ export class ObjectControls {
     }
 
     onContainerMouseMove() {
-
         var raycaster = this._rayGet();
 
         if (this.focused) {
@@ -284,13 +318,12 @@ export class ObjectControls {
                     this._selGetPos(pos);
                 }
             }
-        } else if (this.down) {
+        } else if (this.down && !this.scaling) {
             var intersectsMap = raycaster.intersectObject(this.projectionMap);
 
             if (intersectsMap.length > 0) {
-                var p = intersectsMap[0].point;
-                if (Math.abs(this.lefttop.x - p.x) > 2 || Math.abs(this.lefttop.z - p.z) > 2) {
-                    var pos = new THREE.Vector3().copy(intersectsMap[0].point);
+                var pos = intersectsMap[0].point;
+                if (this.lefttop && (Math.abs(this.lefttop.x - pos.x) > 2 || Math.abs(this.lefttop.z - pos.z) > 2)) {
                     this.marqueeBox.position.set(this.lefttop.x - (this.lefttop.x - pos.x) / 2, 0, this.lefttop.z - (this.lefttop.z - pos.z) / 2);
                     this.marqueeBox.scale.set(Math.abs(this.lefttop.x - pos.x), Math.abs(this.lefttop.z - pos.z), 1);
                     var mbox = new THREE.Box3().setFromCenterAndSize(this.marqueeBox.position, new THREE.Vector3(this.marqueeBox.scale.x, 80, this.marqueeBox.scale.y));
@@ -436,7 +469,6 @@ export class ObjectControls {
     }
 
     private onContainerMouseUp = (event) => {
-        event.preventDefault();
 
         if (this.focused) {
             var userData = this.focused.parent.userData;
@@ -484,6 +516,8 @@ export class ObjectControls {
             }
         }
         this.down = false;
+        this.scaling = false;
+        this.lefttop = null;
     }
 
     hideSelected() {
@@ -509,7 +543,14 @@ export class ObjectControls {
         event.preventDefault();
         event.stopPropagation();
         var delta;
-        if (event.deltaY) {
+        if (event.scale) {
+            if (event.scale > 1) {
+                delta = -event.scale / 1500.0;
+            } else {
+                delta = event.scale / 300.0;
+            }
+        }
+        else if (event.deltaY) {
             switch (event.deltaMode) {
                 case 2:
                     // Zoom in pages
@@ -527,8 +568,9 @@ export class ObjectControls {
                     break;
 
             }
+        } else if (event.detail) {
+            delta = event.detail / 500.0; 
         }
-        delta = delta ? delta : event.detail / 500.0;
 
         if (this.selected) { // move selected ship up/down
             this.selected.parent.position.y -= delta * 200;
@@ -559,30 +601,19 @@ export class ObjectControls {
             zoomSpeed += 10.0;
         }
         this.camera.zoom -= delta * zoomSpeed;
-        var resetView = false;
         if (this.camera.zoom < 1.0) {
             this.camera.zoom = 1.0;
-            resetView = true;
-            //this.joystick.hide();
         } else if (this.camera.zoom > 7.0) {
             this.camera.zoom = 7.0;
-            //this.joystick.show();
-        } else {
-            //this.joystick.show();
         }
         this.camera.updateProjectionMatrix();
 
         this.gridCamera.zoom -= delta * zoomSpeed;
         if (this.gridCamera.zoom < 1.0) {
             this.gridCamera.zoom = 1.0;
-            resetView = true;
         } else if (this.gridCamera.zoom > 7.0) {
             this.gridCamera.zoom = 7.0;
         }
         this.gridCamera.updateProjectionMatrix();
-
-        if (resetView) {
-            this.resetCameraView();
-        }
     }
 }

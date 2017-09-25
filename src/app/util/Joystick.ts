@@ -28,19 +28,12 @@ export class Joystick {
         this.stickEl.style.zIndex = "5";
         this.stickEl.style.display = "none";
 
-        this.container.addEventListener('touchstart', this.onTouchStart, false);
-        this.container.addEventListener('touchend', this.onTouchEnd, false);
-        this.container.addEventListener('touchmove', this.onTouchMove, false);
-        this.container.addEventListener('mousedown', this.onMouseDown, false);
-        this.container.addEventListener('mouseup', this.onMouseUp, false);
-        this.container.addEventListener('mousemove', this.onMouseMove, false);
-
         this.hide();
     }
 
     updateLocation(screenWidth, screenHeight) {
-        this.baseX = screenWidth - 125;
-        this.baseY = screenHeight - 125;
+        this.baseX = screenWidth - 100;
+        this.baseY = screenHeight - 100;
         this.stickX = this.baseX;
         this.stickY = this.baseY;
         this.baseEl.style.left = (this.baseX - this.baseEl.width / 2) + "px";
@@ -62,11 +55,25 @@ export class Joystick {
             c.appendChild(this.baseEl);
             c.appendChild(this.stickEl);
         }
+
+        this.container.addEventListener('touchstart', this.onTouchStart, false);
+        this.container.addEventListener('touchend', this.onTouchEnd, false);
+        this.container.addEventListener('touchmove', this.onTouchMove, false);
+        this.container.addEventListener('mousedown', this.onMouseDown, false);
+        this.container.addEventListener('mouseup', this.onMouseUp, false);
+        this.container.addEventListener('mousemove', this.onMouseMove, false);
     }
 
     hide() {
         this.baseEl.style.display = "none";
         this.visible = false;
+
+        this.container.removeEventListener('touchstart', this.onTouchStart, false);
+        this.container.removeEventListener('touchend', this.onTouchEnd, false);
+        this.container.removeEventListener('touchmove', this.onTouchMove, false);
+        this.container.removeEventListener('mousedown', this.onMouseDown, false);
+        this.container.removeEventListener('mouseup', this.onMouseUp, false);
+        this.container.removeEventListener('mousemove', this.onMouseMove, false);
     }
 
     deltaX() { return this.stickX - this.baseX; }
@@ -113,7 +120,7 @@ export class Joystick {
         this.stickEl.style.display = "none";
     }
 
-    onDown(x, y) {
+    onDown(x, y):any {
         var leftX = this.baseX - this.baseEl.width / 2;
         var topY = this.baseY - this.baseEl.height / 2;
         if (this.visible && x > leftX && x < leftX + this.baseEl.width &&
@@ -136,7 +143,9 @@ export class Joystick {
 
             this.stickEl.style.display = "";
             this.move(this.stickEl.style, (this.stickX - this.stickEl.width / 2), (this.stickY - this.stickEl.height / 2));
+            return true;
         }
+        return false;
     }
 
     moveCallback = function (deltaX, deltaY) {
@@ -181,10 +190,7 @@ export class Joystick {
     }
 
     onTouchStart = (event) => {
-        // if there is already a touch inprogress do nothing
-        if (this.touchIdx !== null) return;
 
-        event.preventDefault();
         // get the first who changed
         var touch = event.changedTouches[0];
         // set the touchIdx of this joystick
@@ -193,21 +199,25 @@ export class Joystick {
         // forward the action
         var x = touch.pageX;
         var y = touch.pageY;
-        return this.onDown(x, y)
+        var d = this.onDown(x, y);
+        //if (d) {
+            event.preventDefault();
+        //}
     }
 
     onTouchEnd = (event) => {
         // if there is no touch in progress, do nothing
-        if (this.touchIdx === null) return;
+        if (this.touchIdx === null || !this.pressed) return;
 
         // try to find our touch event
         var touchList = event.changedTouches;
         for (var i = 0; i < touchList.length && touchList[i].identifier !== this.touchIdx; i++);
-        // if touch event isnt found, 
-        if (i === touchList.length) return;
 
         // reset touchIdx - mark it as no-touch-in-progress
         this.touchIdx = null;
+
+        // if touch event isnt found, 
+        if (i === touchList.length) return;
 
         //??????
         // no preventDefault to get click event on ios
@@ -218,7 +228,7 @@ export class Joystick {
 
     onTouchMove = (event) => {
         // if there is no touch in progress, do nothing
-        if (this.touchIdx === null) return;
+        if (this.touchIdx === null || !this.pressed) return;
 
         // try to find our touch event
         var touchList = event.changedTouches;
