@@ -26,12 +26,6 @@ export class TextLabel {
             var coords2d = this._get2DCoords(position, this.camera, screenWidth, screenHeight);
             this.htmlElement.style.left = coords2d.x + 'px';
             this.htmlElement.style.top = coords2d.y + 'px';
-            this.htmlElement.style.fontSize = this.camera.zoom * 16 + 'px';
-            this.htmlElement.style.height = this.camera.zoom * 36 + 'px';
-            if (!this.originalWidth) {
-                this.originalWidth = this.htmlElement.clientWidth / this.camera.zoom + 20;
-            }
-            this.htmlElement.style.width = this.camera.zoom * this.originalWidth + 'px';
             this.coords2d = coords2d;
             return coords2d;
         } else {
@@ -48,8 +42,8 @@ export class TextLabel {
         if (this.originalWidth) {
             w = this.originalWidth;
         }
-        vector.x = (vector.x * widthHalf) + widthHalf - camera.zoom*w/2;
-        vector.y = - (vector.y * heightHalf) + heightHalf + camera.zoom * (camera.zoom + 10) + 10;
+        vector.x = (vector.x * widthHalf) + widthHalf;
+        vector.y = - (vector.y * heightHalf) + heightHalf + 10;
         return vector;
     }
 

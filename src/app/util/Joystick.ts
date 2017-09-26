@@ -200,9 +200,9 @@ export class Joystick {
         var x = touch.pageX;
         var y = touch.pageY;
         var d = this.onDown(x, y);
-        //if (d) {
+        if (d) {
             event.preventDefault();
-        //}
+        }
     }
 
     onTouchEnd = (event) => {

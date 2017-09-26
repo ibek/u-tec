@@ -135,6 +135,7 @@ export class ShipModel3D {
 
         var color = (shipInstance.enemy)?ShipModel3D.enemyShipColor:ShipModel3D.defaultShipColor;
         var colorCode = (shipInstance.enemy)?0xdd0000:0x00dddd;
+        scale = scale / 2.0;
 
         var uniforms = {
             baseTexture: 	{ type: "t", value: color },
@@ -152,7 +153,8 @@ export class ShipModel3D {
             fragmentShader: this.fragmentShader,
             blending: THREE.AdditiveBlending,
             transparent: true,
-            depthWrite: false
+            depthWrite: false, 
+            depthTest: false
         });
 
         let i = scene.getObjectByName(this.data.name);

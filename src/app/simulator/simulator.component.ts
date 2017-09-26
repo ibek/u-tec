@@ -108,30 +108,26 @@ export class SimulatorComponent implements AfterViewInit {
     }
 
     addGrid() {
-        var material;
+        var material, texture;
 
-        material = new THREE.MeshLambertMaterial({ color: 0x99e3f5, transparent: true, opacity: 0.1, side: THREE.BackSide });
-        this.grid = new THREE.Mesh(new THREE.CircleGeometry(100, 100, 0, Math.PI * 2), material);
+        texture = new THREE.TextureLoader().load("assets/images/grid.png");
+
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+
+        texture.repeat.set(40, 40);
+
+        material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, opacity: 0.3, side: THREE.DoubleSide, depthWrite: true, depthTest: true });
+        this.grid = new THREE.Mesh(new THREE.PlaneGeometry(250, 250), material);
         this.grid.rotation.x = Math.PI / 2;
         this.grid.position.y = -1;
-        this.grid.position.z = -50;
+        this.grid.position.z = -40;
 
-        var path = new THREE.CatmullRomCurve3([
-            new THREE.Vector3(0, 0, 0),
-            new THREE.Vector3(0, 60, 0),
-        ]);
-        var panel3dgeom = new THREE.TubeGeometry(path, 30, 100, 60, false);
-        var panel3d = new THREE.Mesh(panel3dgeom, new THREE.MeshLambertMaterial({ color: 0x99e3f5, side: THREE.BackSide, transparent: true, opacity: 0.1 }));
-        panel3d.rotation.x = Math.PI;
-        panel3d.position.y = 60;
-        panel3d.position.z = -50;
-        this.gridScene.add(panel3d);
-
-        var transparentMaterial = new THREE.MeshLambertMaterial({ transparent: true, opacity: 0.0, side: THREE.DoubleSide, depthTest: false });
-        this.virtualGrid = new THREE.Mesh(new THREE.CircleGeometry(100, 50, 0, Math.PI * 2), transparentMaterial);
+        var transparentMaterial = new THREE.MeshLambertMaterial({ transparent: true, opacity: 0.0, side: THREE.DoubleSide, depthWrite: false, depthTest: false });
+        this.virtualGrid = new THREE.Mesh(new THREE.PlaneGeometry(250, 250), transparentMaterial);
         this.virtualGrid.rotation.x = Math.PI / 2;
         this.virtualGrid.position.y = -1;
-        this.virtualGrid.position.z = -50;
+        this.virtualGrid.position.z = -40;
 
         material = new THREE.MeshStandardMaterial({
             color: 0xffffff,
@@ -144,16 +140,6 @@ export class SimulatorComponent implements AfterViewInit {
         this.marqueeBox.position.set(0, 0, 0);
         this.marqueeBox.rotation.x = Math.PI / 2;
         this.marqueeBox.visible = false;
-
-        var mat = new THREE.LineBasicMaterial({ color: 0x99e3f5, transparent: true, opacity: 0.2, linewidth: 2 });
-        var indicator = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.CircleBufferGeometry(100, 100, 0, Math.PI * 2), 1), mat);
-        indicator.rotation.x = Math.PI / 2;
-        indicator.position.y = 0;
-        indicator.position.z = -50;
-        var indicator2 = indicator.clone(true);
-        indicator2.scale.set(0.5, 0.5, 1.0);
-        this.gridScene.add(indicator);
-        this.gridScene.add(indicator2);
 
         this.gridScene.add(this.marqueeBox);
         this.gridScene.add(this.grid);

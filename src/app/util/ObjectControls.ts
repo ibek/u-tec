@@ -201,6 +201,14 @@ export class ObjectControls {
             this.onDocumentMouseWheel(event);
             return;
         }
+         /**       var rotation = event.rotation;
+
+        // This isn't a fun browser!
+        if ( ! rotation) {
+            rotation = Math.arctan2(event.touches[0].pageY - event.touches[1].pageY,
+                event.touches[0].pageX - event.touches[1].pageX) * 180 / Math.PI;
+        }*/
+        
         var x = 0;
         var z = 0;
         if (event.offsetX !== undefined || event.layerX !== undefined) {
@@ -574,8 +582,8 @@ export class ObjectControls {
 
         if (this.selected) { // move selected ship up/down
             this.selected.parent.position.y -= delta * 200;
-            if (this.selected.parent.position.y < 1) {
-                this.selected.parent.position.y = 1;
+            if (this.selected.parent.position.y < -Ship3D.MAX_HEIGHT) {
+                this.selected.parent.position.y = -Ship3D.MAX_HEIGHT;
             } else if (this.selected.parent.position.y > Ship3D.MAX_HEIGHT) {
                 this.selected.parent.position.y = Ship3D.MAX_HEIGHT;
             }
@@ -586,8 +594,8 @@ export class ObjectControls {
         if (this.selectedObjects.length > 0) { // move selected ships up/down
             this.selectedObjects.forEach(o => {
                 o.parent.position.y -= delta * 200;
-                if (o.parent.position.y < 1) {
-                    o.parent.position.y = 1;
+                if (o.parent.position.y < -Ship3D.MAX_HEIGHT) {
+                    o.parent.position.y = -Ship3D.MAX_HEIGHT;
                 } else if (o.parent.position.y > Ship3D.MAX_HEIGHT) {
                     o.parent.position.y = Ship3D.MAX_HEIGHT;
                 }
