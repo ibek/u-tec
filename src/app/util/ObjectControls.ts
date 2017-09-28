@@ -40,7 +40,7 @@ export class ObjectControls {
 
     updateNeeded = false;
 
-    constructor(private camera, private gridCamera, private container, private htmlContainer, private objects: THREE.Object3D[],
+    constructor(private camera, private container, private htmlContainer, private objects: THREE.Object3D[],
         private projectionMap, private scene: THREE.Scene, private shipService: ShipService, private router: Router, private marqueeBox: THREE.Mesh,
         private joystick: Joystick, private resetCameraView) {
 
@@ -234,6 +234,8 @@ export class ObjectControls {
         if (event.touches && event.touches.length == 2) {
             this.scaling = true;
             return;
+        } else if (event.buttons !== 1) {
+            return;
         }
 
         this.getMousePos(event);
@@ -263,9 +265,11 @@ export class ObjectControls {
         }
     }
 
+    moveCamera = false;
     private onContainerRightClick = (event) => {
         event.preventDefault();
         if (this.selectedObjects.length == 0 && !this.selected) {
+            this.moveCamera = true;
             return;
         }
         this.rightClick = true;
@@ -309,6 +313,7 @@ export class ObjectControls {
         this.mouseup();
     }
 
+    lastMouse = null;
     onContainerMouseMove() {
         var raycaster = this._rayGet();
 
@@ -347,8 +352,19 @@ export class ObjectControls {
                     this.marqueeBox.scale.set(0.0, 0.0, 0.0);
                 }
             }
-        }
-        else {
+        } else if (this.moveCamera && !this.scaling) {
+            if (this.lastMouse && this._mouse && this.lastMouse !== this._mouse) {
+                this.camera.position.x -= (this._mouse.x - this.lastMouse.x)*50;
+                this.camera.position.y += (this._mouse.y - this.lastMouse.y)*50;
+            }
+            if (this.lastMouse == null) {
+                this.lastMouse = new THREE.Vector2();
+            }
+            if (this.lastMouse !== this._mouse) {
+                this.lastMouse.x = this._mouse.x;
+                this.lastMouse.y = this._mouse.y;
+            }
+        } else {
             var intersects = raycaster.intersectObjects(this.objects, true);
             if (intersects.length > 0) {
                 if (this.mouseovered) {
@@ -393,7 +409,7 @@ export class ObjectControls {
                 if (!this.selectedBoxes.has(id)) {
                     var size = new THREE.Box3().setFromObject(o).getSize();
                     var color = (o.parent.userData.shipData.instances[o.parent.userData.id].enemy) ? 0xdd0000 : 0x00dddd;
-                    var boxHelper: any = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxBufferGeometry(size.x, size.y, size.z), 1), new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.3, linewidth: 1 }));
+                    var boxHelper: any = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxBufferGeometry(size.x, size.y, size.z), 1), new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.3, linewidth: 1, depthWrite: false, depthTest: true }));
                     boxHelper.position.set(o.parent.position.x, o.parent.position.y, o.parent.position.z);
                     this.scene.add(boxHelper);
                     this.selectedBoxes.set(id, boxHelper);
@@ -417,7 +433,7 @@ export class ObjectControls {
                 if (!this.selectedBoxes.has(id)) {
                     var size = new THREE.Box3().setFromObject(this.selected).getSize();
                     var color = (this.selected.parent.userData.shipData.instances[this.selected.parent.userData.id].enemy) ? 0xdd0000 : 0x00dddd;
-                    var boxHelper = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxBufferGeometry(size.x, size.y, size.z), 1), new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.3, linewidth: 1 }));
+                    var boxHelper = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxBufferGeometry(size.x, size.y, size.z), 1), new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.3, linewidth: 1, depthWrite: false, depthTest: true }));
                     boxHelper.position.set(this.selected.parent.position.x, this.selected.parent.position.y, this.selected.parent.position.z);
                     this.scene.add(boxHelper);
                     this.selectedBoxes.set(id, boxHelper);
@@ -525,6 +541,8 @@ export class ObjectControls {
         }
         this.down = false;
         this.scaling = false;
+        this.moveCamera = false;
+        this.lastMouse = null;
         this.lefttop = null;
     }
 
@@ -604,24 +622,23 @@ export class ObjectControls {
             return;
         }
 
-        var zoomSpeed = 20.0;
-        if (this.camera.zoom > 3.0) {
+        var zoomSpeed = 5.0;
+        /**if (this.camera.zoom > 3.0) {
             zoomSpeed += 10.0;
         }
-        this.camera.zoom -= delta * zoomSpeed;
-        if (this.camera.zoom < 1.0) {
+        this.camera.zoom -= delta * zoomSpeed;*/
+        if (event.ctrlKey) {
+            this.camera.position.y += -delta * 100;
+            this.camera.lookAt(new THREE.Vector3(0,0,0));
+
+        } else {
+            this.camera.translateOnAxis(this.camera.worldToLocal(new THREE.Vector3(0,0,0)),-delta * zoomSpeed);
+        }
+        /**if (this.camera.zoom < 1.0) {
             this.camera.zoom = 1.0;
         } else if (this.camera.zoom > 7.0) {
             this.camera.zoom = 7.0;
-        }
+        }*/
         this.camera.updateProjectionMatrix();
-
-        this.gridCamera.zoom -= delta * zoomSpeed;
-        if (this.gridCamera.zoom < 1.0) {
-            this.gridCamera.zoom = 1.0;
-        } else if (this.gridCamera.zoom > 7.0) {
-            this.gridCamera.zoom = 7.0;
-        }
-        this.gridCamera.updateProjectionMatrix();
     }
 }

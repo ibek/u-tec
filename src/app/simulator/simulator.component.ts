@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 
 import { OrbitControls } from 'three-orbitcontrols-ts';
 import { ShipModel3D } from './ship-model3d';
+import * as ShipModel3DNS from './ship-model3d';
 import { SceneService } from '../scene.service';
 import { ShipService } from '../ship.service';
 import { Ship, ShipData, TacticalPlan, ShipInstance } from '../data-model';
@@ -36,11 +37,9 @@ export class SimulatorComponent implements AfterViewInit {
     screenHeight = window.innerHeight - 5;
 
     scene: Scene = new Scene();
-    camera: PerspectiveCamera = new PerspectiveCamera(60, this.screenWidth / this.screenHeight, 10, 500);
+    camera: PerspectiveCamera = new PerspectiveCamera(60, this.screenWidth / this.screenHeight, 10, 700);
     renderer: WebGLRenderer = new WebGLRenderer({ antialias: true });
 
-    gridScene: Scene = new Scene();
-    gridCamera: PerspectiveCamera = new PerspectiveCamera(60, this.screenWidth / this.screenHeight, 0.1, 300);
     grid: Mesh;
     virtualGrid: Mesh;
     bgScene: Scene = new THREE.Scene();
@@ -80,13 +79,13 @@ export class SimulatorComponent implements AfterViewInit {
         this.renderer.setSize(this.screenWidth, this.screenHeight);
         this.renderer.domElement.style.position = "relative";
         this.renderer.setClearColor(0xEEEEEE);
+        //this.renderer.sortObjects = false;
 
         this.resetCameraView();
 
         this.configureLight();
         this.scene.add(this.directionalLight);
         this.scene.add(new AmbientLight(new Color(0.8, 0.8, 0.8).getHex()));
-        this.gridScene.add(new AmbientLight(new Color(1.0, 1.0, 1.0).getHex()));
 
         this.addBackground();
         this.addGrid();
@@ -117,17 +116,17 @@ export class SimulatorComponent implements AfterViewInit {
 
         texture.repeat.set(40, 40);
 
-        material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, opacity: 0.3, side: THREE.DoubleSide, depthWrite: true, depthTest: true });
+        material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, opacity: 1.0, side: THREE.DoubleSide, depthWrite: false, depthTest: true });
         this.grid = new THREE.Mesh(new THREE.PlaneGeometry(250, 250), material);
         this.grid.rotation.x = Math.PI / 2;
         this.grid.position.y = -1;
-        this.grid.position.z = -40;
+        this.grid.position.z = 0;
 
-        var transparentMaterial = new THREE.MeshLambertMaterial({ transparent: true, opacity: 0.0, side: THREE.DoubleSide, depthWrite: false, depthTest: false });
+        var transparentMaterial = new THREE.MeshLambertMaterial({ transparent: true, opacity: 0.0, side: THREE.DoubleSide, depthWrite: false, depthTest: true });
         this.virtualGrid = new THREE.Mesh(new THREE.PlaneGeometry(250, 250), transparentMaterial);
         this.virtualGrid.rotation.x = Math.PI / 2;
         this.virtualGrid.position.y = -1;
-        this.virtualGrid.position.z = -40;
+        this.virtualGrid.position.z = 0;
 
         material = new THREE.MeshStandardMaterial({
             color: 0xffffff,
@@ -141,35 +140,59 @@ export class SimulatorComponent implements AfterViewInit {
         this.marqueeBox.rotation.x = Math.PI / 2;
         this.marqueeBox.visible = false;
 
-        this.gridScene.add(this.marqueeBox);
-        this.gridScene.add(this.grid);
-        this.gridScene.add(this.virtualGrid);
+        var ageom = new THREE.BoxGeometry(1, 1, 1);
+        material = new THREE.MeshBasicMaterial({ color: 0x0c67a1, transparent: false, depthWrite: true, depthTest: true });
+        var axisY = new THREE.Mesh(ageom, material);
+        axisY.position.set(0, -1, 0);
+        axisY.scale.set(0.5, ShipModel3DNS.MAX_HEIGHT * 2, 0.5);
+
+        material = new THREE.MeshBasicMaterial({ color: 0x0c67a1, transparent: false, depthWrite: true, depthTest: true });
+        var axisX = new THREE.Mesh(ageom, material);
+        axisX.position.set(0, -1, 0);
+        axisX.scale.set(250, 0.5, 0.5);
+
+        material = new THREE.MeshBasicMaterial({ color: 0x0c67a1, transparent: false, depthWrite: true, depthTest: true });
+        var axisZ = new THREE.Mesh(ageom, material);
+        axisZ.position.set(0, -1, 0);
+        axisZ.scale.set(0.5, 0.5, 250);
+
+        this.scene.add(this.marqueeBox);
+        this.scene.add(axisX);
+        this.scene.add(axisY);
+        this.scene.add(axisZ);
+        this.scene.add(this.grid);
+        this.scene.add(this.virtualGrid);
     }
 
     configureLight() {
         this.directionalLight = new DirectionalLight(0xffffff);
-        this.directionalLight.position.set(0, 200, -50);
-        this.directionalLight.lookAt(new Vector3(0, 0, -50));
+        this.directionalLight.position.set(0, 200, 0);
+        this.directionalLight.lookAt(new Vector3(0, 0, 0));
     }
 
+    cameraRotationX = 0.0;
+    cameraRotationY = 0.0;
     configureControls() {
         var scope = this;
         this.joystick.moveCallback = function (deltaX, deltaY) {
-            var speed = 10 * scope.camera.zoom;
-            deltaX = deltaX / speed;
-            deltaY = -deltaY / speed;
-            scope.camera.translateX(deltaX);
-            scope.camera.translateY(deltaY);
-            scope.camera.lookAt(new Vector3(0, 0, -50));
-            scope.gridCamera.translateX(deltaX);
-            scope.gridCamera.translateY(deltaY);
-            scope.gridCamera.lookAt(new Vector3(0, 0, -50));
+            var speed = 1;
+            scope.cameraRotationX += deltaX / 20;
+            scope.cameraRotationY -= deltaY / 20;
+            scope.cameraRotationX = scope.cameraRotationX % 360;
+            scope.cameraRotationY = scope.cameraRotationY % 360;
+            // update()
+            var eye = new Vector3(-100, 0, 0);
+            eye = eye.applyAxisAngle(new Vector3(0, 0, 1), - speed * THREE.Math.degToRad(scope.cameraRotationY));
+            eye = eye.applyAxisAngle(new Vector3(0, 1, 0), - speed * THREE.Math.degToRad(scope.cameraRotationX));
+            eye.set(eye.x, eye.y + 130, eye.z - 110);
+            scope.camera.position.set(eye.x, eye.y, eye.z);
+            scope.camera.lookAt(new Vector3(0, 0, 0));
         }
         this.joystick.updateLocation(window.innerWidth, window.innerHeight);
         this.joystick.added = false;
         this.joystick.show();
 
-        this.controls = new ObjectControls(this.camera, this.gridCamera, this.renderer.domElement,
+        this.controls = new ObjectControls(this.camera, this.renderer.domElement,
             this.container, this.objects, this.virtualGrid, this.scene, this.shipService, this.router, this.marqueeBox,
             this.joystick, this.resetCameraView);
         this.controls.fixed.y = 1;
@@ -191,7 +214,6 @@ export class SimulatorComponent implements AfterViewInit {
         this.renderer.autoClear = false;
         this.renderer.clear();
         this.renderer.render(this.bgScene, this.bgCam);
-        this.renderer.render(this.gridScene, this.gridCamera);
         this.renderer.render(this.scene, this.camera);
         this.controls.updateAfter(this.screenWidth, this.screenHeight);
 
@@ -348,40 +370,21 @@ export class SimulatorComponent implements AfterViewInit {
         if (this.cameraMode == 1) {
             this.camera.position.x = 0;
             this.camera.position.y = 130;
-            this.camera.position.z = -160;
-            this.camera.lookAt(new Vector3(0, 0, -50));
-            this.gridCamera.position.x = 0;
-            this.gridCamera.position.y = 130;
-            this.gridCamera.position.z = -160;
-            this.gridCamera.lookAt(new Vector3(0, 0, -50));
+            this.camera.position.z = -110;
         } else if (this.cameraMode == 2) {
             this.camera.position.x = 110;
             this.camera.position.y = 130;
-            this.camera.position.z = -50;
-            this.camera.lookAt(new Vector3(0, 0, -50));
-            this.gridCamera.position.x = 110;
-            this.gridCamera.position.y = 130;
-            this.gridCamera.position.z = -50;
-            this.gridCamera.lookAt(new Vector3(0, 0, -50));
+            this.camera.position.z = 0;
         } else if (this.cameraMode == 3) {
             this.camera.position.x = 0;
             this.camera.position.y = 130;
-            this.camera.position.z = 60;
-            this.camera.lookAt(new Vector3(0, 0, -50));
-            this.gridCamera.position.x = 0;
-            this.gridCamera.position.y = 130;
-            this.gridCamera.position.z = 60;
-            this.gridCamera.lookAt(new Vector3(0, 0, -50));
+            this.camera.position.z = 10;
         } else if (this.cameraMode == 4) {
             this.camera.position.x = -110;
             this.camera.position.y = 130;
-            this.camera.position.z = -50;
-            this.camera.lookAt(new Vector3(0, 0, -50));
-            this.gridCamera.position.x = -110;
-            this.gridCamera.position.y = 130;
-            this.gridCamera.position.z = -50;
-            this.gridCamera.lookAt(new Vector3(0, 0, -50));
+            this.camera.position.z = 0;
         }
+        this.camera.lookAt(new Vector3(0, 0, 0));
     }
 
     switchSide() {

@@ -10,7 +10,7 @@ import { Gyroscope } from '../util/Gyroscope'
 
 const MAX_POS: number = 30;
 const debug: boolean = true;
-export const MAX_HEIGHT = 60;
+export const MAX_HEIGHT = 80;
 
 export class ShipModel3D {
     static stepSize: number = 10;
@@ -154,7 +154,7 @@ export class ShipModel3D {
             blending: THREE.AdditiveBlending,
             transparent: true,
             depthWrite: false, 
-            depthTest: false
+            depthTest: true
         });
 
         let i = scene.getObjectByName(this.data.name);
@@ -178,7 +178,7 @@ export class ShipModel3D {
             geometry.vertices.push(new Vector3(0, 0, MAX_HEIGHT / scale));
             geometry.vertices.push(new Vector3(0, 0, 0));
 
-            var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color:colorCode, transparent: true, opacity: 0.3, linewidth: 1 }));
+            var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color:colorCode, transparent: true, opacity: 0.3, linewidth: 1, depthWrite: false, depthTest: true }));
             line.scale.z = shipInstance.position.y / MAX_HEIGHT;
             line.rotateX(Math.PI / 2);
             var gyro = new Gyroscope();
@@ -203,7 +203,7 @@ export class ShipModel3D {
             geometry.vertices.push(new Vector3(0, 0, MAX_HEIGHT / scale));
             geometry.vertices.push(new Vector3(0, 0, 0));
 
-            var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color:colorCode, transparent: true, opacity: 0.3, linewidth: 1 }));
+            var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color:colorCode, transparent: true, opacity: 0.3, linewidth: 1, depthWrite: false, depthTest: true }));
             line.scale.z = shipInstance.position.y / MAX_HEIGHT;
             line.rotateX(Math.PI / 2);
             var gyro = new Gyroscope();
