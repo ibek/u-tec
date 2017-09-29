@@ -354,8 +354,8 @@ export class ObjectControls {
             }
         } else if (this.moveCamera && !this.scaling) {
             if (this.lastMouse && this._mouse && this.lastMouse !== this._mouse) {
-                this.camera.position.x -= (this._mouse.x - this.lastMouse.x)*50;
-                this.camera.position.y += (this._mouse.y - this.lastMouse.y)*50;
+                //this.camera.position.x -= (this._mouse.x - this.lastMouse.x)*50;
+                //this.camera.position.y += (this._mouse.y - this.lastMouse.y)*50;
             }
             if (this.lastMouse == null) {
                 this.lastMouse = new THREE.Vector2();
@@ -622,17 +622,14 @@ export class ObjectControls {
             return;
         }
 
-        var zoomSpeed = 5.0;
-        /**if (this.camera.zoom > 3.0) {
-            zoomSpeed += 10.0;
-        }
-        this.camera.zoom -= delta * zoomSpeed;*/
+        
+        // WTF is in delta? why is it +-0.006?
+        var zoomSpeed = 0.2 / 0.006;
         if (event.ctrlKey) {
-            this.camera.position.y += -delta * 100;
-            this.camera.lookAt(new THREE.Vector3(0,0,0));
-
+            this.camera.center.y+=-delta * 100;
         } else {
-            this.camera.translateOnAxis(this.camera.worldToLocal(new THREE.Vector3(0,0,0)),-delta * zoomSpeed);
+            var mul = Math.pow(1.1,delta*zoomSpeed);
+            this.camera.zoomout*=mul;
         }
         /**if (this.camera.zoom < 1.0) {
             this.camera.zoom = 1.0;
