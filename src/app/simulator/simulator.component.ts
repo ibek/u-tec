@@ -20,6 +20,7 @@ import { ShipService } from '../ship.service';
 import { Ship, ShipData, TacticalPlan, ShipInstance } from '../data-model';
 import { ObjectControls } from '../util/ObjectControls';
 import { Joystick } from '../util/Joystick';
+import { OrbitCamera } from '../util/OrbitCamera';
 
 @Component({
     selector: 'simulator',
@@ -37,7 +38,7 @@ export class SimulatorComponent implements AfterViewInit {
     screenHeight = window.innerHeight - 5;
 
     scene: Scene = new Scene();
-    camera: PerspectiveCamera = new PerspectiveCamera(60, this.screenWidth / this.screenHeight, 10, 700);
+    camera: OrbitCamera = new OrbitCamera(60, this.screenWidth / this.screenHeight, 10, 700);
     renderer: WebGLRenderer = new WebGLRenderer({ antialias: true });
 
     grid: Mesh;
@@ -123,7 +124,7 @@ export class SimulatorComponent implements AfterViewInit {
         this.grid.position.z = 0;
 
         var transparentMaterial = new THREE.MeshLambertMaterial({ transparent: true, opacity: 0.0, side: THREE.DoubleSide, depthWrite: false, depthTest: true });
-        this.virtualGrid = new THREE.Mesh(new THREE.PlaneGeometry(250, 250), transparentMaterial);
+        this.virtualGrid = new THREE.Mesh(new THREE.PlaneGeometry(25000, 25000), transparentMaterial);
         this.virtualGrid.rotation.x = Math.PI / 2;
         this.virtualGrid.position.y = -1;
         this.virtualGrid.position.z = 0;
@@ -170,23 +171,15 @@ export class SimulatorComponent implements AfterViewInit {
         this.directionalLight.lookAt(new Vector3(0, 0, 0));
     }
 
-    cameraRotationX = 0.0;
-    cameraRotationY = 0.0;
     configureControls() {
         var scope = this;
         this.joystick.moveCallback = function (deltaX, deltaY) {
-            var speed = 1;
-            scope.cameraRotationX += deltaX / 20;
-            scope.cameraRotationY -= deltaY / 20;
-            scope.cameraRotationX = scope.cameraRotationX % 360;
-            scope.cameraRotationY = scope.cameraRotationY % 360;
-            // update()
-            var eye = new Vector3(-100, 0, 0);
-            eye = eye.applyAxisAngle(new Vector3(0, 0, 1), - speed * THREE.Math.degToRad(scope.cameraRotationY));
-            eye = eye.applyAxisAngle(new Vector3(0, 1, 0), - speed * THREE.Math.degToRad(scope.cameraRotationX));
-            eye.set(eye.x, eye.y + 130, eye.z - 110);
-            scope.camera.position.set(eye.x, eye.y, eye.z);
-            scope.camera.lookAt(new Vector3(0, 0, 0));
+            // @TODO move constants somewhere
+            var joystickSpeedX = 0.05;
+            var joystickSpeedY = 0.05;
+
+            scope.camera.rotationX += deltaX * joystickSpeedX;
+            scope.camera.rotationY += deltaY * joystickSpeedY;
         }
         this.joystick.updateLocation(window.innerWidth, window.innerHeight);
         this.joystick.added = false;
@@ -208,7 +201,11 @@ export class SimulatorComponent implements AfterViewInit {
     }
 
     render() {
-        requestAnimationFrame(() => this.render());
+        requestAnimationFrame(() => this.render());        
+        var delta = this.clock.getDelta();
+        ShipModel3D.time.value += delta;
+        
+        this.camera.update(delta);
         this.controls.update();
         this.joystick.update();
         this.renderer.autoClear = false;
@@ -217,8 +214,6 @@ export class SimulatorComponent implements AfterViewInit {
         this.renderer.render(this.scene, this.camera);
         this.controls.updateAfter(this.screenWidth, this.screenHeight);
 
-        var delta = this.clock.getDelta();
-        ShipModel3D.time.value += delta;
     }
 
     start() {
