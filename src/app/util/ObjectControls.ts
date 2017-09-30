@@ -42,7 +42,7 @@ export class ObjectControls {
 
     constructor(private camera, private container, private htmlContainer, private objects: THREE.Object3D[],
         private projectionMap, private scene: THREE.Scene, private shipService: ShipService, private router: Router, private marqueeBox: THREE.Mesh,
-        private joystick: Joystick, private resetCameraView) {
+        private joystick: Joystick) {
 
     }
 
@@ -201,14 +201,14 @@ export class ObjectControls {
             this.onDocumentMouseWheel(event);
             return;
         }
-         /**       var rotation = event.rotation;
+        /**       var rotation = event.rotation;
 
-        // This isn't a fun browser!
-        if ( ! rotation) {
-            rotation = Math.arctan2(event.touches[0].pageY - event.touches[1].pageY,
-                event.touches[0].pageX - event.touches[1].pageX) * 180 / Math.PI;
-        }*/
-        
+       // This isn't a fun browser!
+       if ( ! rotation) {
+           rotation = Math.arctan2(event.touches[0].pageY - event.touches[1].pageY,
+               event.touches[0].pageX - event.touches[1].pageX) * 180 / Math.PI;
+       }*/
+
         var x = 0;
         var z = 0;
         if (event.offsetX !== undefined || event.layerX !== undefined) {
@@ -595,7 +595,7 @@ export class ObjectControls {
 
             }
         } else if (event.detail) {
-            delta = event.detail / 500.0; 
+            delta = event.detail / 500.0;
         }
 
         if (this.selected) { // move selected ship up/down
@@ -622,20 +622,13 @@ export class ObjectControls {
             return;
         }
 
-        
-        // WTF is in delta? why is it +-0.006?
         var zoomSpeed = 0.2 / 0.006;
         if (event.ctrlKey) {
-            this.camera.center.y+=-delta * 100;
+            this.camera.center.y += -delta * 100;
         } else {
-            var mul = Math.pow(1.1,delta*zoomSpeed);
-            this.camera.zoomout*=mul;
+            var mul = Math.pow(1.1, delta * zoomSpeed);
+            this.camera.zoomout *= mul;
         }
-        /**if (this.camera.zoom < 1.0) {
-            this.camera.zoom = 1.0;
-        } else if (this.camera.zoom > 7.0) {
-            this.camera.zoom = 7.0;
-        }*/
         this.camera.updateProjectionMatrix();
     }
 }

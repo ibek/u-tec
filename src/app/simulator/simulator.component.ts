@@ -63,7 +63,6 @@ export class SimulatorComponent implements AfterViewInit {
 
     Arr = Array; // helper property for multiple crewmen
 
-    cameraMode = 1;
     aidsVisible = true;
 
     clock = new THREE.Clock();
@@ -81,8 +80,6 @@ export class SimulatorComponent implements AfterViewInit {
         this.renderer.domElement.style.position = "relative";
         this.renderer.setClearColor(0xEEEEEE);
         //this.renderer.sortObjects = false;
-
-        this.resetCameraView();
 
         this.configureLight();
         this.scene.add(this.directionalLight);
@@ -124,7 +121,7 @@ export class SimulatorComponent implements AfterViewInit {
         this.grid.position.z = 0;
 
         var transparentMaterial = new THREE.MeshLambertMaterial({ transparent: true, opacity: 0.0, side: THREE.DoubleSide, depthWrite: false, depthTest: true });
-        this.virtualGrid = new THREE.Mesh(new THREE.PlaneGeometry(25000, 25000), transparentMaterial);
+        this.virtualGrid = new THREE.Mesh(new THREE.PlaneGeometry(250, 250), transparentMaterial);
         this.virtualGrid.rotation.x = Math.PI / 2;
         this.virtualGrid.position.y = -1;
         this.virtualGrid.position.z = 0;
@@ -173,13 +170,14 @@ export class SimulatorComponent implements AfterViewInit {
 
     configureControls() {
         var scope = this;
+
         this.joystick.moveCallback = function (deltaX, deltaY) {
             // @TODO move constants somewhere
             var joystickSpeedX = 0.05;
             var joystickSpeedY = 0.05;
 
-            scope.camera.rotationX += deltaX * joystickSpeedX;
-            scope.camera.rotationY += deltaY * joystickSpeedY;
+            scope.camera.rotationX -= deltaX * joystickSpeedX;
+            scope.camera.rotationY -= deltaY * joystickSpeedY;
         }
         this.joystick.updateLocation(window.innerWidth, window.innerHeight);
         this.joystick.added = false;
@@ -187,7 +185,7 @@ export class SimulatorComponent implements AfterViewInit {
 
         this.controls = new ObjectControls(this.camera, this.renderer.domElement,
             this.container, this.objects, this.virtualGrid, this.scene, this.shipService, this.router, this.marqueeBox,
-            this.joystick, this.resetCameraView);
+            this.joystick);
         this.controls.fixed.y = 1;
         var scope = this;
         this.controls.mouseup = function () {
@@ -350,36 +348,6 @@ export class SimulatorComponent implements AfterViewInit {
         }
         this.controls.saveRotation();
         this.shipService.updateTacticalPlan();
-    }
-
-    switchCameraView() {
-        this.cameraMode++;
-        this.resetCameraView();
-    }
-
-    resetCameraView = () => {
-        if (this.cameraMode > 4) {
-            this.cameraMode = 1;
-        }
-
-        if (this.cameraMode == 1) {
-            this.camera.position.x = 0;
-            this.camera.position.y = 130;
-            this.camera.position.z = -110;
-        } else if (this.cameraMode == 2) {
-            this.camera.position.x = 110;
-            this.camera.position.y = 130;
-            this.camera.position.z = 0;
-        } else if (this.cameraMode == 3) {
-            this.camera.position.x = 0;
-            this.camera.position.y = 130;
-            this.camera.position.z = 10;
-        } else if (this.cameraMode == 4) {
-            this.camera.position.x = -110;
-            this.camera.position.y = 130;
-            this.camera.position.z = 0;
-        }
-        this.camera.lookAt(new Vector3(0, 0, 0));
     }
 
     switchSide() {
