@@ -106,14 +106,14 @@
                         <li class="tools-divider">
                         </li>
                         <li>
-                            <button md-button (click)="rotateReset()" md-tooltip='Reset rotation of the selected ship(s).' [disabled]="!controls.selected && controls.selectedObjects.length == 0 || !shipService.isUnlocked()">
+                            <button md-button (click)="rotateReset()" md-tooltip='Reset rotation of the selected ship(s).' [disabled]="!shipService.isUnlocked()">
                                 <md-icon>airplay</md-icon>
                             </button>
                         </li>
                         <li class="tools-divider">
                         </li>
                         <li>
-                            <button md-button (click)="switchSide()" md-tooltip='Switch allies and enemies of selected ships.' [disabled]="!controls.selected && controls.selectedObjects.length == 0 || !shipService.isUnlocked()">
+                            <button md-button (click)="switchSide()" md-tooltip='Switch allies and enemies of selected ships.' [disabled]="!shipService.isUnlocked()">
                                 <md-icon>invert_colors</md-icon>
                             </button>
                         </li>

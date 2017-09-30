@@ -21,6 +21,7 @@ import { Ship, ShipData, TacticalPlan, ShipInstance } from '../data-model';
 import { ObjectControls } from '../util/ObjectControls';
 import { Joystick } from '../util/Joystick';
 import { OrbitCamera } from '../util/OrbitCamera';
+import { Controller } from '../util/Controller';
 
 @Component({
     selector: 'simulator',
@@ -40,17 +41,15 @@ export class SimulatorComponent implements AfterViewInit {
     scene: Scene = new Scene();
     camera: OrbitCamera = new OrbitCamera(60, this.screenWidth / this.screenHeight, 10, 700);
     renderer: WebGLRenderer = new WebGLRenderer({ antialias: true });
+    controller: Controller;
 
     grid: Mesh;
     virtualGrid: Mesh;
     bgScene: Scene = new THREE.Scene();
     bgCam: THREE.Camera = new THREE.Camera();
 
-    controls: ObjectControls;
-
     directionalLight: DirectionalLight;
 
-    objects: any = [];
     getImageData: any;
 
     // remember these initial values
@@ -171,46 +170,27 @@ export class SimulatorComponent implements AfterViewInit {
     configureControls() {
         var scope = this;
 
-        this.joystick.moveCallback = function (deltaX, deltaY) {
-            // @TODO move constants somewhere
-            var joystickSpeedX = 0.05;
-            var joystickSpeedY = 0.05;
-
-            scope.camera.rotationX -= deltaX * joystickSpeedX;
-            scope.camera.rotationY -= deltaY * joystickSpeedY;
-        }
         this.joystick.updateLocation(window.innerWidth, window.innerHeight);
         this.joystick.added = false;
         this.joystick.show();
 
-        this.controls = new ObjectControls(this.camera, this.renderer.domElement,
-            this.container, this.objects, this.virtualGrid, this.scene, this.shipService, this.router, this.marqueeBox,
-            this.joystick);
-        this.controls.fixed.y = 1;
-        var scope = this;
-        this.controls.mouseup = function () {
-            this.container.style.cursor = 'auto';
-            scope.shipService.updateTacticalPlan();
-        }
-        this.controls.onclick = function () {
+        this.controller = new Controller(this.scene, this.shipService, this.virtualGrid, this.camera, this.joystick);
+        this.controller.enable(this.renderer.domElement);
 
-        }
-        this.controls.activate();
     }
 
     render() {
-        requestAnimationFrame(() => this.render());        
+        requestAnimationFrame(() => this.render());
         var delta = this.clock.getDelta();
         ShipModel3D.time.value += delta;
-        
+
         this.camera.update(delta);
-        this.controls.update();
         this.joystick.update();
+        this.controller.update(delta);
         this.renderer.autoClear = false;
         this.renderer.clear();
         this.renderer.render(this.bgScene, this.bgCam);
         this.renderer.render(this.scene, this.camera);
-        this.controls.updateAfter(this.screenWidth, this.screenHeight);
 
     }
 
@@ -225,17 +205,12 @@ export class SimulatorComponent implements AfterViewInit {
                 this.container.nativeElement.appendChild(this.renderer.domElement);
                 var scope = this;
                 ShipModel3D.init();
-                let updateCallback = function () {
-                    scope.objects.splice(0, scope.objects.length)
-                    scope.sceneService.shipModels3d.forEach((model: ShipModel3D, type: string) => {
-                        model.init();
-                        model.addShipsToScene(scope.scene);
-                        model.objects.forEach(o => scope.objects.push(o));
-                    })
-                    scope.controls.onUpdateTacticalPlan();
-                };
-                updateCallback();
-                this.sceneService.setUpdateCallback(updateCallback);
+                scope.controller.reset();
+                scope.sceneService.shipModels3d.forEach((model: ShipModel3D, type: string) => {
+                    model.clear();
+                    model.addShipsToScene(scope.scene);
+                    model.objects.forEach(o => scope.controller.actionableObjects.push(o));
+                })
                 this.shipService.updateTacticalPlan(); // to update generated positions
                 this.render();
             } else {
@@ -248,18 +223,18 @@ export class SimulatorComponent implements AfterViewInit {
     }
 
     showInfo() {
-        var userData = this.controls.selected.parent.userData;
+        /**var userData = this.controls.selected.parent.userData;
         this.selectedShip = userData.shipModel;
         this.selectedShipInstance = userData.shipData.instances[userData.id];
         this.joystick.hide();
         this.controls.enabled = false;
-        this.shipInfoBar.toggle();
+        this.shipInfoBar.toggle();*/
     }
 
     onCloseShipInfo() {
-        this.controls.enabled = true;
+        /**this.controls.enabled = true;
         this.joystick.show();
-        this.controls.hideSelected();
+        this.controls.hideSelected();*/
     }
 
     onShipInfoChange() {
@@ -267,7 +242,7 @@ export class SimulatorComponent implements AfterViewInit {
     }
 
     saveImage() {
-        this.controls.hideSelected();
+        //this.controls.hideSelected();
         this.render();
         var imgData = this.renderer.domElement.toDataURL();
         var a: any = document.createElement("a");
@@ -337,7 +312,7 @@ export class SimulatorComponent implements AfterViewInit {
     }
 
     rotateReset() {
-        if (this.controls.selectedObjects.length > 0) {
+        /**if (this.controls.selectedObjects.length > 0) {
             this.controls.selectedObjects.forEach(o => {
                 o.rotation.set(-Math.PI / 2, Math.PI, 0);
                 o.parent.rotation.set(0, 0, 0);
@@ -347,11 +322,11 @@ export class SimulatorComponent implements AfterViewInit {
             this.controls.selected.parent.rotation.set(0, 0, 0);
         }
         this.controls.saveRotation();
-        this.shipService.updateTacticalPlan();
+        this.shipService.updateTacticalPlan();*/
     }
 
     switchSide() {
-        if (this.controls.selectedObjects.length > 0) {
+        /**if (this.controls.selectedObjects.length > 0) {
             this.controls.selectedObjects.forEach(o => {
                 var userData = o.parent.userData;
                 var selectedShipInstance = userData.shipData.instances[userData.id];
@@ -362,12 +337,12 @@ export class SimulatorComponent implements AfterViewInit {
             var selectedShipInstance = userData.shipData.instances[userData.id];
             selectedShipInstance.enemy = !selectedShipInstance.enemy;
         }
-        this.onShipInfoChange();
+        this.onShipInfoChange();*/
     }
 
     toggleLines() {
         this.aidsVisible = !this.aidsVisible;
-        this.objects.forEach(o => {
+        this.controller.actionableObjects.forEach(o => {
             o.parent.children[1].children[0].visible = !o.parent.children[1].children[0].visible;
         });
     }

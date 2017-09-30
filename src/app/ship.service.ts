@@ -60,9 +60,6 @@ export class ShipService {
                 var shipModel = scope.getModel(ship.name);
                 scope.sceneService.addShipModelFor(scope.getModel3d(shipModel), ship, shipModel);
             });
-            if (scope.sceneService.updateCallback) {
-                scope.sceneService.updateCallback();
-            }
             scope.ready = true;
         });
     }
@@ -118,13 +115,6 @@ export class ShipService {
         if (this.id) {
             this.tacticalPlan.updated = this._getToday();
             this.plan.set(this.tacticalPlan);
-            this.tacticalPlan.ships.forEach(ship => {
-                var shipModel = this.getModel(ship.name);
-                this.sceneService.addShipModelFor(this.getModel3d(shipModel), ship, shipModel);
-            });
-            if (this.sceneService.updateCallback) {
-                this.sceneService.updateCallback();
-            }
         }
     }
 

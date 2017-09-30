@@ -8,7 +8,6 @@ import { ShipModel3D } from './simulator/ship-model3d';
 export class SceneService {
 
     shipModels3d: Map<string, ShipModel3D> = new Map();
-    updateCallback;
 
     constructor(private route: ActivatedRoute) {
 
@@ -19,21 +18,13 @@ export class SceneService {
             var model = new ShipModel3D(shipData, shipModel);
             this.shipModels3d.set(shipData.name, model);
             var scope = this;
-            model.load(modelPath, () => {
-                if (scope.updateCallback) {
-                    scope.updateCallback();
-                }
-            });
+            model.load(modelPath);
         }
     }
 
     removeShipModelFor(name: string) {
         this.shipModels3d.get(name).removeShipFromScene();
         this.shipModels3d.delete(name);
-    }
-
-    setUpdateCallback(update) {
-        this.updateCallback = update;
     }
 
     loadingProgress(): number {
