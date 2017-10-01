@@ -35,6 +35,8 @@
     color: #80CADC;
     display: none;
     position: absolute;
+    bottom: 30px;
+    left: 30px;
     z-index: 10;
     width: auto;
     white-space: nowrap;
@@ -158,4 +160,10 @@
 .mat-button-toggle-disabled {
     background-color: rgba(0, 0, 0, 0.1);
     color: rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 480px) {
+    .title {
+        display: none;
+    }
 }

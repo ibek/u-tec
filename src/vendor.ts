@@ -18,3 +18,4 @@ import 'rxjs';
 // ThreeJS
 
 import 'three';
+import 'hammerjs';

@@ -9,7 +9,6 @@ import { Ship, ShipData, ShipInstance } from '../data-model';
 import { Gyroscope } from '../util/Gyroscope'
 
 const MAX_POS: number = 30;
-const debug: boolean = true;
 export const MAX_HEIGHT = 80;
 
 export class ShipModel3D {
@@ -101,6 +100,13 @@ export class ShipModel3D {
         }
     }
 
+    static deselect(obj, scene) {
+        var id = obj.parent.name + "" + obj.parent.userData.id;
+        scene.remove(this.selectedBoxes.get(id));
+        this.selectedBoxes.delete(id);
+        obj.parent.userData.selected = false;
+    }
+
     static deselectAll(objects, scene) {
         this.selectedBoxes.forEach((value: any, key: string) => {
             scene.remove(value);
@@ -112,8 +118,8 @@ export class ShipModel3D {
         });
     }
 
-    static updateObjectPosition(obj, pos) {
-        obj.parent.position.copy(pos);
+    static updateObjectPosition(obj, x, y, z) {
+        obj.parent.position.set(x, y, z);
         ShipModel3D.updateBoxPosition(obj);
     }
 
@@ -134,6 +140,11 @@ export class ShipModel3D {
             obj.parent.position.y = MAX_HEIGHT;
         }
         ShipModel3D.updateBoxPosition(obj);
+    }
+
+    static switchSide(obj, enemy) {
+        var color = (enemy) ? ShipModel3D.enemyShipColor : ShipModel3D.defaultShipColor;
+        obj.material.uniforms.baseTexture.value = color;
     }
 
     private _addShipTo(scene, id: number, shipInstance: ShipInstance, scale: number) {

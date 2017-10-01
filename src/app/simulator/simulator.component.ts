@@ -18,7 +18,6 @@ import * as ShipModel3DNS from './ship-model3d';
 import { SceneService } from '../scene.service';
 import { ShipService } from '../ship.service';
 import { Ship, ShipData, TacticalPlan, ShipInstance } from '../data-model';
-import { ObjectControls } from '../util/ObjectControls';
 import { Joystick } from '../util/Joystick';
 import { OrbitCamera } from '../util/OrbitCamera';
 import { Controller } from '../util/Controller';
@@ -119,7 +118,7 @@ export class SimulatorComponent implements AfterViewInit {
         this.grid.position.y = -1;
         this.grid.position.z = 0;
 
-        var transparentMaterial = new THREE.MeshLambertMaterial({ transparent: true, opacity: 0.0, side: THREE.DoubleSide, depthWrite: false, depthTest: true });
+        var transparentMaterial = new THREE.MeshLambertMaterial({ transparent: true, opacity: 0.0, side: THREE.DoubleSide, depthWrite: false, depthTest: false });
         this.virtualGrid = new THREE.Mesh(new THREE.PlaneGeometry(250, 250), transparentMaterial);
         this.virtualGrid.rotation.x = Math.PI / 2;
         this.virtualGrid.position.y = -1;
@@ -174,7 +173,7 @@ export class SimulatorComponent implements AfterViewInit {
         this.joystick.added = false;
         this.joystick.show();
 
-        this.controller = new Controller(this.scene, this.shipService, this.virtualGrid, this.camera, this.joystick);
+        this.controller = new Controller(this.scene, this.shipService, this.virtualGrid, this.camera, this.joystick, this.marqueeBox);
         this.controller.enable(this.renderer.domElement);
 
     }
@@ -223,18 +222,20 @@ export class SimulatorComponent implements AfterViewInit {
     }
 
     showInfo() {
-        /**var userData = this.controls.selected.parent.userData;
-        this.selectedShip = userData.shipModel;
-        this.selectedShipInstance = userData.shipData.instances[userData.id];
-        this.joystick.hide();
-        this.controls.enabled = false;
-        this.shipInfoBar.toggle();*/
+        var selected = this.controller.getAllSelected();
+        if (selected.length == 1) {
+            var userData = selected[0].parent.userData;
+            this.selectedShip = userData.shipModel;
+            this.selectedShipInstance = userData.shipData.instances[userData.id];
+            this.joystick.hide();
+            this.controller.disable(this.renderer.domElement);
+            this.shipInfoBar.toggle();
+        }
     }
 
     onCloseShipInfo() {
-        /**this.controls.enabled = true;
+        this.controller.enable(this.renderer.domElement);
         this.joystick.show();
-        this.controls.hideSelected();*/
     }
 
     onShipInfoChange() {
@@ -242,7 +243,7 @@ export class SimulatorComponent implements AfterViewInit {
     }
 
     saveImage() {
-        //this.controls.hideSelected();
+        this.controller.deselectAll();
         this.render();
         var imgData = this.renderer.domElement.toDataURL();
         var a: any = document.createElement("a");
@@ -312,32 +313,11 @@ export class SimulatorComponent implements AfterViewInit {
     }
 
     rotateReset() {
-        /**if (this.controls.selectedObjects.length > 0) {
-            this.controls.selectedObjects.forEach(o => {
-                o.rotation.set(-Math.PI / 2, Math.PI, 0);
-                o.parent.rotation.set(0, 0, 0);
-            });
-        } else if (this.controls.selected) {
-            this.controls.selected.rotation.set(-Math.PI / 2, Math.PI, 0);
-            this.controls.selected.parent.rotation.set(0, 0, 0);
-        }
-        this.controls.saveRotation();
-        this.shipService.updateTacticalPlan();*/
+        this.controller.rotateResetOfSelectedShips();
     }
 
     switchSide() {
-        /**if (this.controls.selectedObjects.length > 0) {
-            this.controls.selectedObjects.forEach(o => {
-                var userData = o.parent.userData;
-                var selectedShipInstance = userData.shipData.instances[userData.id];
-                selectedShipInstance.enemy = !selectedShipInstance.enemy;
-            });
-        } else if (this.controls.selected) {
-            var userData = this.controls.selected.parent.userData;
-            var selectedShipInstance = userData.shipData.instances[userData.id];
-            selectedShipInstance.enemy = !selectedShipInstance.enemy;
-        }
-        this.onShipInfoChange();*/
+        this.controller.switchSideOfSelectedShips();
     }
 
     toggleLines() {
