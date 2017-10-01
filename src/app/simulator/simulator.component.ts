@@ -312,6 +312,14 @@ export class SimulatorComponent implements AfterViewInit {
         });
     }
 
+    switchCameraView() {
+        this.camera.switch();
+    }
+
+    lookAtShip() {
+        this.controller.lookAtSelectedShip();
+    }
+
     rotateReset() {
         this.controller.rotateResetOfSelectedShips();
     }

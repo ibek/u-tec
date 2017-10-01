@@ -26,6 +26,7 @@ export class Controller {
     private _focusedObject = null;
     private _title: TextLabel;
     private _mbox = new THREE.Box3();
+    private _hammer;
 
     constructor(private scene: THREE.Scene, private shipService: ShipService, private projectionMap: THREE.Mesh,
         private camera: OrbitCamera, private joystick: Joystick, private marqueeBox) {
@@ -57,12 +58,14 @@ export class Controller {
             container.attachEvent("on" + mousewheelevt, this._onMouseWheel);
         }
 
-        var mc = new Hammer(container);
-        mc.get('pinch').set({ enable: true });
-        mc.get('rotate').set({ enable: true });
+        if (!this._hammer) {
+            this._hammer = new Hammer(container);
+        }
+        this._hammer.get('pinch').set({ enable: true });
+        this._hammer.get('rotate').set({ enable: true });
 
         var scope = this;
-        mc.on("pinch", function (e) {
+        this._hammer.on("pinch", function (e) {
             var selected = scope.getAllSelected();
             if (selected.length == 0) {
                 var delta;
@@ -75,7 +78,7 @@ export class Controller {
                 scope._keymap.set("zoom", delta);
             }
         });
-        mc.on("rotate", function (e) {
+        this._hammer.on("rotate", function (e) {
             var selected = scope.getAllSelected();
             if (selected.length > 0) {
                 var radRotation = THREE.Math.degToRad(e.rotation);
@@ -114,6 +117,9 @@ export class Controller {
             container.detachEvent('oncontextmenu', this._noop, false);
             container.detachEvent("on" + mousewheelevt, this._onMouseWheel);
         }
+
+        this._hammer.off("pinch");
+        this._hammer.off("rotate");
     }
 
     reset() {
@@ -281,6 +287,13 @@ export class Controller {
         });
         if (changed) {
             this._updateTacticalPlan();
+        }
+    }
+
+    lookAtSelectedShip() {
+        var selected = this.getAllSelected();
+        if (selected.length == 1) {
+            this.camera.moveTo(selected[0].parent.position, 40);
         }
     }
 

@@ -19,6 +19,7 @@ export class OrbitCamera extends PerspectiveCamera {
     _right: number;
     _fwd: number;
     _camup: number;
+    _view: number = 0;
 
     constructor(...args) {
         super(...args);
@@ -38,6 +39,31 @@ export class OrbitCamera extends PerspectiveCamera {
         this._right = 0;
         this._fwd = 0;
         this._camup = 0;
+    }
+
+    topView() {
+        this.center = new Vector3(0, 0, 0);
+        this.rotationX = 90.0;
+        this.rotationY = 89.0; // default tilt
+        this.zoomout = 300; // default zoom
+        this.speedX = -1;
+        this.speedY = 0.5;
+
+        this._dir = 0;
+        this._up = 0;
+        this._right = 0;
+        this._fwd = 0;
+        this._camup = 0;
+    }
+
+    switch() {
+        this._view++;
+        this._view = this._view % 2;
+        if (this._view == 0) {
+            this.reset();
+        } else if (this._view == 1) {
+            this.topView();
+        }
     }
 
     update(dt: number) {
@@ -108,9 +134,21 @@ export class OrbitCamera extends PerspectiveCamera {
     forward(fwd: number) {
         this._fwd += fwd;
     }
+
+    moveTo(center, distance) {
+        this.center.set(center.x, center.y, center.z);
+        this.zoomout = distance;
+        this.rotationX = 90.0;
+        this.rotationY = 45.0;
+    }
     
     zoomIn(dt: number) {
         var mul = Math.pow(1.1, dt);
         this.zoomout *= mul;
+        if (this.zoomout > 400) {
+            this.zoomout = 400;
+        } else if (this.zoomout < 20) {
+            this.zoomout = 20;
+        }
     }
 }

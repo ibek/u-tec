@@ -106,6 +106,13 @@
                         <li class="tools-divider">
                         </li>
                         <li>
+                            <button md-button (click)="lookAtShip()" md-tooltip='Look closely at the selected ship.'>
+                                <md-icon>camera</md-icon>
+                            </button>
+                        </li>
+                        <li class="tools-divider">
+                        </li>
+                        <li>
                             <button md-button (click)="rotateReset()" md-tooltip='Reset rotation of the selected ship(s).' [disabled]="!shipService.isUnlocked()">
                                 <md-icon>airplay</md-icon>
                             </button>
