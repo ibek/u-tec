@@ -20,6 +20,8 @@ export class Controller {
     container;
 
     private _needRefresh = false;
+    private _keydown = false;
+    private _keyup = false;
     private _needTacticalPlanUpdate = false;
     private _lefttop = null;
     private _keymap: Map<string, any>;
@@ -38,6 +40,8 @@ export class Controller {
 
         var mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x
 
+        window.addEventListener('keydown', this._onKeyDown, false);
+        window.addEventListener('keyup', this._onKeyUp, false);
         if (container.addEventListener) { //WC3 browsers
             container.addEventListener('mousedown', this._onDown, false);
             container.addEventListener('mousemove', this._onMove, false);
@@ -98,6 +102,8 @@ export class Controller {
     disable(container) {
         var mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x
 
+        window.removeEventListener('keydown', this._onKeyDown, false);
+        window.removeEventListener('keyup', this._onKeyUp, false);
         if (container.removeEventListener) { //WC3 browsers
             container.removeEventListener('mousedown', this._onDown, false);
             container.removeEventListener('mousemove', this._onMove, false);
@@ -197,8 +203,56 @@ export class Controller {
                 var zoom = this._keymap.get("zoom")
                 this.camera.zoomIn(zoom * Controller._zoomSpeed);
             }
-            this._keymap.clear();
+
+            this._clearKeyMap();
             this._needRefresh = false;
+        }
+
+        if (this._keydown) {
+            if (this._keymap.get("down-w")) {
+                this.camera.forward(100 * dt);
+            }
+            if (this._keymap.get("down-s")) {
+                this.camera.forward(-100 * dt);
+            }
+            if (this._keymap.get("down-a")) {
+                this.camera.right(100 * dt);
+            }
+            if (this._keymap.get("down-d")) {
+                this.camera.right(-100 * dt);
+            }
+            if (this._keymap.get("down-e")) {
+                this.camera.rotate(-100 * dt, 0);
+            }
+            if (this._keymap.get("down-q")) {
+                this.camera.rotate(100 * dt, 0);
+            }
+            if (this._keymap.get("down-c")) {
+                this.rotateSelectedShipsBy(this.getAllSelected(), 5 * dt);
+            }
+            if (this._keymap.get("down-v")) {
+                this.rotateSelectedShipsBy(this.getAllSelected(), -5 * dt);
+            }
+        }
+
+        if (this._keyup) {
+            if (this._keymap.get("up-f")) {
+                this.switchSideOfSelectedShips();
+            }
+            if (this._keymap.get("up-r")) {
+                this.camera.reset();
+            }
+            if (this._keymap.get("up- ")) {
+                this.lookAtSelectedShip();
+            }
+            if (this._keymap.get("up-x")) {
+                this.rotateResetOfSelectedShips();
+            }
+            if (this._keymap.get("up-c") || this._keymap.get("up-v")) {
+                this._updateTacticalPlan();
+            }
+            this._keyup = false;
+            this._keymap.clear();
         }
     }
 
@@ -255,24 +309,25 @@ export class Controller {
         }
     }
 
-    rotateSelectedShipsToAngle(selectedShips, angle) {
+    rotateSelectedShipsBy(selectedShips, delta) {
         var changed = false
         selectedShips.forEach(o => {
             o.rotation.x = -Math.PI / 2;
             o.rotation.y = Math.PI;
-            var axis = new THREE.Vector3(0, 0.5, 0);
+            var axis = new THREE.Vector3(0, 1.0, 0);
             var origin = o.parent.rotation.clone();
             //o.parent.rotateOnAxis(axis, angle);
             var rotMatrix = new THREE.Matrix4();
-            var obj:THREE.Object3D;
-            rotMatrix.makeRotationAxis(axis.normalize(), angle);
-            o.parent.applyMatrix(rotMatrix);
+            var obj: THREE.Object3D;
+            //rotMatrix.makeRotationAxis(axis.normalize(), angle);
+            o.parent.rotateOnAxis(axis.normalize(), delta)
+            //o.parent.rotation.applyMatrix(rotMatrix);
             //o.parent.rotation.set((origin.x - o.parent.rotation.x) + origin.x, (origin.y - o.parent.rotation.y) + origin.y, (origin.z - o.parent.rotation.z) + origin.z);
             changed = true;
         });
-        if (changed) {
+        /**if (changed) {
             this._updateTacticalPlan();
-        }
+        }*/
     }
 
     rotateResetOfSelectedShips() {
@@ -367,6 +422,18 @@ export class Controller {
         this._focusedObject = null;
         this._lefttop = null;
         this.marqueeBox.visible = false;
+    }
+
+    private _onKeyDown = (e) => {
+        this._keymap.set("down-"+e.key, true);
+        this._keydown = true;
+    }
+
+    private _onKeyUp = (e) => {
+        this._keymap.set("down-"+e.key, false);
+        this._keymap.set("up-"+e.key, true);
+        this._keydown = false;
+        this._keyup = true;
     }
 
     private _onMouseWheel = (e) => {
@@ -481,6 +548,12 @@ export class Controller {
         vector.unproject(this.camera);
         var raycaster = new THREE.Raycaster(this.camera.position, vector.sub(this.camera.position).normalize());
         return raycaster;
+    }
+
+    private _clearKeyMap() {
+        this._keymap.delete("leftclick");
+        this._keymap.delete("rightclick");
+        this._keymap.delete("zoom");
     }
 
 }

@@ -135,6 +135,10 @@ export class OrbitCamera extends PerspectiveCamera {
         this._fwd += fwd;
     }
 
+    right(right: number) {
+        this._right += right;
+    }
+
     moveTo(center, distance) {
         this.center.set(center.x, center.y, center.z);
         this.zoomout = distance;
