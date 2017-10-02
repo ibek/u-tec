@@ -279,33 +279,6 @@ export class SimulatorComponent implements AfterViewInit {
         a.dispatchEvent(clickEvent);
     }
 
-    toggleFullscreen() {
-        var document: any = window.document;
-        var elem = document.documentElement;
-        if (!document.fullscreenElement && !document.mozFullScreenElement &&
-            !document.webkitFullscreenElement && !document.msFullscreenElement) {
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            } else if (elem.msRequestFullscreen) {
-                elem.msRequestFullscreen();
-            } else if (elem.mozRequestFullScreen) {
-                elem.mozRequestFullScreen();
-            } else if (elem.webkitRequestFullscreen) {
-                elem.webkitRequestFullscreen((<any>Element).ALLOW_KEYBOARD_INPUT);
-            }
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            }
-        }
-    }
-
     @HostListener('window:resize', ['$event'])
     onResize(event) {
         this.screenWidth = window.innerWidth - 5;
@@ -340,10 +313,6 @@ export class SimulatorComponent implements AfterViewInit {
 
     lookAtShip() {
         this.controller.lookAtSelectedShip();
-    }
-
-    rotateReset() {
-        this.controller.rotateResetOfSelectedShips();
     }
 
     switchSide() {

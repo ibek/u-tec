@@ -10,18 +10,39 @@
         <div class="logo"></div>
 
         <md-menu #menu="mdMenu" [overlapTrigger]="false">
+          <button md-menu-item (click)="manageCrew()" [disabled]="!shipService.isUnlocked()" *ngIf="isSimulator()">
+              <md-icon md-tooltip='Click here to add players.'>airline_seat_recline_extra</md-icon>
+              <span>Crew Management</span>
+          </button>
+          <button md-menu-item (click)="toggleLines()" *ngIf="isSimulator()">
+              <md-icon>border_style</md-icon>
+              <span *ngIf="!isAidsVisible()">Show Visual Aids</span>
+              <span *ngIf="isAidsVisible()">Hide Visual Aids</span>
+          </button>
+          <button md-menu-item (click)="saveImage()" *ngIf="isSimulator()">
+              <md-icon>photo_camera</md-icon>
+              <span>Save Image</span>
+          </button>
           <button md-menu-item (click)="newTacticalPlan()">
-          <md-icon>clear_all</md-icon>
-          <span>New Tactical Plan</span>
-        </button>
+              <md-icon>clear_all</md-icon>
+              <span>New Tactical Plan</span>
+          </button>
+          <button md-menu-item (click)="toggleFullscreen()">
+              <md-icon>fullscreen</md-icon>
+              <span>Fullscreen</span>
+          </button>
           <button md-menu-item (click)="lock()" *ngIf="!shipService.tacticalPlan.passwordHash">
-          <md-icon>lock_outline</md-icon>
-          <span>Lock</span>
-        </button>
+              <md-icon>lock_outline</md-icon>
+              <span>Lock</span>
+          </button>
           <button md-menu-item (click)="unlock()" *ngIf="shipService.isConnected() && shipService.tacticalPlan.passwordHash" [disabled]="shipService.isUnlocked()">
-          <md-icon>lock_open</md-icon>
-          <span>Unlock</span>
-        </button>
+              <md-icon>lock_open</md-icon>
+              <span>Unlock</span>
+          </button>
+          <button md-menu-item (click)="showControls()" *ngIf="isSimulator()">
+              <md-icon>games</md-icon>
+              <span>Open Controls</span>
+          </button>
           <button class="donate" (click)="donate()" md-menu-item></button>
         </md-menu>
 
@@ -37,21 +58,21 @@
     <div class="toolbar-right">
       <div class="tl-action">
         <div class="tl-action-highlight">
-        <button md-raised-button color="primary" routerLink="/inventory" routerLinkActive="inventoryActive" (click)="inventory()"
-              class="button primary-button" skipLocationChange>
+          <button md-raised-button color="primary" routerLink="/inventory" routerLinkActive="inventoryActive" (click)="inventory()"
+            class="button primary-button" skipLocationChange>
           <i class="material-icons">view_list</i>
           Inventory
         </button>
-        <button md-raised-button color="primary" routerLink="/simulator" routerLinkActive="simulatorActive" (click)="simulator()"
-              class="button primary-button" skipLocationChange [disabled]="!shipService.isReady()">
+          <button md-raised-button color="primary" routerLink="/simulator" routerLinkActive="simulatorActive" (click)="simulator()"
+            class="button primary-button" skipLocationChange [disabled]="!shipService.isReady()">
           Simulate
           <i class="material-icons">play_circle_outline</i>
         </button>
         </div>
-      <div>
-    </div>
+        <div>
+        </div>
   </md-toolbar>
   <div class="content">
-    <router-outlet></router-outlet>
+    <router-outlet (activate)="onActivate($event)"></router-outlet>
   </div>
 </main>

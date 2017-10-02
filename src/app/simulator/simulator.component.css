@@ -35,8 +35,8 @@
     color: #80CADC;
     display: none;
     position: absolute;
-    bottom: 30px;
-    left: 30px;
+    top: 60px;
+    right: 25px;
     z-index: 10;
     width: auto;
     white-space: nowrap;
@@ -46,6 +46,14 @@
 #text-label:hover {
     background-color: #80CADC;
     color: rgba(6, 70, 102, 0.8);
+}
+
+.timeline {
+    position: absolute;
+    z-index: 10;
+    width: 400px;
+    bottom: 20px;
+    left: 20px;
 }
 
 .info {
@@ -64,22 +72,26 @@
     background-color: #99e3f5;
 }
 
-.tools {
+.tool-panel {
     position: absolute;
     top: 60px;
     left: 10px;
-    padding: 0px;
-    background: rgba(6, 70, 102, 0.4);
     z-index: 2;
+    padding: 0px;
 }
 
-.tools ul {
+.tools {
+    padding: 0px;
+    background: rgba(6, 70, 102, 0.4);
+}
+
+.tools ul, .tool-panel ul {
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
-.tools ul li {
+.tools ul li, .tool-panel ul li {
     display: inline-block;
     vertical-align: top;
     position: relative;
@@ -165,5 +177,13 @@
 @media (max-width: 480px) {
     .title {
         display: none;
+    }
+
+    .timeline {
+        position: absolute;
+        z-index: 10;
+        width: 150px;
+        bottom: 20px;
+        left: 20px;
     }
 }

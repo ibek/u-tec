@@ -65,70 +65,46 @@
         </md-sidenav>
 
         <div class="background">
-            <md-card class="tools" *ngIf="loaded">
-                <div md-card-content>
-                    <ul>
-                        <li>
-                            <button md-button [mdMenuTriggerFor]="simulatorMenu">
-                                <md-icon>more_horiz</md-icon>
-                            </button>
-                            <md-menu #simulatorMenu [overlapTrigger]="false">
-                                <button md-menu-item (click)="manageCrew()" [disabled]="!shipService.isUnlocked()">
-                                    <md-icon md-tooltip='Click here to add players.'>airline_seat_recline_extra</md-icon>
-                                    <span>Crew Management</span>
-                                </button>
-                                <button md-menu-item (click)="toggleLines()">
-                                    <md-icon>border_style</md-icon>
-                                    <span *ngIf="!aidsVisible">Show Visual Aids</span>
-                                    <span *ngIf="aidsVisible">Hide Visual Aids</span>
-                                </button>
-                                <button md-menu-item (click)="saveImage()">
-                                    <md-icon>photo_camera</md-icon>
-                                    <span>Save Image</span>
-                                </button>
-                                <button md-menu-item (click)="toggleFullscreen()">
-                                    <md-icon>fullscreen</md-icon>
-                                    <span>Fullscreen</span>
-                                </button>
-                                <button md-menu-item (click)="showControls()">
-                                    <md-icon>games</md-icon>
-                                    <span>Open Controls</span>
-                                </button>
-                            </md-menu>
-                        </li>
-                        <li class="tools-divider">
-                        </li>
-                        <li>
-                            <button md-button (click)="switchCameraView()" md-tooltip='Change camera view.'>
+            <div class="tool-panel" *ngIf="loaded">
+                <md-card class="tools">
+                    <div md-card-content>
+                        <ul>
+                            <li>
+                                <button md-button (click)="switchCameraView()" md-tooltip='Change camera view.'>
                                 <md-icon>explore</md-icon>
                             </button>
-                        </li>
-                        <li class="tools-divider">
-                        </li>
-                        <li>
-                            <button md-button (click)="lookAtShip()" md-tooltip='Look closely at the selected ship.'>
+                            </li>
+                            <li class="tools-divider">
+                            </li>
+                            <li>
+                                <button md-button (click)="lookAtShip()" md-tooltip='Look closely at the selected ship.' [disabled]="controller.getAllSelected().length !== 1 || !shipService.isUnlocked()">
                                 <md-icon>camera</md-icon>
                             </button>
-                        </li>
-                        <li class="tools-divider">
-                        </li>
-                        <li>
-                            <button md-button (click)="rotateReset()" md-tooltip='Reset rotation of the selected ship(s).' [disabled]="!shipService.isUnlocked()">
-                                <md-icon>airplay</md-icon>
-                            </button>
-                        </li>
-                        <li class="tools-divider">
-                        </li>
-                        <li>
-                            <button md-button (click)="switchSide()" md-tooltip='Switch allies and enemies of selected ships.' [disabled]="!shipService.isUnlocked()">
+                            </li>
+                            <li class="tools-divider">
+                            </li>
+                            <li>
+                                <button md-button (click)="switchSide()" md-tooltip='Switch allies and enemies of selected ships.' [disabled]="controller.getAllSelected().length == 0 || !shipService.isUnlocked()">
                                 <md-icon>invert_colors</md-icon>
                             </button>
-                        </li>
-                    </ul>
-                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </md-card>
+                <ul>
+                    <li style="background: rgba(6, 70, 102, 0.4);margin-top: 10px;">
+                        <button md-button (click)="switchSide()" md-tooltip='Play.'>
+                        <md-icon>play_arrow</md-icon>
+                    </button>
+                    </li>
+                    <li style="width:calc(100% - 100px);">
+                        <md-slider style="width:100%;" color="primary" max="5" min="0" value="1" step="1" tick-interval="1">
+                        </md-slider>
+                    </li>
+                </ul>
                 <div class="card-corner card-corner-top"></div>
                 <div class="card-corner card-corner-bottom"></div>
-            </md-card>
+            </div>
             <div id="container" class="container" #container>
                 <button id="text-label" md-raised-button color='none' (click)="showInfo()"></button>
                 <section class="loader" [hidden]="loaded">
