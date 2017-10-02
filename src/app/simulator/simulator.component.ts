@@ -105,12 +105,34 @@ export class SimulatorComponent implements AfterViewInit {
     addGrid() {
         var material, texture;
 
-        texture = new THREE.TextureLoader().load("assets/images/grid.png");
+        var maxAnisotropy = this.renderer.getMaxAnisotropy();
 
+        texture = new THREE.TextureLoader().load("assets/images/grid256.png");
+
+        texture.anisotropy = maxAnisotropy;
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
 
-        texture.repeat.set(40, 40);
+        texture.repeat.set(60, 60);
+        var texture2 = new THREE.TextureLoader().load("assets/images/grid256.png");
+        texture.mipmaps[0] = texture2.image;
+        var texture3 = new THREE.TextureLoader().load("assets/images/grid128.png");
+        texture.mipmaps[1] = texture3.image;
+        var texture4 = new THREE.TextureLoader().load("assets/images/grid64.png");
+        texture.mipmaps[2] = texture4.image;
+        var texture5 = new THREE.TextureLoader().load("assets/images/grid32.png");
+        texture.mipmaps[3] = texture5.image;
+        var texture6 = new THREE.TextureLoader().load("assets/images/grid16.png");
+        texture.mipmaps[4] = texture6.image;
+        var texture7 = new THREE.TextureLoader().load("assets/images/grid8.png");
+        texture.mipmaps[5] = texture7.image;
+        var texture8 = new THREE.TextureLoader().load("assets/images/grid4.png");
+        texture.mipmaps[6] = texture8.image;
+        var texture9 = new THREE.TextureLoader().load("assets/images/grid2.png");
+        texture.mipmaps[7] = texture9.image;
+        var texture10 = new THREE.TextureLoader().load("assets/images/grid1.png");
+        texture.mipmaps[8] = texture10.image;
+        texture.needsUpdate = true;
 
         material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, opacity: 1.0, side: THREE.DoubleSide, depthWrite: false, depthTest: true });
         this.grid = new THREE.Mesh(new THREE.PlaneGeometry(250, 250), material);
@@ -137,17 +159,17 @@ export class SimulatorComponent implements AfterViewInit {
         this.marqueeBox.visible = false;
 
         var ageom = new THREE.BoxGeometry(1, 1, 1);
-        material = new THREE.MeshBasicMaterial({ color: 0x0c67a1, transparent: false, depthWrite: true, depthTest: true });
+        material = new THREE.MeshBasicMaterial({ color: 0x285157, transparent: false, depthWrite: true, depthTest: true });
         var axisY = new THREE.Mesh(ageom, material);
         axisY.position.set(0, -1, 0);
         axisY.scale.set(0.5, ShipModel3DNS.MAX_HEIGHT * 2, 0.5);
 
-        material = new THREE.MeshBasicMaterial({ color: 0x0c67a1, transparent: false, depthWrite: true, depthTest: true });
+        material = new THREE.MeshBasicMaterial({ color: 0x285157, transparent: false, depthWrite: true, depthTest: true });
         var axisX = new THREE.Mesh(ageom, material);
         axisX.position.set(0, -1, 0);
         axisX.scale.set(250, 0.5, 0.5);
 
-        material = new THREE.MeshBasicMaterial({ color: 0x0c67a1, transparent: false, depthWrite: true, depthTest: true });
+        material = new THREE.MeshBasicMaterial({ color: 0x285157, transparent: false, depthWrite: true, depthTest: true });
         var axisZ = new THREE.Mesh(ageom, material);
         axisZ.position.set(0, -1, 0);
         axisZ.scale.set(0.5, 0.5, 250);
