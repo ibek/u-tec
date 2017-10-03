@@ -105,7 +105,7 @@ export class SimulatorComponent implements AfterViewInit {
     addGrid() {
         var material, texture;
 
-        var maxAnisotropy = this.renderer.getMaxAnisotropy();
+        var maxAnisotropy = this.renderer.capabilities.getMaxAnisotropy();
 
         texture = new THREE.TextureLoader().load("assets/images/grid256.png");
 
@@ -132,7 +132,6 @@ export class SimulatorComponent implements AfterViewInit {
         texture.mipmaps[7] = texture9.image;
         var texture10 = new THREE.TextureLoader().load("assets/images/grid1.png");
         texture.mipmaps[8] = texture10.image;
-        texture.needsUpdate = true;
 
         material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, opacity: 1.0, side: THREE.DoubleSide, depthWrite: false, depthTest: true });
         this.grid = new THREE.Mesh(new THREE.PlaneGeometry(250, 250), material);

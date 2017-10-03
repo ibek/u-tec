@@ -14,7 +14,7 @@
     <img md-card-image src="{{shipService.getImage(model)}}" class="ship-thumbnail">
     <md-card-footer class="ship-amount">
         <div class="ship-amount-panel">
-            <md-slider color="primary" max="10" min="1" step="1" [(ngModel)]="ship.amount" thumb-label="1" (change)="onShipAmountChange()"
+            <md-slider color="primary" max="10" min="0" step="1" [(ngModel)]="ship.amount" (change)="onShipAmountChange()"
                 class="slider" [disabled]="!shipService.isUnlocked()">
             </md-slider>
             <button md-mini-fab color="none" class="amount-number">{{ship.amount}}</button>

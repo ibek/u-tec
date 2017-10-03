@@ -4,7 +4,7 @@
 
 .main {
   background: url("~/assets/images/inventory-bg.jpg") repeat;
-  min-width: 375px;
+  min-width: 360px;
 }
 
 .toolbar {
@@ -33,7 +33,7 @@
     padding-top: 64px;
     background: url("~/assets/images/grid-bg.png") repeat center top;
     background-color: rgba(6, 70, 102, 0.2);
-    min-width: 375px;
+    min-width: 360px;
 }
 
 .title {
@@ -237,7 +237,7 @@
 }
 
 /deep/ .mat-dialog-container {
-    background: rgba(6, 70, 102, 0.8) !important;
+    background: rgba(6, 70, 102, 0.8);
     color: #99e3f5;
 }
 

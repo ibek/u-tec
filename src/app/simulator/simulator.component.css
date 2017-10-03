@@ -31,12 +31,8 @@
 }
 
 #text-label {
-    background: rgba(6, 70, 102, 0.8);
     color: #80CADC;
     display: none;
-    position: absolute;
-    top: 60px;
-    right: 25px;
     z-index: 10;
     width: auto;
     white-space: nowrap;
@@ -44,8 +40,8 @@
 }
 
 #text-label:hover {
-    background-color: #80CADC;
-    color: rgba(6, 70, 102, 0.8);
+    background: rgba(0, 0, 0, 0.1);
+    color: #80CADC;
 }
 
 .timeline {
@@ -63,7 +59,7 @@
 }
 
 .info-card {
-    background: rgba(6, 70, 102, 0.4);
+    background: rgba(6, 70, 102, 0.8);
     color: #80CADC;
     padding: 0px;
 }
@@ -74,24 +70,40 @@
 
 .tool-panel {
     position: absolute;
-    top: 60px;
+    top: 50px;
     left: 10px;
     z-index: 2;
     padding: 0px;
 }
 
-.tools {
+.camera-panel {
+    position: absolute;
+    bottom: 200px;
+    right: 10px;
+    z-index: 2;
+    padding: 0px;
+}
+
+.ship-panel {
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    z-index: 2;
+    padding: 0px;
+}
+
+.tools, .cameras, .ships {
     padding: 0px;
     background: rgba(6, 70, 102, 0.4);
 }
 
-.tools ul, .tool-panel ul {
+.tools ul, .tool-panel ul, .cameras ul, .ships ul {
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
-.tools ul li, .tool-panel ul li {
+.tools ul li, .tool-panel ul li, .cameras ul li, .ships ul li {
     display: inline-block;
     vertical-align: top;
     position: relative;
@@ -185,5 +197,21 @@
         width: 150px;
         bottom: 20px;
         left: 20px;
+    }
+
+    .ship-panel {
+        position: absolute;
+        top: 110px;
+        right: 10px;
+        z-index: 2;
+        padding: 0px;
+    }
+
+    .camera-panel {
+        position: absolute;
+        bottom: 0px;
+        right: 10px;
+        z-index: 2;
+        padding: 0px;
     }
 }

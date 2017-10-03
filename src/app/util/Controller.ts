@@ -180,9 +180,9 @@ export class Controller {
                             });
                             if (i == 1 && selected) {
                                 this._title.setLabel(selected.parent.userData.shipData.name);
-                                this._title.htmlElement.style.display = 'block';
+                                this._title.show();
                             } else {
-                                this._title.htmlElement.style.display = 'none';
+                                this._title.hide();
                             }
                         } else {
                             this.marqueeBox.scale.set(0.0, 0.0, 0.0);
@@ -269,12 +269,12 @@ export class Controller {
     selectObject(obj) {
         ShipModel3D.select(obj, this.scene);
         this._title.setLabel(obj.parent.userData.shipData.name);
-        this._title.htmlElement.style.display = 'block';
+        this._title.show();
     }
 
     deselectAll() {
         ShipModel3D.deselectAll(this.actionableObjects, this.scene);
-        this._title.htmlElement.style.display = 'none';
+        this._title.hide();
     }
 
     switchSideOfSelectedShips() {

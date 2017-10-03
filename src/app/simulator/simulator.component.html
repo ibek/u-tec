@@ -66,7 +66,20 @@
 
         <div class="background">
             <div class="tool-panel" *ngIf="loaded">
-                <md-card class="tools">
+                <ul>
+                    <li style="background: rgba(6, 70, 102, 0.4);margin-top: 10px;">
+                        <button md-button (click)="switchSide()" md-tooltip='Play.'>
+                        <md-icon>play_arrow</md-icon>
+                    </button>
+                    </li>
+                    <li style="width:250px;">
+                        <md-slider style="width:100%;" color="primary" max="4" min="0" value="1" step="1" tick-interval="1">
+                        </md-slider>
+                    </li>
+                </ul>
+            </div>
+            <div class="camera-panel" *ngIf="loaded">
+                <md-card class="cameras">
                     <div md-card-content>
                         <ul>
                             <li>
@@ -81,32 +94,31 @@
                                 <md-icon>camera</md-icon>
                             </button>
                             </li>
-                            <li class="tools-divider">
+                        </ul>
+                    </div>
+                </md-card>
+            </div>
+            <div class="ship-panel">
+                <md-card class="ships">
+                    <div md-card-content>
+                        <ul>
+                            <li *ngIf="loaded && controller.getAllSelected().length > 0 && shipService.isUnlocked()">
+                                <button md-button (click)="switchSide()" md-tooltip='Switch allies and enemies of selected ships.'>
+                                    <md-icon>invert_colors</md-icon>
+                                </button>
+                            </li>
+                            <li class="tools-divider" *ngIf="loaded && controller.getAllSelected().length > 0 && shipService.isUnlocked()">
                             </li>
                             <li>
-                                <button md-button (click)="switchSide()" md-tooltip='Switch allies and enemies of selected ships.' [disabled]="controller.getAllSelected().length == 0 || !shipService.isUnlocked()">
-                                <md-icon>invert_colors</md-icon>
-                            </button>
+                                <button md-button id="text-label" md-tooltip='Show info about the selected ship.' (click)="showInfo()">
+                                    <md-icon>info_outline</md-icon>
+                                </button>
                             </li>
                         </ul>
                     </div>
                 </md-card>
-                <ul>
-                    <li style="background: rgba(6, 70, 102, 0.4);margin-top: 10px;">
-                        <button md-button (click)="switchSide()" md-tooltip='Play.'>
-                        <md-icon>play_arrow</md-icon>
-                    </button>
-                    </li>
-                    <li style="width:calc(100% - 100px);">
-                        <md-slider style="width:100%;" color="primary" max="5" min="0" value="1" step="1" tick-interval="1">
-                        </md-slider>
-                    </li>
-                </ul>
-                <div class="card-corner card-corner-top"></div>
-                <div class="card-corner card-corner-bottom"></div>
             </div>
             <div id="container" class="container" #container>
-                <button id="text-label" md-raised-button color='none' (click)="showInfo()"></button>
                 <section class="loader" [hidden]="loaded">
                     <h3>Loading ...</h3>
                     <md-progress-bar color="primary" mode="determinate" [value]="loadingProgress">

@@ -23,11 +23,14 @@ export class ShipCardComponent implements OnInit {
 
   public delete(event) {
     this.shipService.deleteShip(this.model);
-    this.router.navigate(["inventory"], this.shipService.getNavigationExtras());
   }
 
   onShipAmountChange() {
-    this.shipService.updateTacticalPlan();
+    if (this.ship.amount < 1) {
+      this.ship.amount = 1;
+    } else {
+      this.shipService.updateTacticalPlan();
+    }
   }
 
 }
