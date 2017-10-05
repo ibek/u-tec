@@ -41,6 +41,7 @@ export class SimulatorComponent implements AfterViewInit {
     camera: OrbitCamera = new OrbitCamera(60, this.screenWidth / this.screenHeight, 10, 700);
     renderer: WebGLRenderer = new WebGLRenderer({ antialias: true });
     controller: Controller;
+    text = "ahoj";
 
     grid: Mesh;
     virtualGrid: Mesh;

@@ -73,8 +73,8 @@
                     </button>
                     </li>
                     <li style="width:250px;">
-                        <md-slider style="width:100%;" color="primary" max="4" min="0" value="1" step="1" tick-interval="1">
-                        </md-slider>
+                        <md-progress-bar style="width: 100%; margin-top: 22px; height: 10px;" color="primary" mode="determinate" value="33">
+                        </md-progress-bar>
                     </li>
                 </ul>
             </div>
@@ -98,24 +98,39 @@
                     </div>
                 </md-card>
             </div>
-            <div class="ship-panel">
+            <div class="ship-panel" *ngIf="loaded && controller.getAllSelected().length > 0 && shipService.isUnlocked()">
                 <md-card class="ships">
                     <div md-card-content>
                         <ul>
-                            <li *ngIf="loaded && controller.getAllSelected().length > 0 && shipService.isUnlocked()">
+                            <li>
                                 <button md-button (click)="switchSide()" md-tooltip='Switch allies and enemies of selected ships.'>
                                     <md-icon>invert_colors</md-icon>
                                 </button>
                             </li>
-                            <li class="tools-divider" *ngIf="loaded && controller.getAllSelected().length > 0 && shipService.isUnlocked()">
+                            <li class="tools-divider">
                             </li>
                             <li>
-                                <button md-button id="text-label" md-tooltip='Show info about the selected ship.' (click)="showInfo()">
-                                    <md-icon>info_outline</md-icon>
+                                <button md-button md-tooltip='Show info about the selected ship.' (click)="showInfo()" [disabled]="controller.getAllSelected().length > 1">
+                                    {{controller.shipLabel}}
                                 </button>
                             </li>
                         </ul>
+                        <ul>
+                            <li style="width:250px;">
+                                <md-slider style="width:100%;" color="primary" max="4" min="0" value="1" step="1" tick-interval="1">
+                                </md-slider>
+                            </li>
+                            <li class="tools-divider">
+                            </li>
+                            <li>
+                                <md-button-toggle (click)="switchSide()" color="warn" md-tooltip='Record the ship positions.'>
+                                    <md-icon>fiber_manual_record</md-icon>
+                                </md-button-toggle>
+                            </li>
+                        </ul>
                     </div>
+                    <div class="card-corner card-corner-top"></div>
+                    <div class="card-corner card-corner-bottom"></div>
                 </md-card>
             </div>
             <div id="container" class="container" #container>
