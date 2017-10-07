@@ -176,20 +176,6 @@
     padding-right: 16px;
 }
 
-.mat-button-toggle {
-    color: rgba(255, 0, 0, 0.4);
-}
-
-.mat-button-toggle-checked {
-    background-color: #80CADC;
-    color: red;
-}
-
-.mat-button-toggle-disabled {
-    background-color: rgba(0, 0, 0, 0.1);
-    color: rgba(0, 0, 0, 0.6);
-}
-
 @media (max-width: 480px) {
     .title {
         display: none;

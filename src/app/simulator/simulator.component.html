@@ -66,15 +66,27 @@
 
         <div class="background">
             <div class="tool-panel" *ngIf="loaded">
-                <ul>
-                    <li style="background: rgba(6, 70, 102, 0.4);margin-top: 10px;">
-                        <button md-button (click)="switchSide()" md-tooltip='Play.'>
-                        <md-icon>play_arrow</md-icon>
+                <ul style="margin-top: 10px;">
+                    <li style="background: rgba(6, 70, 102, 0.4);">
+                        <button md-button (click)="resetAnimation()">
+                        <md-icon>skip_previous</md-icon>
+                    </button>
+                    </li>
+                            <li class="tools-divider">
+                            </li>
+                    <li style="background: rgba(6, 70, 102, 0.4);">
+                        <button md-button (click)="playAnimation()">
+                        <md-icon *ngIf="!play">play_arrow</md-icon>
+                        <md-icon *ngIf="play">pause</md-icon>
                     </button>
                     </li>
                     <li style="width:250px;">
-                        <md-progress-bar style="width: 100%; margin-top: 22px; height: 10px;" color="primary" mode="determinate" value="33">
+                        <md-progress-bar style="width: 100%; height: 20px;" color="primary" mode="determinate" [value]="currentTime / maxTime * 100">
                         </md-progress-bar>
+                        <div>
+                            <span style="float: left;">{{controller.currentAnimationFrame}} / 5 frames</span>
+                            <span style="float: right;">{{timeSec}}s</span>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -117,15 +129,8 @@
                         </ul>
                         <ul>
                             <li style="width:250px;">
-                                <md-slider style="width:100%;" color="primary" max="4" min="0" value="1" step="1" tick-interval="1">
+                                <md-slider style="width:100%;" color="primary" [max]="5" min="0" value="1" step="1" tick-interval="1" (change)="onAnimationFrameChange()" [(ngModel)]="controller.currentAnimationFrame">
                                 </md-slider>
-                            </li>
-                            <li class="tools-divider">
-                            </li>
-                            <li>
-                                <md-button-toggle (click)="switchSide()" color="warn" md-tooltip='Record the ship positions.'>
-                                    <md-icon>fiber_manual_record</md-icon>
-                                </md-button-toggle>
                             </li>
                         </ul>
                     </div>

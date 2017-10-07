@@ -1,6 +1,6 @@
 declare var require: any
 
-import { Component, AfterViewInit, HostListener, ViewChild, ElementRef, Inject } from '@angular/core';
+import { Component, AfterViewInit, HostListener, ViewChild, ElementRef, Inject, Input } from '@angular/core';
 import { MdSidenav, MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 import {
     Scene, PerspectiveCamera, WebGLRenderer,
@@ -65,6 +65,11 @@ export class SimulatorComponent implements AfterViewInit {
     aidsVisible = true;
 
     clock = new THREE.Clock();
+
+    currentTime = 0;
+    @Input() timeSec = 0;
+    maxTime = 15;
+    play = false;
 
     constructor(private sceneService: SceneService, private shipService: ShipService,
         private router: Router, public mdDialog: MdDialog, private joystick: Joystick) {
@@ -205,6 +210,23 @@ export class SimulatorComponent implements AfterViewInit {
         var delta = this.clock.getDelta();
         ShipModel3D.time.value += delta;
 
+        if (this.play) {
+            this.currentTime += delta;
+            this.timeSec = Math.floor(this.currentTime);
+            if (this.timeSec > this.maxTime) {
+                this.timeSec = this.maxTime;
+            }
+            if (this.currentTime >= this.maxTime) {
+                this.currentTime = this.maxTime;
+                this.play = false;
+            }
+            this.controller.currentAnimationFrame = Math.floor(this.currentTime / (this.maxTime / 5));
+            this.controller.actionableObjects.forEach(o => {
+                var newpos = ShipModel3D.getAnimatedPosition(o, this.currentTime / this.maxTime, this.controller.currentAnimationFrame);
+                o.parent.position.set(newpos.x, newpos.y, newpos.z);
+            });
+        }
+
         this.camera.update(delta);
         this.joystick.update();
         this.controller.update(delta);
@@ -328,6 +350,33 @@ export class SimulatorComponent implements AfterViewInit {
 
     showControls() {
         let dialogRef = this.mdDialog.open(ControlsDialogComponent);
+    }
+
+    onAnimationFrameChange() {
+        /**if (this.controller.currentAnimationFrame < 1) {
+            setTimeout(() => {
+                this.controller.currentAnimationFrame = 1;
+            }, 100);
+        } else {
+
+        }*/
+    }
+
+    playAnimation() {
+        if (!this.play) {
+            this.play = true;
+            if (this.currentTime == this.maxTime) {
+                this.resetAnimation();
+            }
+        } else {
+            this.play = false;
+        }
+    }
+
+    resetAnimation() {
+        this.currentTime = 0;
+        this.timeSec = 0;
+        this.controller.currentAnimationFrame = 0;
     }
 }
 

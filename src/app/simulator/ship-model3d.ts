@@ -22,7 +22,7 @@ export class ShipModel3D {
     static noiseTexture;
 
     static needsUpdate = false;
-    static selectedBoxes: Map<string, any> = new Map();
+    static selectedAids: Map<string, any> = new Map();
 
     model: any;
 
@@ -91,26 +91,55 @@ export class ShipModel3D {
         var id = obj.parent.name + "" + obj.parent.userData.id;
         if (!obj.parent.userData.selected) {
             var size = new THREE.Box3().setFromObject(obj).getSize();
-            var color = (obj.parent.userData.shipInstance.enemy) ? 0xdd0000 : 0x00dddd;
+            var shipInstance = obj.parent.userData.shipInstance;
+            var color = (shipInstance.enemy) ? 0xdd0000 : 0x00dddd;
             var boxHelper = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxBufferGeometry(size.x, size.y, size.z), 1), new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.3, linewidth: 1, depthWrite: false, depthTest: true }));
             boxHelper.position.set(obj.parent.position.x, obj.parent.position.y, obj.parent.position.z);
             scene.add(boxHelper);
-            ShipModel3D.selectedBoxes.set(id, boxHelper);
+            var aids = [];
+            aids.push(boxHelper);
+
+            var points = [];
+            points.push(new Vector3(shipInstance.position.x, shipInstance.position.y, shipInstance.position.z));
+            shipInstance.animation.forEach(animFrame => {
+                points.push(new Vector3(animFrame.position.x, animFrame.position.y, animFrame.position.z));
+            });
+            if (points.length > 1) {
+                var spline = new THREE.CatmullRomCurve3(points);
+                var geometry = new THREE.Geometry();
+                geometry.vertices = spline.getPoints(50);
+                var material = new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.6 });
+                var path = new THREE.Line(geometry, material);
+                scene.add(path);
+                aids.push(path);
+            }
+            ShipModel3D.selectedAids.set(id, aids);
+
             obj.parent.userData.selected = true;
         }
     }
 
     static deselect(obj, scene) {
         var id = obj.parent.name + "" + obj.parent.userData.id;
-        scene.remove(this.selectedBoxes.get(id));
-        this.selectedBoxes.delete(id);
+        var aids = this.selectedAids.get(id);
+        if (aids) {
+            aids.forEach(a => {
+                scene.remove(a);
+            });
+            this.selectedAids.delete(id);
+        }
         obj.parent.userData.selected = false;
     }
 
     static deselectAll(objects, scene) {
-        this.selectedBoxes.forEach((value: any, key: string) => {
-            scene.remove(value);
-            this.selectedBoxes.delete(key);
+        this.selectedAids.forEach((value: any, key: string) => {
+            var aids = this.selectedAids.get(key);
+            if (aids) {
+                aids.forEach(a => {
+                    scene.remove(a);
+                });
+                this.selectedAids.delete(key);
+            }
         });
 
         objects.forEach(o => {
@@ -125,7 +154,7 @@ export class ShipModel3D {
 
     static updateBoxPosition(obj) {
         var id = obj.parent.name + "" + obj.parent.userData.id;
-        var sb = ShipModel3D.selectedBoxes.get(id);
+        var sb = ShipModel3D.selectedAids.get(id)[0];
         sb.position.set(obj.parent.position.x, obj.parent.position.y, obj.parent.position.z);
         if (obj.parent.children.length > 1) {
             obj.parent.children[1].children[0].scale.z = obj.parent.position.y / MAX_HEIGHT;
@@ -145,6 +174,57 @@ export class ShipModel3D {
     static switchSide(obj, enemy) {
         var color = (enemy) ? ShipModel3D.enemyShipColor : ShipModel3D.defaultShipColor;
         obj.material.uniforms.baseTexture.value = color;
+    }
+
+    static getAnimatedPosition(obj, time, frame): Vector3 { // time 0-1
+        var res;
+        var points = [];
+        var shipInstance = obj.parent.userData.shipInstance;
+        points.push(new Vector3(shipInstance.position.x, shipInstance.position.y, shipInstance.position.z));
+        shipInstance.animation.forEach(animFrame => {
+            points.push(new Vector3(animFrame.position.x, animFrame.position.y, animFrame.position.z));
+        });
+        if (points.length > 1) {
+            var spline:any = new THREE.CatmullRomCurve3(points);
+            spline.arcLengthDivisions = 100;
+            var frameLen = 15 / 5.0;
+            var dt = (time * 15.0) % frameLen;
+            var p = 0.0;
+            var totalDistance = spline.getLength();
+            if (totalDistance == 0) {
+                res = points[0];
+                return res;
+            }
+            /**var lengths = spline.getLengths(points.length-1);
+            totalDistance = lengths[lengths.length - 1];
+            for (var i = 1; i < lengths.length; i++) {
+                var diff = lengths[i] - lengths[i-1];
+                if (i == frame) {
+                    p += diff * dt / frameLen;
+                } else if (i < frame) {
+                    p += diff;
+                }
+            }*/
+            totalDistance = 0;
+            for (var i=0; i+1<points.length; i++) {
+                var distance = points[i].distanceTo(points[i+1]);
+                totalDistance += distance;
+                if (i == frame) {
+                    p += distance * dt / frameLen;
+                } else if (i < frame) {
+                    p += distance;
+                }
+            }
+            p = p / totalDistance;
+            if (p > 1) {
+                p = 1;
+            }
+            res = spline.getPointAt(p);
+
+        } else {
+            res = points[0];
+        }
+        return res;
     }
 
     private _addShipTo(scene, id: number, shipInstance: ShipInstance, scale: number) {
@@ -212,7 +292,6 @@ export class ShipModel3D {
         object.userData.shipInstance = shipInstance;
         object.userData.selected = false;
 
-        shipInstance.position = object.position; // update when changes on object
         this.objects.push(object.children[0]);
 
         var geometry = new THREE.Geometry();

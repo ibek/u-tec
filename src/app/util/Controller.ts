@@ -1,8 +1,10 @@
 import * as THREE from 'three'
 import { ShipService } from '../ship.service'
 import { Router } from '@angular/router'
+import { Input } from '@angular/core'
 import { OrbitCamera } from './OrbitCamera'
 import { Joystick } from './Joystick'
+import { AnimationFrame } from '../data-model';
 import { ShipModel3D } from '../simulator/ship-model3d'
 import * as ShipModel3DNS from '../simulator/ship-model3d';
 import * as Hammer from 'hammerjs'
@@ -18,6 +20,7 @@ export class Controller {
     actionableObjects: any = [];
     container;
     shipLabel = "none";
+    @Input() currentAnimationFrame = 0;
 
     private _needRefresh = false;
     private _keydown = false;
@@ -347,6 +350,17 @@ export class Controller {
         }
     }
 
+    getAnimationFramesMinNumberOfSelectedShips() {
+        var num = 1000;
+        this.getAllSelected().forEach(o => {
+            var oanimlen = o.parent.userData.shipInstance.animation.length;
+            if (num > oanimlen) {
+                num = oanimlen;
+            }
+        });
+        return num;
+    }
+
     private _onDown = (e) => {
         if (e.buttons & 1 || (e.touches && e.touches.length == 1) || (e.changedPointers && e.changedPointers.length == 1)) { // left click
             var pos = this._getPosition(e);
@@ -514,26 +528,47 @@ export class Controller {
     private _updateTacticalPlan() {
         this.actionableObjects.forEach(o => {
             var userData = o.parent.userData;
+            var target;
+            if (this.currentAnimationFrame > 0) {
+                if (this.currentAnimationFrame > userData.shipInstance.animation.length) {
+                    var len = this.currentAnimationFrame - userData.shipInstance.animation.length;
+                    var last = null;
+                    if (userData.shipInstance.animation.length > 0) {
+                        last = userData.shipInstance.animation[userData.shipInstance.animation.length - 1];
+                    } else {
+                        last = userData.shipInstance;
+                    }
+                    for (var i=0; i<len; i++) {
+                        var animFrame = new AnimationFrame();
+                        animFrame.position = new THREE.Vector3(last.position.x, last.position.y, last.position.z);
+                        animFrame.rotation = new THREE.Vector3(last.rotation.x, last.rotation.y, last.rotation.z);
+                        userData.shipInstance.animation.push(animFrame);
+                    }
+                }
+                target = userData.shipInstance.animation[this.currentAnimationFrame - 1];
+            } else {
+                target = userData.shipInstance;
+            }
             // position
             var x = Math.round(o.parent.position.x * 10) / 10;
             o.parent.position.x = x;
-            userData.shipInstance.position.x = x;
+            target.position.x = x;
             var y = Math.round(o.parent.position.y * 10) / 10;
             o.parent.position.y = y;
-            userData.shipInstance.position.y = y;
+            target.position.y = y;
             var z = Math.round(o.parent.position.z * 10) / 10;
             o.parent.position.z = z;
-            userData.shipInstance.position.z = z;
+            target.position.z = z;
             // rotation
             x = Math.round(o.parent.rotation.x * 1000) / 1000;
             o.parent.rotation.x = x;
-            userData.shipInstance.rotation.x = x;
+            target.rotation.x = x;
             y = Math.round(o.parent.rotation.y * 1000) / 1000;
             o.parent.rotation.y = y;
-            userData.shipInstance.rotation.y = y;
+            target.rotation.y = y;
             z = Math.round(o.parent.rotation.z * 1000) / 1000;
             o.parent.rotation.z = z;
-            userData.shipInstance.rotation.z = z;
+            target.rotation.z = z;
         });
         this.shipService.updateTacticalPlan();
     }
