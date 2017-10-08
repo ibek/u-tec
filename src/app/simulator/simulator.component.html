@@ -72,8 +72,8 @@
                         <md-icon>skip_previous</md-icon>
                     </button>
                     </li>
-                            <li class="tools-divider">
-                            </li>
+                    <li class="tools-divider">
+                    </li>
                     <li style="background: rgba(6, 70, 102, 0.4);">
                         <button md-button (click)="playAnimation()">
                         <md-icon *ngIf="!play">play_arrow</md-icon>
@@ -81,7 +81,7 @@
                     </button>
                     </li>
                     <li style="width:250px;">
-                        <md-progress-bar style="width: 100%; height: 20px;" color="primary" mode="determinate" [value]="currentTime / maxTime * 100">
+                        <md-progress-bar style="width: 100%; height: 20px;" color="primary" (click)="onChangeAnimation($event)" mode="determinate" [value]="currentTime / maxTime * 100">
                         </md-progress-bar>
                         <div>
                             <span style="float: left;">{{controller.currentAnimationFrame}} / 5 frames</span>
@@ -111,32 +111,27 @@
                 </md-card>
             </div>
             <div class="ship-panel" *ngIf="loaded && controller.getAllSelected().length > 0 && shipService.isUnlocked()">
-                <md-card class="ships">
-                    <div md-card-content>
-                        <ul>
-                            <li>
-                                <button md-button (click)="switchSide()" md-tooltip='Switch allies and enemies of selected ships.'>
+                <ul>
+                    <li>
+                        <button md-button (click)="switchSide()" md-tooltip='Switch allies and enemies of selected ships.'>
                                     <md-icon>invert_colors</md-icon>
                                 </button>
-                            </li>
-                            <li class="tools-divider">
-                            </li>
-                            <li>
-                                <button md-button md-tooltip='Show info about the selected ship.' (click)="showInfo()" [disabled]="controller.getAllSelected().length > 1">
+                    </li>
+                    <li class="tools-divider">
+                    </li>
+                    <li>
+                        <button md-button md-tooltip='Show info about the selected ship.' (click)="showInfo()" [disabled]="controller.getAllSelected().length > 1">
                                     {{controller.shipLabel}}
                                 </button>
-                            </li>
-                        </ul>
-                        <ul>
-                            <li style="width:250px;">
-                                <md-slider style="width:100%;" color="primary" [max]="5" min="0" value="1" step="1" tick-interval="1" (change)="onAnimationFrameChange()" [(ngModel)]="controller.currentAnimationFrame">
-                                </md-slider>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="card-corner card-corner-top"></div>
-                    <div class="card-corner card-corner-bottom"></div>
-                </md-card>
+                    </li>
+                </ul>
+                <ul style="margin-top: 10px;">
+                    <li>
+                        <md-button-toggle (click)="recording()" color="warn" md-tooltip='Record the ship movement.'>
+                            <md-icon>fiber_manual_record</md-icon>
+                        </md-button-toggle>
+                    </li>
+                </ul>
             </div>
             <div id="container" class="container" #container>
                 <section class="loader" [hidden]="loaded">

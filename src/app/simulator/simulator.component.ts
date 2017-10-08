@@ -70,6 +70,7 @@ export class SimulatorComponent implements AfterViewInit {
     @Input() timeSec = 0;
     maxTime = 15;
     play = false;
+    cameraLockedTo = null;
 
     constructor(private sceneService: SceneService, private shipService: ShipService,
         private router: Router, public mdDialog: MdDialog, private joystick: Joystick) {
@@ -222,11 +223,13 @@ export class SimulatorComponent implements AfterViewInit {
             }
             this.controller.currentAnimationFrame = Math.floor(this.currentTime / (this.maxTime / 5));
             this.controller.actionableObjects.forEach(o => {
-                var newpos = ShipModel3D.getAnimatedPosition(o, this.currentTime / this.maxTime, this.controller.currentAnimationFrame);
-                o.parent.position.set(newpos.x, newpos.y, newpos.z);
+                ShipModel3D.updateAnimatedPosition(o, this.currentTime / this.maxTime, this.controller.currentAnimationFrame);
             });
         }
 
+        if (this.cameraLockedTo) {
+            this.camera.center.set(this.cameraLockedTo.parent.position.x, this.cameraLockedTo.parent.position.y, this.cameraLockedTo.parent.position.z);
+        }
         this.camera.update(delta);
         this.joystick.update();
         this.controller.update(delta);
@@ -303,8 +306,8 @@ export class SimulatorComponent implements AfterViewInit {
 
     @HostListener('window:resize', ['$event'])
     onResize(event) {
-        this.screenWidth = window.innerWidth - 5;
-        this.screenHeight = window.innerHeight - 40;
+        this.screenWidth = window.innerWidth;
+        this.screenHeight = window.innerHeight - 5;
         this.camera.aspect = this.screenWidth / this.screenHeight;
 
         // adjust the FOV
@@ -330,11 +333,16 @@ export class SimulatorComponent implements AfterViewInit {
     }
 
     switchCameraView() {
+        this.cameraLockedTo = null;
         this.camera.switch();
     }
 
     lookAtShip() {
-        this.controller.lookAtSelectedShip();
+        var selected = this.controller.getAllSelected();
+        if (selected.length == 1) {
+            this.cameraLockedTo = selected[0];
+            this.controller.lookAtSelectedShip(this.cameraLockedTo);
+        }
     }
 
     switchSide() {
@@ -352,16 +360,6 @@ export class SimulatorComponent implements AfterViewInit {
         let dialogRef = this.mdDialog.open(ControlsDialogComponent);
     }
 
-    onAnimationFrameChange() {
-        /**if (this.controller.currentAnimationFrame < 1) {
-            setTimeout(() => {
-                this.controller.currentAnimationFrame = 1;
-            }, 100);
-        } else {
-
-        }*/
-    }
-
     playAnimation() {
         if (!this.play) {
             this.play = true;
@@ -377,6 +375,29 @@ export class SimulatorComponent implements AfterViewInit {
         this.currentTime = 0;
         this.timeSec = 0;
         this.controller.currentAnimationFrame = 0;
+        this.controller.actionableObjects.forEach(o => {
+            ShipModel3D.updateAnimatedPosition(o, 0, this.controller.currentAnimationFrame);
+        });
+    }
+
+    onChangeAnimation(e) {
+        this.currentTime = (e.layerX / e.target.offsetWidth) * 15;
+        this.timeSec = Math.floor(this.currentTime);
+        this.controller.currentAnimationFrame = Math.floor(this.currentTime / (this.maxTime / 5));
+        this.controller.actionableObjects.forEach(o => {
+            ShipModel3D.updateAnimatedPosition(o, this.currentTime / this.maxTime, this.controller.currentAnimationFrame);
+        });
+    }
+
+    recording() {
+        this.controller.recording = !this.controller.recording;
+        if (this.controller.recording) {
+            this.controller.getAllSelected().forEach(o => {
+                this.controller.updateAnimationCurveFor(o);
+            });
+        } else {
+            ShipModel3D._removePoints(this.scene);
+        }
     }
 }
 

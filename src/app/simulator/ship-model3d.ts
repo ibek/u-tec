@@ -23,6 +23,7 @@ export class ShipModel3D {
 
     static needsUpdate = false;
     static selectedAids: Map<string, any> = new Map();
+    static points: any[] = [];
 
     model: any;
 
@@ -98,25 +99,48 @@ export class ShipModel3D {
             scene.add(boxHelper);
             var aids = [];
             aids.push(boxHelper);
-
-            var points = [];
-            points.push(new Vector3(shipInstance.position.x, shipInstance.position.y, shipInstance.position.z));
-            shipInstance.animation.forEach(animFrame => {
-                points.push(new Vector3(animFrame.position.x, animFrame.position.y, animFrame.position.z));
-            });
-            if (points.length > 1) {
-                var spline = new THREE.CatmullRomCurve3(points);
-                var geometry = new THREE.Geometry();
-                geometry.vertices = spline.getPoints(50);
-                var material = new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.6 });
-                var path = new THREE.Line(geometry, material);
-                scene.add(path);
-                aids.push(path);
-            }
+            aids = this.updateAnimationCurve(scene, shipInstance, aids, false);
             ShipModel3D.selectedAids.set(id, aids);
 
             obj.parent.userData.selected = true;
         }
+    }
+
+    static updateAnimationCurve(scene, shipInstance, aids: any[], recording: boolean): any[] {
+        var points = [];
+        points.push(new Vector3(shipInstance.position.x, shipInstance.position.y, shipInstance.position.z));
+        shipInstance.animation.forEach(animFrame => {
+            points.push(new Vector3(animFrame.position.x, animFrame.position.y, animFrame.position.z));
+        });
+        if (points.length > 1) {
+            var spline = new THREE.CatmullRomCurve3(points);
+            var geometry = new THREE.Geometry();
+            geometry.vertices = spline.getPoints(50);
+            var color = (shipInstance.enemy) ? 0xdd0000 : 0x00dddd;
+            var material = new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.6 });
+            var path = new THREE.Line(geometry, material);
+            if (aids.length == 1) {
+                aids.push(path);
+                scene.add(path);
+            } else if (aids.length > 1) {
+                scene.remove(aids[1]);
+                aids[1] = path;
+                scene.add(path);
+            }
+            if (recording) {
+                this._removePoints(scene);
+                for (var i=0; i<points.length; i++) {
+                    geometry = new THREE.SphereGeometry( 3, 8, 8 );
+                    var pointMat = new THREE.MeshBasicMaterial( {color: color} );
+                    var sphere = new THREE.Mesh( geometry, pointMat );
+                    var p = points[i];
+                    sphere.position.set(p.x, p.y, p.z);
+                    ShipModel3D.points.push(sphere);
+                    scene.add( sphere );
+                }
+            }
+        }
+        return aids;
     }
 
     static deselect(obj, scene) {
@@ -128,6 +152,7 @@ export class ShipModel3D {
             });
             this.selectedAids.delete(id);
         }
+        this._removePoints(scene);
         obj.parent.userData.selected = false;
     }
 
@@ -141,6 +166,7 @@ export class ShipModel3D {
                 this.selectedAids.delete(key);
             }
         });
+        this._removePoints(scene);
 
         objects.forEach(o => {
             o.parent.userData.selected = false;
@@ -149,13 +175,15 @@ export class ShipModel3D {
 
     static updateObjectPosition(obj, x, y, z) {
         obj.parent.position.set(x, y, z);
-        ShipModel3D.updateBoxPosition(obj);
+        ShipModel3D.updateAidsPosition(obj);
     }
 
-    static updateBoxPosition(obj) {
-        var id = obj.parent.name + "" + obj.parent.userData.id;
-        var sb = ShipModel3D.selectedAids.get(id)[0];
-        sb.position.set(obj.parent.position.x, obj.parent.position.y, obj.parent.position.z);
+    static updateAidsPosition(obj) {
+        if (obj.parent.userData.selected) {
+            var id = obj.parent.name + "" + obj.parent.userData.id;
+            var sb = ShipModel3D.selectedAids.get(id)[0];
+            sb.position.set(obj.parent.position.x, obj.parent.position.y, obj.parent.position.z);
+        }
         if (obj.parent.children.length > 1) {
             obj.parent.children[1].children[0].scale.z = obj.parent.position.y / MAX_HEIGHT;
         }
@@ -168,7 +196,7 @@ export class ShipModel3D {
         } else if (obj.parent.position.y > MAX_HEIGHT) {
             obj.parent.position.y = MAX_HEIGHT;
         }
-        ShipModel3D.updateBoxPosition(obj);
+        ShipModel3D.updateAidsPosition(obj);
     }
 
     static switchSide(obj, enemy) {
@@ -176,8 +204,8 @@ export class ShipModel3D {
         obj.material.uniforms.baseTexture.value = color;
     }
 
-    static getAnimatedPosition(obj, time, frame): Vector3 { // time 0-1
-        var res;
+    static updateAnimatedPosition(obj, time, frame) { // time 0-1
+        var newpos, newrot = null, nextpos;
         var points = [];
         var shipInstance = obj.parent.userData.shipInstance;
         points.push(new Vector3(shipInstance.position.x, shipInstance.position.y, shipInstance.position.z));
@@ -185,46 +213,48 @@ export class ShipModel3D {
             points.push(new Vector3(animFrame.position.x, animFrame.position.y, animFrame.position.z));
         });
         if (points.length > 1) {
-            var spline:any = new THREE.CatmullRomCurve3(points);
+            var spline: any = new THREE.CatmullRomCurve3(points);
             spline.arcLengthDivisions = 100;
             var frameLen = 15 / 5.0;
             var dt = (time * 15.0) % frameLen;
             var p = 0.0;
             var totalDistance = spline.getLength();
             if (totalDistance == 0) {
-                res = points[0];
-                return res;
-            }
-            /**var lengths = spline.getLengths(points.length-1);
-            totalDistance = lengths[lengths.length - 1];
-            for (var i = 1; i < lengths.length; i++) {
-                var diff = lengths[i] - lengths[i-1];
-                if (i == frame) {
-                    p += diff * dt / frameLen;
-                } else if (i < frame) {
-                    p += diff;
+                newpos = points[0];
+            } else {
+                totalDistance = 0;
+                for (var i = 0; i + 1 < points.length; i++) {
+                    var distance = points[i].distanceTo(points[i + 1]);
+                    totalDistance += distance;
+                    if (i == frame) {
+                        p += distance * dt / frameLen;
+                    } else if (i < frame) {
+                        p += distance;
+                    }
                 }
-            }*/
-            totalDistance = 0;
-            for (var i=0; i+1<points.length; i++) {
-                var distance = points[i].distanceTo(points[i+1]);
-                totalDistance += distance;
-                if (i == frame) {
-                    p += distance * dt / frameLen;
-                } else if (i < frame) {
-                    p += distance;
+                p = p / totalDistance;
+                if (p > 1) { // TODO: optimize when the ship reaches the end
+                    p = 1;
                 }
+                newpos = spline.getPointAt(p);
+                if (p + 0.01 <= 1.0) {
+                    nextpos = spline.getPointAt(p + 0.01);
+                } else {
+                    var prevpos = spline.getPointAt(p - 0.01);
+                    var dir = new THREE.Vector3();
+                    dir = dir.subVectors(newpos, prevpos);
+                    nextpos = newpos.clone().add(dir);
+                }
+                newrot = spline.getTangentAt(p);
             }
-            p = p / totalDistance;
-            if (p > 1) {
-                p = 1;
-            }
-            res = spline.getPointAt(p);
-
         } else {
-            res = points[0];
+            newpos = points[0];
         }
-        return res;
+        this.updateObjectPosition(obj, newpos.x, newpos.y, newpos.z);
+        if (newrot) {
+            obj.parent.rotation.set(newrot.x, newrot.y, newrot.z);
+            obj.parent.lookAt(nextpos);
+        }
     }
 
     private _addShipTo(scene, id: number, shipInstance: ShipInstance, scale: number) {
@@ -316,6 +346,13 @@ export class ShipModel3D {
             ShipModel3D.currentZ -= ShipModel3D.stepSize;
         }
         return new Vector3(-x, 1, z);
+    }
+
+    static _removePoints(scene) {
+        this.points.forEach(o => {
+            scene.remove(o);
+        });
+        this.points.splice(0, this.points.length);
     }
 
     vertexShader = `

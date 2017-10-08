@@ -90,20 +90,30 @@
     right: 10px;
     z-index: 2;
     padding: 0px;
+    text-align: right;
 }
 
-.tools, .cameras, .ships {
+.tools, .cameras {
     padding: 0px;
     background: rgba(6, 70, 102, 0.4);
 }
 
-.tools ul, .tool-panel ul, .cameras ul, .ships ul {
+.tools ul, .tool-panel ul, .cameras ul, .ship-panel ul {
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
-.tools ul li, .tool-panel ul li, .cameras ul li, .ships ul li {
+.ship-panel ul li {
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+    text-align: center;
+    color: #80CADC;
+    background: rgba(6, 70, 102, 0.4);
+}
+
+.tools ul li, .tool-panel ul li, .cameras ul li {
     display: inline-block;
     vertical-align: top;
     position: relative;
@@ -116,7 +126,7 @@
     margin-top: 5px;
     margin-bottom: 5px;
     height: 26px;
-    background-color: #99e3f5;
+    background-color: #99e3f5 !important;
     content: '';
 }
 
@@ -174,6 +184,28 @@
     margin: 0 auto;
     padding-left: 16px;
     padding-right: 16px;
+}
+
+.mat-button-toggle {
+    color: rgba(255, 0, 0, 0.4);
+}
+
+.mat-button-toggle:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.mat-button-toggle-standalone {
+    box-shadow: none;
+}
+
+.mat-button-toggle-checked {
+    background-color: #80CADC;
+    color: red;
+}
+
+.mat-button-toggle-disabled {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.6);
 }
 
 @media (max-width: 480px) {

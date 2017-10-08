@@ -168,5 +168,4 @@ export class Ship {
 
 export class AnimationFrame {
     position: Vector3;
-    rotation: Vector3;
 }

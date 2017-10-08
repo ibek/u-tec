@@ -21,6 +21,7 @@ export class Controller {
     container;
     shipLabel = "none";
     @Input() currentAnimationFrame = 0;
+    recording = false;
 
     private _needRefresh = false;
     private _keydown = false;
@@ -31,6 +32,7 @@ export class Controller {
     private _focusedObject = null;
     private _mbox = new THREE.Box3();
     private _hammer;
+    private _mouseCursorObj;
 
     constructor(private scene: THREE.Scene, private shipService: ShipService, private projectionMap: THREE.Mesh,
         private camera: OrbitCamera, private joystick: Joystick, private marqueeBox) {
@@ -38,6 +40,7 @@ export class Controller {
 
     enable(container) {
         this.container = container;
+        this.recording = false;
 
         var mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x
 
@@ -144,15 +147,33 @@ export class Controller {
                     var intersectsMap = raycaster.intersectObject(this.projectionMap);
                     if (intersectsMap.length > 0) {
                         var newpos = new THREE.Vector3().copy(intersectsMap[0].point);
-                        var diff = new THREE.Vector3(newpos.x - this._focusedObject.parent.position.x, 0, newpos.z - this._focusedObject.parent.position.z);
+                        if (!this.recording) {
+                            var diff = new THREE.Vector3(newpos.x - this._focusedObject.parent.position.x, 0, newpos.z - this._focusedObject.parent.position.z);
 
-                        ShipModel3D.updateObjectPosition(this._focusedObject, newpos.x, newpos.y, newpos.z);
-                        this.actionableObjects.forEach(o => {
-                            if (o.parent.userData.selected == true && o !== this._focusedObject) {
-                                ShipModel3D.updateObjectPosition(o, o.parent.position.x + diff.x, o.parent.position.y, o.parent.position.z + diff.z);
+                            ShipModel3D.updateObjectPosition(this._focusedObject, newpos.x, newpos.y, newpos.z);
+                            this.updateAnimationCurveFor(this._focusedObject);
+                            this.actionableObjects.forEach(o => {
+                                if (o.parent.userData.selected == true && o !== this._focusedObject) {
+                                    ShipModel3D.updateObjectPosition(o, o.parent.position.x + diff.x, o.parent.position.y, o.parent.position.z + diff.z);
+                                    this.updateAnimationCurveFor(o);
+                                }
+                            });
+                            this._needTacticalPlanUpdate = true;
+                        } else {
+                            var selected = this.getAllSelected();
+                            var i = ShipModel3D.points.indexOf(this._focusedObject);
+                            if (i > 0) {
+                                var animFrame = selected[0].parent.userData.shipInstance.animation[i - 1];
+                                animFrame.position.x = newpos.x;
+                                animFrame.position.y = newpos.y;
+                                animFrame.position.z = newpos.z;
+                            } else {
+                                ShipModel3D.updateObjectPosition(selected[0], newpos.x, newpos.y, newpos.z)
                             }
-                        });
-                        this._needTacticalPlanUpdate = true;
+                            this.updateAnimationCurveFor(selected[0]);
+                            this._focusedObject = ShipModel3D.points[i]; // refresh point
+                            this._needTacticalPlanUpdate = true;
+                        }
                     }
                 } else if (this._lefttop) {// marquee box
                     var e = this._keymap.get("leftclick");
@@ -193,7 +214,7 @@ export class Controller {
 
             if (this._keymap.get("rightclick")) {
                 var selected = this.getAllSelected();
-                if (selected.length == 0) {
+                if (selected.length == 0 || (selected.length == 1 && this.recording)) {
                     var e = this._keymap.get("rightclick");
                     this.camera.rotate(e.movementX * Controller._mouseSpeedX, e.movementY * Controller._mouseSpeedY);
                 }
@@ -243,7 +264,10 @@ export class Controller {
                 this.camera.reset();
             }
             if (this._keymap.get("up- ")) {
-                this.lookAtSelectedShip();
+                var selected = this.getAllSelected();
+                if (selected.length == 1) {
+                    this.lookAtSelectedShip(selected[0]);
+                }
             }
             if (this._keymap.get("up-x")) {
                 this.rotateResetOfSelectedShips();
@@ -269,6 +293,10 @@ export class Controller {
     selectObject(obj) {
         ShipModel3D.select(obj, this.scene);
         this.shipLabel = obj.parent.userData.shipData.name;
+    }
+
+    deselectObject(obj) {
+        ShipModel3D.deselect(obj, this.scene);
     }
 
     deselectAll() {
@@ -343,11 +371,8 @@ export class Controller {
         }
     }
 
-    lookAtSelectedShip() {
-        var selected = this.getAllSelected();
-        if (selected.length == 1) {
-            this.camera.moveTo(selected[0].parent.position, 40);
-        }
+    lookAtSelectedShip(obj) {
+        this.camera.moveTo(obj.parent.position, 40);
     }
 
     getAnimationFramesMinNumberOfSelectedShips() {
@@ -362,7 +387,7 @@ export class Controller {
     }
 
     private _onDown = (e) => {
-        if (e.buttons & 1 || (e.touches && e.touches.length == 1) || (e.changedPointers && e.changedPointers.length == 1)) { // left click
+        if (!this.recording && (e.buttons & 1 || (e.touches && e.touches.length == 1) || (e.changedPointers && e.changedPointers.length == 1))) { // left click
             var pos = this._getPosition(e);
             var raycaster = this._rayGet(pos.x, pos.y);
             var intersects = raycaster.intersectObjects(this.actionableObjects, true);
@@ -370,8 +395,12 @@ export class Controller {
                 var obj = intersects[0].object;
                 this.projectionMap.position.y = obj.parent.position.y;
                 this.projectionMap.updateMatrixWorld(false);
-                if (obj.parent.userData.selected) {
+                if (obj.parent.userData.selected && !e.ctrlKey) {
                     this._focusedObject = obj;
+                } else if (obj.parent.userData.selected && e.ctrlKey) {
+                    this.deselectObject(obj);
+                } else if (!obj.parent.userData.selected && e.ctrlKey) {
+                    this.selectObject(obj);
                 } else {
                     this.deselectAll();
                     this.selectObject(obj);
@@ -385,7 +414,7 @@ export class Controller {
             }
         }
 
-        if (e.buttons & 2 || (e.touches && e.touches.length == 2)) { // right click rotate
+        if (!this.recording && e.buttons & 2) { // right click rotate
             var selectedShips = this.getAllSelected();
             if (selectedShips.length > 0) {
                 var pos = this._getPosition(e);
@@ -408,6 +437,61 @@ export class Controller {
                 this.rotateSelectedShipsTo(selectedShips, dir, rotate2d);
             }
         }
+
+        if (this.recording && (e.buttons & 1 || (e.touches && e.touches.length == 1) || (e.changedPointers && e.changedPointers.length == 1))) {
+            var pos = this._getPosition(e);
+            var raycaster = this._rayGet(pos.x, pos.y);
+            var intersects = raycaster.intersectObjects(ShipModel3D.points, true);
+            if (intersects.length > 0) {
+                var p = intersects[0].object;
+                this.projectionMap.position.y = p.position.y;
+                this.projectionMap.updateMatrixWorld(false);
+                this._focusedObject = p;
+            }
+        }
+
+        if (this.recording && e.buttons & 2) { // right click adding movement point
+            var selectedShips = this.getAllSelected();
+            if (selectedShips.length == 1) {
+                var aobj = selectedShips[0];
+                var shipInstance = aobj.parent.userData.shipInstance;
+                var animation = shipInstance.animation;
+                var pos = this._getPosition(e);
+                var raycaster = this._rayGet(pos.x, pos.y);
+                var intersects = raycaster.intersectObjects(ShipModel3D.points, true);
+                if (intersects.length > 0) {
+                    var p = intersects[0].object;
+                    var i = ShipModel3D.points.indexOf(p);
+                    if (i > 0) {
+                        animation.splice(i - 1, 1);
+                        this.updateAnimationCurveFor(aobj);
+                        this._updateTacticalPlan();
+                    }
+                } else if (animation.length < 5) {
+                    var pos = this._getPosition(e);
+                    var raycaster = this._rayGet(pos.x, pos.y);
+                    this.projectionMap.position.y = aobj.parent.position.y;
+                    this.projectionMap.updateMatrixWorld(false);
+                    var intersectsMap = raycaster.intersectObject(this.projectionMap);
+                    if (intersectsMap.length > 0) {
+                        dpoint = intersectsMap[0].point;
+                        var animFrame = new AnimationFrame();
+                        animFrame.position = dpoint;
+                        animation.push(animFrame);
+                        this.updateAnimationCurveFor(aobj);
+                        this._updateTacticalPlan();
+                    }
+                }
+            }
+        }
+    }
+
+    updateAnimationCurveFor(obj) {
+        this._updateShipInstance();
+        var shipInstance = obj.parent.userData.shipInstance;
+        var id = obj.parent.name + "" + obj.parent.userData.id;
+        var aids = ShipModel3D.selectedAids.get(id);
+        ShipModel3D.updateAnimationCurve(this.scene, shipInstance, aids, this.recording);
     }
 
     private _onMove = (e) => {
@@ -434,13 +518,13 @@ export class Controller {
     }
 
     private _onKeyDown = (e) => {
-        this._keymap.set("down-"+e.key, true);
+        this._keymap.set("down-" + e.key, true);
         this._keydown = true;
     }
 
     private _onKeyUp = (e) => {
-        this._keymap.set("down-"+e.key, false);
-        this._keymap.set("up-"+e.key, true);
+        this._keymap.set("down-" + e.key, false);
+        this._keymap.set("up-" + e.key, true);
         this._keydown = false;
         this._keyup = true;
     }
@@ -478,13 +562,33 @@ export class Controller {
             delta = e.detail / 500.0;
         }
 
-        // move selected ships up/down
-        this.actionableObjects.forEach(o => {
-            if (o.parent.userData.selected) {
+        if (!this.recording) {
+            // move selected ships up/down
+            this.actionableObjects.forEach(o => {
+                if (o.parent.userData.selected) {
+                    this._needTacticalPlanUpdate = true;
+                    ShipModel3D.moveUp(o, delta * 200);
+                    this.updateAnimationCurveFor(o);
+                }
+            });
+        } else {
+            var pos = this._getPosition(e);
+            var raycaster = this._rayGet(pos.x, pos.y);
+            var intersects = raycaster.intersectObjects(ShipModel3D.points, true);
+            if (intersects.length > 0) {
+                var p = intersects[0].object;
+                var selected = this.getAllSelected();
+                var i = ShipModel3D.points.indexOf(p);
+                if (i > 0) {
+                    var animFrame = selected[0].parent.userData.shipInstance.animation[i - 1];
+                    animFrame.position.y -= delta * 200;
+                } else {
+                    ShipModel3D.moveUp(selected[0], delta * 200);
+                }
+                this.updateAnimationCurveFor(selected[0]);
                 this._needTacticalPlanUpdate = true;
-                ShipModel3D.moveUp(o, delta * 200);
             }
-        });
+        }
         if (this._needTacticalPlanUpdate) {
             return;
         }
@@ -526,51 +630,34 @@ export class Controller {
     }
 
     private _updateTacticalPlan() {
+        this._updateShipInstance();
+        this.shipService.updateTacticalPlan();
+    }
+
+    private _updateShipInstance() {
         this.actionableObjects.forEach(o => {
             var userData = o.parent.userData;
-            var target;
-            if (this.currentAnimationFrame > 0) {
-                if (this.currentAnimationFrame > userData.shipInstance.animation.length) {
-                    var len = this.currentAnimationFrame - userData.shipInstance.animation.length;
-                    var last = null;
-                    if (userData.shipInstance.animation.length > 0) {
-                        last = userData.shipInstance.animation[userData.shipInstance.animation.length - 1];
-                    } else {
-                        last = userData.shipInstance;
-                    }
-                    for (var i=0; i<len; i++) {
-                        var animFrame = new AnimationFrame();
-                        animFrame.position = new THREE.Vector3(last.position.x, last.position.y, last.position.z);
-                        animFrame.rotation = new THREE.Vector3(last.rotation.x, last.rotation.y, last.rotation.z);
-                        userData.shipInstance.animation.push(animFrame);
-                    }
-                }
-                target = userData.shipInstance.animation[this.currentAnimationFrame - 1];
-            } else {
-                target = userData.shipInstance;
-            }
             // position
             var x = Math.round(o.parent.position.x * 10) / 10;
             o.parent.position.x = x;
-            target.position.x = x;
+            userData.shipInstance.position.x = x;
             var y = Math.round(o.parent.position.y * 10) / 10;
             o.parent.position.y = y;
-            target.position.y = y;
+            userData.shipInstance.position.y = y;
             var z = Math.round(o.parent.position.z * 10) / 10;
             o.parent.position.z = z;
-            target.position.z = z;
+            userData.shipInstance.position.z = z;
             // rotation
             x = Math.round(o.parent.rotation.x * 1000) / 1000;
             o.parent.rotation.x = x;
-            target.rotation.x = x;
+            userData.shipInstance.rotation.x = x;
             y = Math.round(o.parent.rotation.y * 1000) / 1000;
             o.parent.rotation.y = y;
-            target.rotation.y = y;
+            userData.shipInstance.rotation.y = y;
             z = Math.round(o.parent.rotation.z * 1000) / 1000;
             o.parent.rotation.z = z;
-            target.rotation.z = z;
+            userData.shipInstance.rotation.z = z;
         });
-        this.shipService.updateTacticalPlan();
     }
 
     private _rayGet(x, y): THREE.Raycaster {
