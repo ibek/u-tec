@@ -213,8 +213,9 @@ export class Controller {
             }
 
             if (this._keymap.get("rightclick")) {
+                var e = this._keymap.get("rightclick");
                 var selected = this.getAllSelected();
-                if (selected.length == 0 || (selected.length == 1 && this.recording)) {
+                if (!e.ctrlKey && !e.shiftKey) {
                     var e = this._keymap.get("rightclick");
                     this.camera.rotate(e.movementX * Controller._mouseSpeedX, e.movementY * Controller._mouseSpeedY);
                 }
@@ -414,7 +415,7 @@ export class Controller {
             }
         }
 
-        if (!this.recording && e.buttons & 2) { // right click rotate
+        if (!this.recording && e.buttons & 2 && (e.shiftKey || e.ctrlKey)) { // right click rotate
             var selectedShips = this.getAllSelected();
             if (selectedShips.length > 0) {
                 var pos = this._getPosition(e);

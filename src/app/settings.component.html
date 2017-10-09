@@ -8,7 +8,8 @@
             <md-list style="text-align: left;" *ngIf="shipService.isConnected()">
                 <md-list-item style="color: #80CADC;">
                     <h4 md-line>Background</h4>
-                    <md-select color="primary" md-line placeholder="Select Background or Set custom URL" md-tooltip="Select Background or Set custom URL" [(ngModel)]="bg" class="input highlight">
+                    <md-select color="primary" md-line placeholder="Select Background or Set custom URL" md-tooltip="Select Background or Set custom URL"
+                        [(ngModel)]="bg" class="input highlight">
                         <md-option *ngFor="let bg of backgrounds" [value]="bg">
                             <span>{{ bg }}</span>
                         </md-option>
@@ -23,6 +24,14 @@
                     <h4 md-line>Animation length ( in seconds )</h4>
                     <input md-line placeholder="Animation length" type="number" class="input" [(ngModel)]="animationLength">
                     </input>
+                </md-list-item>
+                <md-list-item style="color: #80CADC;margin-top: 20px;">
+                    <h4 md-line>Set player names assignable to pilot and crew positions on a ship.</h4>
+                    <button md-line md-button color="primary" style="background: rgba(6, 70, 102, 0.4); margin-top: 10px; width: 200px;" (click)="manageCrew()"
+                        [disabled]="!shipService.isUnlocked()">
+                        <md-icon md-tooltip='Click here to add players.'>airline_seat_recline_extra</md-icon>
+                        <span>Crew Management</span>
+                    </button>
                 </md-list-item>
             </md-list>
             <p *ngIf="!shipService.isConnected()">

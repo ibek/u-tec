@@ -10,15 +10,6 @@
         <div class="logo"></div>
 
         <md-menu #menu="mdMenu" [overlapTrigger]="false">
-          <button md-menu-item (click)="manageCrew()" [disabled]="!shipService.isUnlocked()" *ngIf="isSimulator()">
-              <md-icon md-tooltip='Click here to add players.'>airline_seat_recline_extra</md-icon>
-              <span>Crew Management</span>
-          </button>
-          <button md-menu-item (click)="toggleLines()" *ngIf="isSimulator()">
-              <md-icon>border_style</md-icon>
-              <span *ngIf="!isAidsVisible()">Show Visual Aids</span>
-              <span *ngIf="isAidsVisible()">Hide Visual Aids</span>
-          </button>
           <button md-menu-item (click)="saveImage()" *ngIf="isSimulator()">
               <md-icon>photo_camera</md-icon>
               <span>Save Image</span>

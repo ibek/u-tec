@@ -367,10 +367,6 @@ export class SimulatorComponent implements AfterViewInit {
         this.controller.switchSideOfSelectedShips();
     }
 
-    toggleLines() {
-        this.showAids(!this.aidsVisible);
-    }
-
     showAids(visible) {
         this.aidsVisible = visible;
         this.controller.actionableObjects.forEach(o => {
