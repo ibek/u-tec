@@ -266,11 +266,10 @@ export class ShipModel3D {
                 }
             }
             for (var m = 1; m < shipInstance.squadron; m++) {
-                var sq = new THREE.Mesh(object.children[0].geometry, object.children[0].material);
+                var sq = new THREE.Mesh(object.parent.children[0].geometry, object.parent.children[0].material);
                 sq.name = "squadron";
-                sq.rotation.set(-Math.PI / 2, Math.PI, 0);
                 var sp = ShipModel3D.squadronPositions[shipInstance.squadron - 2];
-                sq.position.set(sp[m - 1].x, sp[m - 1].y, sp[m - 1].z);
+                sq.position.set(sp[m - 1].x, sp[m - 1].z, sp[m - 1].y);
                 object.add(sq);
             }
         }
@@ -314,6 +313,7 @@ export class ShipModel3D {
             object.children[0].geometry.computeBoundingBox();
 
             this._setObject3d(id, object, colorCode, scale, shipInstance, material);
+            ShipModel3D.updateSquadron(shipInstance, object.children[0]);
 
             scene.add(this.model);
         } else {
@@ -324,7 +324,7 @@ export class ShipModel3D {
             object.add(mesh);
 
             this._setObject3d(id, object, colorCode, scale, shipInstance, material);
-            ShipModel3D.updateSquadron(shipInstance, object);
+            ShipModel3D.updateSquadron(shipInstance, mesh);
 
             this.model.add(object);
         }
@@ -416,10 +416,10 @@ export class ShipModel3D {
     `;
 
     static squadronPositions = [[{ x: -3000, y: 0, z: 0 }],
-    [{ x: 1500, y: 0, z: -3000 }, { x: -1500, y: 0, z: -3000 }],
-    [{ x: -3000, y: 0, z: 0 }, { x: 1500, y: 0, z: -3000 }, { x: -4500, y: 0, z: -3000 }],
-    [{ x: 1500, y: 0, z: -3000 }, { x: -1500, y: 0, z: -3000 }, { x: 3000, y: 0, z: -6000 }, { x: -3000, y: 0, z: -6000 }],
-    [{ x: 1500, y: 0, z: -3000 }, { x: -1500, y: 0, z: -3000 }, { x: 3000, y: 0, z: -6000 }, { x: -3000, y: 0, z: -6000 }, { x: 0, y: 0, z: -6000 }],
-    [{ x: -3000, y: 0, z: 0 }, { x: 1500, y: 0, z: -3000 }, { x: -4500, y: 0, z: -3000 }, { x: -1500, y: 0, z: -3000 }, { x: 3000, y: 0, z: -6000 }, { x: -6000, y: 0, z: -6000 }],
-    [{ x: 1500, y: 0, z: -3000 }, { x: -1500, y: 0, z: -3000 }, { x: 3000, y: 0, z: -6000 }, { x: -3000, y: 0, z: -6000 }, { x: 0, y: 0, z: -6000 }, { x: 4500, y: 0, z: -9000 }, { x: -4500, y: 0, z: -9000 }]];
+    [{ x: 1500, y: 0, z: 3000 }, { x: -1500, y: 0, z: 3000 }],
+    [{ x: -3000, y: 0, z: 0 }, { x: 1500, y: 0, z: 3000 }, { x: -4500, y: 0, z: 3000 }],
+    [{ x: 1500, y: 0, z: 3000 }, { x: -1500, y: 0, z: 3000 }, { x: 3000, y: 0, z: 6000 }, { x: -3000, y: 0, z: 6000 }],
+    [{ x: 1500, y: 0, z: 3000 }, { x: -1500, y: 0, z: 3000 }, { x: 3000, y: 0, z: 6000 }, { x: -3000, y: 0, z: 6000 }, { x: 0, y: 0, z: 6000 }],
+    [{ x: -3000, y: 0, z: 0 }, { x: 1500, y: 0, z: 3000 }, { x: -4500, y: 0, z: 3000 }, { x: -1500, y: 0, z: 3000 }, { x: 3000, y: 0, z: 6000 }, { x: -6000, y: 0, z: 6000 }],
+    [{ x: 1500, y: 0, z: 3000 }, { x: -1500, y: 0, z: 3000 }, { x: 3000, y: 0, z: 6000 }, { x: -3000, y: 0, z: 6000 }, { x: 0, y: 0, z: 6000 }, { x: 4500, y: 0, z: 9000 }, { x: -4500, y: 0, z: 9000 }]];
 }

@@ -439,7 +439,8 @@ export class SimulatorComponent implements AfterViewInit {
         }
         if (shipInstance.squadron + num <= 8 && shipInstance.squadron + num >= 1) {
             shipInstance.squadron = shipInstance.squadron + num;
-            ShipModel3D.updateSquadron(shipInstance, obj.parent);
+            ShipModel3D.updateSquadron(shipInstance, obj);
+            this.shipService.updateTacticalPlan();
         }
     }
 }
