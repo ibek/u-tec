@@ -5,6 +5,7 @@ import { InventoryComponent } from './inventory/inventory.component';
 import { AddShipComponent } from './inventory/add-ship.component';
 import { SimulatorComponent } from './simulator/simulator.component';
 import { WelcomeComponent } from './welcome.component';
+import { SettingsComponent } from './settings.component';
 
 const routes: Routes = [
     { path: '', redirectTo: '/welcome', pathMatch: 'full' },
@@ -23,6 +24,7 @@ const routes: Routes = [
         ]
     },
     { path: 'welcome', component: WelcomeComponent },
+    { path: 'settings', component: SettingsComponent },
     { path: 'simulator', component: SimulatorComponent },
     { path: '**', component: InventoryComponent }
 ];

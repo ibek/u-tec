@@ -1,0 +1,39 @@
+<div class="border">
+    <md-card class="container">
+        <div class="content">
+            <h1 style="font: 32px/36px Electrolize;">Settings</h1>
+            <p>
+                The custom settings are saved with your tactical plan in the database.
+            </p>
+            <md-list style="text-align: left;" *ngIf="shipService.isConnected()">
+                <md-list-item style="color: #80CADC;">
+                    <h4 md-line>Background</h4>
+                    <md-select color="primary" md-line placeholder="Select Background or Set custom URL" md-tooltip="Select Background or Set custom URL" [(ngModel)]="bg" class="input highlight">
+                        <md-option *ngFor="let bg of backgrounds" [value]="bg">
+                            <span>{{ bg }}</span>
+                        </md-option>
+                    </md-select>
+                </md-list-item>
+                <md-list-item style="color: #80CADC;">
+                    <h4 md-line>Show visual aids</h4>
+                    <md-slide-toggle md-line color="primary" class="input" style="padding-top: 5px;" [(ngModel)]="showVisualAids">
+                    </md-slide-toggle>
+                </md-list-item>
+                <md-list-item style="color: #80CADC;">
+                    <h4 md-line>Animation length ( in seconds )</h4>
+                    <input md-line placeholder="Animation length" type="number" class="input" [(ngModel)]="animationLength">
+                    </input>
+                </md-list-item>
+            </md-list>
+            <p *ngIf="!shipService.isConnected()">
+                Trying to load tactical plan data...
+            </p>
+            <div style="width: auto;margin: 0 auto;padding: 20px;">
+                <button md-button style="background-color: #80CADC; color: rgba(6, 70, 102, 1.0); width: 250px; height: 60px; font: 32px/36px Electrolize;"
+                    (click)="saveSettings()">Save</button>
+            </div>
+        </div>
+        <div class="card-corner card-corner-top"></div>
+        <div class="card-corner card-corner-bottom"></div>
+    </md-card>
+</div>

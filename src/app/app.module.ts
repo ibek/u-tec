@@ -13,6 +13,7 @@ import { ShipCardComponent } from './inventory/ship-card.component';
 import { AddShipComponent } from './inventory/add-ship.component';
 import { SimulatorComponent, CrewDialogComponent, ControlsDialogComponent } from './simulator/simulator.component';
 import { WelcomeComponent } from './welcome.component';
+import { SettingsComponent } from './settings.component';
 
 import { SceneService } from './scene.service';
 import { ShipService } from './ship.service';
@@ -57,7 +58,8 @@ export const environment = {
     LockDialogComponent,
     CrewDialogComponent,
     ControlsDialogComponent,
-    WelcomeComponent
+    WelcomeComponent,
+    SettingsComponent
   ],
   entryComponents: [
     LockDialogComponent,

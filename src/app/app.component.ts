@@ -101,6 +101,11 @@ export class AppComponent {
     this.router.navigate(["inventory"], this.shipService.getNavigationExtras());
   }
 
+  openSettings(): void {
+    this.joystick.hide();
+    this.router.navigate(["settings"], this.shipService.getNavigationExtras());
+  }
+
   simulator(): void {
     this.router.navigate(["simulator"], this.shipService.getNavigationExtras());
   }

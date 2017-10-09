@@ -3,7 +3,6 @@
 }
 
 .main {
-  background: url("~/assets/images/inventory-bg.jpg") repeat;
   min-width: 360px;
 }
 
@@ -31,8 +30,6 @@
 
 .content {
     padding-top: 64px;
-    background: url("~/assets/images/grid-bg.png") repeat center top;
-    background-color: rgba(6, 70, 102, 0.2);
     min-width: 360px;
 }
 

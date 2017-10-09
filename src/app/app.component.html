@@ -39,6 +39,10 @@
               <md-icon>lock_open</md-icon>
               <span>Unlock</span>
           </button>
+          <button md-menu-item (click)="openSettings()" *ngIf="shipService.isConnected()">
+              <md-icon>settings</md-icon>
+              <span>Settings</span>
+          </button>
           <button md-menu-item (click)="showControls()" *ngIf="isSimulator()">
               <md-icon>games</md-icon>
               <span>Open Controls</span>

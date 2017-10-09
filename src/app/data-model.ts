@@ -9,6 +9,11 @@ export class TacticalPlan {
     players: string[] = ["?"];
     updated: string = null; // date yyyy/mm/dd
     viewed: string = null; // date yyyy/mm/dd
+    settings: Settings = null;
+
+    constructor() {
+        this.verify(null);
+    }
 
     verify(shipService: ShipService) {
         if (this.passwordHash == undefined) {
@@ -23,6 +28,11 @@ export class TacticalPlan {
         if (this.viewed == undefined) {
             this.viewed = null;
         }
+        if (this.settings == undefined) {
+            this.settings = new Settings();
+            this.settings.animationLength = 15;
+            this.settings.showVisualAids = true;
+        }
 
         this.ships.forEach(s => {
             while (s.instances.length < s.amount) {
@@ -33,7 +43,7 @@ export class TacticalPlan {
                     i.position = ShipModel3D.getNextPosition();
                 }
                 if (!i.rotation) {
-                    i.rotation = new Vector3(0,0,0);
+                    i.rotation = new Vector3(0, 0, 0);
                 }
                 if (!i.pilot) {
                     i.pilot = "?";
@@ -60,6 +70,7 @@ export class TacticalPlan {
         this.players = tacticalPlan.players;
         this.updated = tacticalPlan.updated;
         this.viewed = tacticalPlan.viewed;
+        this.settings = tacticalPlan.settings;
 
         let tl = (tacticalPlan && tacticalPlan.ships) ? tacticalPlan.ships.length : 0;
         var diff = this.ships.length - tl;
@@ -152,7 +163,7 @@ export class ShipInstance {
     rotation: Vector3;
     pilot: string;
     crewmen: string[] = [];
-    enemy:boolean = false;
+    enemy: boolean = false;
     animation: AnimationFrame[];
 }
 
@@ -169,3 +180,14 @@ export class Ship {
 export class AnimationFrame {
     position: Vector3;
 }
+
+export class Settings {
+    background: string;
+    showVisualAids: boolean;
+    animationLength: number;
+}
+
+export const BACKGROUNDS: Map<string, string> = new Map([["Starfarer (default)", "assets/images/background/starfarer-cockpit.png"],
+["Freelancer", "assets/images/background/freelancer-cockpit.png"],
+["Galaxy", "assets/images/background/galaxy.png"],
+["Black", "black"]]);

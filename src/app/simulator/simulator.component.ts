@@ -17,7 +17,7 @@ import { ShipModel3D } from './ship-model3d';
 import * as ShipModel3DNS from './ship-model3d';
 import { SceneService } from '../scene.service';
 import { ShipService } from '../ship.service';
-import { Ship, ShipData, TacticalPlan, ShipInstance } from '../data-model';
+import { Ship, ShipData, TacticalPlan, ShipInstance, BACKGROUNDS } from '../data-model';
 import { Joystick } from '../util/Joystick';
 import { OrbitCamera } from '../util/OrbitCamera';
 import { Controller } from '../util/Controller';
@@ -90,17 +90,31 @@ export class SimulatorComponent implements AfterViewInit {
         this.scene.add(this.directionalLight);
         this.scene.add(new AmbientLight(new Color(0.8, 0.8, 0.8).getHex()));
 
-        this.addBackground();
         this.addGrid();
 
         this.start();
     }
 
-    addBackground() {
-        var texture: THREE.Texture = new THREE.TextureLoader().load("assets/images/background.png");
+    addBackground(tacticalPlan: TacticalPlan) {
+        var background = tacticalPlan.settings.background;
+        var material;
+        if (!background) {
+            background = "assets/images/background/starfarer-cockpit.png";
+        }
+        var bgUrl = BACKGROUNDS.get(background);
+        if (bgUrl) {
+            background = bgUrl;
+        }
+        if (background === "black") {
+            material = new THREE.MeshBasicMaterial({ color:0x090909 });
+        } else {
+            var loader = new THREE.TextureLoader();
+            var texture: THREE.Texture = loader.load(background);
+            material = new THREE.MeshBasicMaterial({ map: texture });
+        }
         var bg = new THREE.Mesh(
             new THREE.PlaneGeometry(2, 2, 0),
-            new THREE.MeshBasicMaterial({ map: texture })
+            material
         );
         bg.material.depthTest = false;
         bg.material.depthWrite = false;
@@ -244,6 +258,9 @@ export class SimulatorComponent implements AfterViewInit {
         let tacticalPlan: Promise<TacticalPlan> = this.shipService.getTacticalPlan(); // the list needs to be upto date
         tacticalPlan.then((res) => {
             res.verify(this.shipService);
+            this.addBackground(res);
+            this.maxTime = res.settings.animationLength;
+
             this.loadingProgress = this.sceneService.loadingProgress();
             if (this.shipService.isReady() && this.loadingProgress == 100) {
                 this.loaded = true;
@@ -256,7 +273,8 @@ export class SimulatorComponent implements AfterViewInit {
                     model.clear();
                     model.addShipsToScene(scope.scene);
                     model.objects.forEach(o => scope.controller.actionableObjects.push(o));
-                })
+                });
+                this.showAids(res.settings.showVisualAids);
                 this.shipService.updateTacticalPlan(); // to update generated positions
                 this.render();
             } else {
@@ -350,9 +368,13 @@ export class SimulatorComponent implements AfterViewInit {
     }
 
     toggleLines() {
-        this.aidsVisible = !this.aidsVisible;
+        this.showAids(!this.aidsVisible);
+    }
+
+    showAids(visible) {
+        this.aidsVisible = visible;
         this.controller.actionableObjects.forEach(o => {
-            o.parent.children[1].children[0].visible = !o.parent.children[1].children[0].visible;
+            o.parent.children[1].children[0].visible = visible;
         });
     }
 

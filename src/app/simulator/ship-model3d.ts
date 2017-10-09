@@ -130,8 +130,8 @@ export class ShipModel3D {
             if (recording) {
                 this._removePoints(scene);
                 for (var i=0; i<points.length; i++) {
-                    geometry = new THREE.SphereGeometry( 3, 8, 8 );
-                    var pointMat = new THREE.MeshBasicMaterial( {color: color} );
+                    geometry = new THREE.SphereGeometry( 2.5, 16, 16 );
+                    var pointMat = new THREE.MeshStandardMaterial( {color: color, roughness: 0.7, metalness: 0.3} );
                     var sphere = new THREE.Mesh( geometry, pointMat );
                     var p = points[i];
                     sphere.position.set(p.x, p.y, p.z);
