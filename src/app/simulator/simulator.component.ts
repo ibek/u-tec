@@ -417,6 +417,31 @@ export class SimulatorComponent implements AfterViewInit {
             ShipModel3D._removePoints(this.scene);
         }
     }
+
+    isSquadron(): boolean {
+        var selected = this.controller.getAllSelected();
+        if (selected.length !== 1) {
+            return false;
+        }
+        var obj = selected[0];
+        return obj.parent.userData.shipModel.size === "S";
+    }
+
+    squadron(num:number) {
+        var selected = this.controller.getAllSelected();
+        if (selected.length !== 1) {
+            return;
+        }
+        var obj = selected[0];
+        var shipInstance = obj.parent.userData.shipInstance;
+        if (!shipInstance.squadron || shipInstance.squadron < 1) {
+            shipInstance.squadron = 1;
+        }
+        if (shipInstance.squadron + num <= 8 && shipInstance.squadron + num >= 1) {
+            shipInstance.squadron = shipInstance.squadron + num;
+            ShipModel3D.updateSquadron(shipInstance, obj.parent);
+        }
+    }
 }
 
 @Component({

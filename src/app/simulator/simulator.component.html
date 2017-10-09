@@ -81,7 +81,8 @@
                     </button>
                     </li>
                     <li style="width:250px;">
-                        <md-progress-bar style="width: 100%; height: 20px;" color="primary" (click)="onChangeAnimation($event)" mode="determinate" [value]="currentTime / maxTime * 100">
+                        <md-progress-bar style="width: 100%; height: 20px;" color="primary" (click)="onChangeAnimation($event)" mode="determinate"
+                            [value]="currentTime / maxTime * 100">
                         </md-progress-bar>
                         <div>
                             <span style="float: left;">{{controller.currentAnimationFrame}} / 5 frames</span>
@@ -114,15 +115,25 @@
                 <ul>
                     <li>
                         <button md-button (click)="switchSide()" md-tooltip='Switch allies and enemies of selected ships.'>
-                                    <md-icon>invert_colors</md-icon>
-                                </button>
+                            <md-icon>invert_colors</md-icon>
+                        </button>
                     </li>
                     <li class="tools-divider">
                     </li>
                     <li>
                         <button md-button md-tooltip='Show info about the selected ship.' (click)="showInfo()" [disabled]="controller.getAllSelected().length > 1">
-                                    {{controller.shipLabel}}
-                                </button>
+                            {{controller.shipLabel}}
+                        </button>
+                    </li>
+                    <li class="tools-divider">
+                    </li>
+                    <li>
+                        <div style="height:18px"><button class="arrow" md-icon-button (click)="squadron(1)" [disabled]="!isSquadron()">
+                            <md-icon style="margin-top: -24px;">keyboard_arrow_up</md-icon>
+                        </button></div>
+                        <div style="height:18px"><button class="arrow" md-icon-button (click)="squadron(-1)" [disabled]="!isSquadron()">
+                            <md-icon style="margin-top: -24px;">keyboard_arrow_down</md-icon>
+                        </button></div>
                     </li>
                 </ul>
                 <ul style="margin-top: 10px;">

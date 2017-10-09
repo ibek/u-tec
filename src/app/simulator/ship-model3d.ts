@@ -129,14 +129,14 @@ export class ShipModel3D {
             }
             if (recording) {
                 this._removePoints(scene);
-                for (var i=0; i<points.length; i++) {
-                    geometry = new THREE.SphereGeometry( 2.5, 16, 16 );
-                    var pointMat = new THREE.MeshStandardMaterial( {color: color, roughness: 0.7, metalness: 0.3} );
-                    var sphere = new THREE.Mesh( geometry, pointMat );
+                for (var i = 0; i < points.length; i++) {
+                    geometry = new THREE.SphereGeometry(2.5, 16, 16);
+                    var pointMat = new THREE.MeshStandardMaterial({ color: color, roughness: 0.7, metalness: 0.3 });
+                    var sphere = new THREE.Mesh(geometry, pointMat);
                     var p = points[i];
                     sphere.position.set(p.x, p.y, p.z);
                     ShipModel3D.points.push(sphere);
-                    scene.add( sphere );
+                    scene.add(sphere);
                 }
             }
         }
@@ -257,6 +257,25 @@ export class ShipModel3D {
         }
     }
 
+    static updateSquadron(shipInstance, object) {
+        if (shipInstance.squadron && shipInstance.squadron >= 1) {
+            for (var o=object.children.length-1; o>=0; o--) {
+                var obj = object.children[o];
+                if (obj.name == "squadron") {
+                    object.children.splice(o, 1);
+                }
+            }
+            for (var m = 1; m < shipInstance.squadron; m++) {
+                var sq = new THREE.Mesh(object.children[0].geometry, object.children[0].material);
+                sq.name = "squadron";
+                sq.rotation.set(-Math.PI / 2, Math.PI, 0);
+                var sp = ShipModel3D.squadronPositions[shipInstance.squadron - 2];
+                sq.position.set(sp[m - 1].x, sp[m - 1].y, sp[m - 1].z);
+                object.add(sq);
+            }
+        }
+    }
+
     private _addShipTo(scene, id: number, shipInstance: ShipInstance, scale: number) {
 
         if (!ShipModel3D.defaultShipColor || !ShipModel3D.enemyShipColor || !ShipModel3D.noiseTexture) {
@@ -301,9 +320,11 @@ export class ShipModel3D {
             var object = this.model.children[0].clone(false);
             var mesh = new THREE.Mesh(this.model.children[0].children[0].geometry, material);
             mesh.rotation.set(-Math.PI / 2, Math.PI, 0);
+
             object.add(mesh);
 
             this._setObject3d(id, object, colorCode, scale, shipInstance, material);
+            ShipModel3D.updateSquadron(shipInstance, object);
 
             this.model.add(object);
         }
@@ -393,4 +414,12 @@ export class ShipModel3D {
             gl_FragColor = baseColor;
         }
     `;
+
+    static squadronPositions = [[{ x: -3000, y: 0, z: 0 }],
+    [{ x: 1500, y: 0, z: -3000 }, { x: -1500, y: 0, z: -3000 }],
+    [{ x: -3000, y: 0, z: 0 }, { x: 1500, y: 0, z: -3000 }, { x: -4500, y: 0, z: -3000 }],
+    [{ x: 1500, y: 0, z: -3000 }, { x: -1500, y: 0, z: -3000 }, { x: 3000, y: 0, z: -6000 }, { x: -3000, y: 0, z: -6000 }],
+    [{ x: 1500, y: 0, z: -3000 }, { x: -1500, y: 0, z: -3000 }, { x: 3000, y: 0, z: -6000 }, { x: -3000, y: 0, z: -6000 }, { x: 0, y: 0, z: -6000 }],
+    [{ x: -3000, y: 0, z: 0 }, { x: 1500, y: 0, z: -3000 }, { x: -4500, y: 0, z: -3000 }, { x: -1500, y: 0, z: -3000 }, { x: 3000, y: 0, z: -6000 }, { x: -6000, y: 0, z: -6000 }],
+    [{ x: 1500, y: 0, z: -3000 }, { x: -1500, y: 0, z: -3000 }, { x: 3000, y: 0, z: -6000 }, { x: -3000, y: 0, z: -6000 }, { x: 0, y: 0, z: -6000 }, { x: 4500, y: 0, z: -9000 }, { x: -4500, y: 0, z: -9000 }]];
 }

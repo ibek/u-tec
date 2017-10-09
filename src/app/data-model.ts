@@ -61,6 +61,9 @@ export class TacticalPlan {
                 if (!i.animation) {
                     i.animation = [];
                 }
+                if (!i.squadron) {
+                    i.squadron = null;
+                }
             });
         });
     }
@@ -130,6 +133,9 @@ export class TacticalPlan {
                             if (ts.instances && ts.instances[m] && ts.instances[m].animation) {
                                 sinstance.animation = ts.instances[m].animation;
                             }
+                            if (ts.instances && ts.instances[m] && ts.instances[m].squadron) {
+                                sinstance.squadron = ts.instances[m].squadron;
+                            }
                         } else { // newly added instance
                             if (ts.instances && m < ts.instances.length) {
                                 s.instances.push(ts.instances[m]);
@@ -165,6 +171,7 @@ export class ShipInstance {
     crewmen: string[] = [];
     enemy: boolean = false;
     animation: AnimationFrame[];
+    squadron: number;
 }
 
 export class Ship {

@@ -186,6 +186,11 @@
     padding-right: 16px;
 }
 
+.arrow:hover {
+    background: rgba(0, 0, 0, 0.2);
+    height:18px;
+}
+
 .mat-button-toggle {
     color: rgba(255, 0, 0, 0.4);
 }
