@@ -106,7 +106,7 @@ export class SimulatorComponent implements AfterViewInit {
             background = bgUrl;
         }
         if (background === "black") {
-            material = new THREE.MeshBasicMaterial({ color:0x090909 });
+            material = new THREE.MeshBasicMaterial({ color: 0x090909 });
         } else {
             var loader = new THREE.TextureLoader();
             var texture: THREE.Texture = loader.load(background);
@@ -351,15 +351,20 @@ export class SimulatorComponent implements AfterViewInit {
     }
 
     switchCameraView() {
-        this.cameraLockedTo = null;
         this.camera.switch();
     }
 
     lookAtShip() {
         var selected = this.controller.getAllSelected();
         if (selected.length == 1) {
+            if (this.cameraLockedTo == selected[0]) {
+                this.cameraLockedTo = null;
+                return;
+            }
             this.cameraLockedTo = selected[0];
             this.controller.lookAtSelectedShip(this.cameraLockedTo);
+        } else {
+            this.cameraLockedTo = null;
         }
     }
 
@@ -427,7 +432,7 @@ export class SimulatorComponent implements AfterViewInit {
         return obj.parent.userData.shipModel.size === "S";
     }
 
-    squadron(num:number) {
+    squadron(num: number) {
         var selected = this.controller.getAllSelected();
         if (selected.length !== 1) {
             return;

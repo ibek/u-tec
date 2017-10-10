@@ -563,7 +563,7 @@ export class Controller {
             delta = e.detail / 500.0;
         }
 
-        if (!this.recording) {
+        if (!this.recording && e.shiftKey) {
             // move selected ships up/down
             this.actionableObjects.forEach(o => {
                 if (o.parent.userData.selected) {

@@ -97,15 +97,15 @@
                         <ul>
                             <li>
                                 <button md-button (click)="switchCameraView()" md-tooltip='Change camera view.'>
-                                <md-icon>explore</md-icon>
-                            </button>
+                                    <md-icon>explore</md-icon>
+                                </button>
                             </li>
                             <li class="tools-divider">
                             </li>
                             <li>
-                                <button md-button (click)="lookAtShip()" md-tooltip='Look closely at the selected ship.' [disabled]="controller.getAllSelected().length !== 1 || !shipService.isUnlocked()">
-                                <md-icon>camera</md-icon>
-                            </button>
+                                <button md-button (click)="lookAtShip()" md-tooltip='Lock or unlock ship view.' [disabled]="controller.getAllSelected().length !== 1 && !cameraLockedTo">
+                                    <md-icon>camera</md-icon>
+                                </button>
                             </li>
                         </ul>
                     </div>
