@@ -10,17 +10,13 @@
         <div class="logo"></div>
 
         <md-menu #menu="mdMenu" [overlapTrigger]="false">
-          <button md-menu-item (click)="saveImage()" *ngIf="isSimulator()">
-              <md-icon>photo_camera</md-icon>
-              <span>Save Image</span>
-          </button>
           <button md-menu-item (click)="newTacticalPlan()">
               <md-icon>clear_all</md-icon>
               <span>New Tactical Plan</span>
           </button>
-          <button md-menu-item (click)="toggleFullscreen()">
-              <md-icon>fullscreen</md-icon>
-              <span>Fullscreen</span>
+          <button md-menu-item (click)="saveImage()" *ngIf="isSimulator()">
+              <md-icon>photo_camera</md-icon>
+              <span>Save Image</span>
           </button>
           <button md-menu-item (click)="lock()" *ngIf="!shipService.tacticalPlan.passwordHash">
               <md-icon>lock_outline</md-icon>
@@ -30,14 +26,19 @@
               <md-icon>lock_open</md-icon>
               <span>Unlock</span>
           </button>
-          <button md-menu-item (click)="openSettings()" *ngIf="shipService.isConnected()">
-              <md-icon>settings</md-icon>
-              <span>Settings</span>
+          <button md-menu-item (click)="toggleFullscreen()">
+              <md-icon>fullscreen</md-icon>
+              <span>Fullscreen</span>
           </button>
           <button md-menu-item (click)="showControls()" *ngIf="isSimulator()">
               <md-icon>games</md-icon>
               <span>Open Controls</span>
           </button>
+          <button md-menu-item (click)="openSettings()" *ngIf="shipService.isConnected()">
+              <md-icon>settings</md-icon>
+              <span>Settings</span>
+          </button>
+          <md-divider></md-divider>
           <button class="donate" (click)="donate()" md-menu-item></button>
         </md-menu>
 

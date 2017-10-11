@@ -1,41 +1,85 @@
 <div>
-    <h1 md-dialog-title>Controls</h1>
     <md-dialog-content>
-        <md-list>
-            <md-list-item style="color: #80CADC;">
-                <h4 md-line>Zoom</h4>
-                <p md-line>Use mouse scroll wheel
-                    <md-icon md-list-icon>mouse</md-icon> to zoom in or out.</p>
-            </md-list-item>
-            <md-list-item style="color: #80CADC;">
-                <h4 md-line>Move Ship Up or Down</h4>
-                <p md-line>Have a selected ship(s) and use the mouse scroll wheel
-                    <md-icon md-list-icon>mouse</md-icon> to move the ship up or down.</p>
-            </md-list-item>
-            <md-list-item style="color: #80CADC;">
-                <h4 md-line>2D Rotation</h4>
-                <p md-line>
-                    Have a selected ship(s). Mouse Right Click will rotate the ship(s) towards the target.
-                </p>
-            </md-list-item>
-            <md-list-item style="color: #80CADC;">
-                <h4 md-line>3D Rotation</h4>
-                <p md-line>
-                    Have a selected ship(s). Hold CTRL key during mouse Right Click which will rotate the ship(s) towards the target.
-                </p>
-            </md-list-item>
-            <md-list-item style="color: #80CADC;">
-                <h4 md-line>Switch Ship to Enemy or Ally</h4>
-                <p md-line>Have a selected ship(s) and click on
-                    <md-icon md-list-icon>invert_colors</md-icon> to switch the selected ship to enemy or ally.</p>
-            </md-list-item>
-            <md-list-item style="color: #80CADC;">
-                <h4 md-line>Show Ship Info</h4>
-                <p md-line>
-                    Have a selected single ship. Click on the label with the ship's name.
-                </p>
-            </md-list-item>
-        </md-list>
+        <h1 style="margin:20px;">Controls</h1>
+        <p style="margin:10px;">
+            Though it's possible to move around the scene on your mobile phone or tablet, it's recommended to use your PC for creating
+            the tactical plans.
+        </p>
+
+        <h2 style="margin:30px;">Camera</h2>
+        <h4 style="margin:10px;">
+            <md-icon>zoom_in</md-icon> Zoom View</h4>
+        <p>
+            Use mouse scroll wheel
+            <md-icon>mouse</md-icon> or touch pinch to zoom in or out.
+        </p>
+        <h4 style="margin:10px;">
+            <md-icon>camera_roll</md-icon> Rotate View</h4>
+        <p>
+            Use mouse Right Click or virtual joystick to rotate the scene view.
+        </p>
+        <h4 style="margin:10px;">
+            <md-icon>camera</md-icon> Lock View to a Ship</h4>
+        <p>
+            Have a selected ship and click on
+            <md-icon>camera</md-icon> to lock the camera view to the selected ship. To unlock the view, click to the same button
+            <md-icon>camera</md-icon> again.
+        </p>
+
+        <h2 style="margin:30px;">Editing</h2>
+        <p style="margin:10px;">
+            Have a selected ship(s) to do any of the actions below.
+        </p>
+        <h4 style="margin:10px;">
+            <md-icon>swap_vert</md-icon>Move Ship Up or Down</h4>
+        <p>
+            Hold SHIFT key + Mouse Scroll Wheel <md-icon>mouse</md-icon> to move the ship up or down.
+        </p>
+
+        <h4 style="margin:10px;">
+            <md-icon>rotate_90_degrees_ccw</md-icon> 2D Ship Rotation</h4>
+        <p>
+            Hold SHIFT key + Mouse Right Click will rotate the ship(s) towards the target. Alternatively press
+            <strong>C</strong> or <strong>V</strong> to rotate the ship(s) to the left or right. To reset the ship(s)' rotation,
+            press <strong>X</strong>.
+        </p>
+
+        <h4 style="margin:10px;">
+            <md-icon>3d_rotation</md-icon> 3D Ship Rotation</h4>
+        <p>
+            Hold CTRL key + Mouse Right Click will rotate the ship(s) towards the target.
+        </p>
+
+        <h4 style="margin:10px;">
+            <md-icon>invert_colors</md-icon>Switch Ship to Enemy or Ally</h4>
+        <p>
+            Click on <md-icon>invert_colors</md-icon> or press <strong>F</strong> to switch the selected ship to enemy or ally.
+        </p>
+
+        <h4 style="margin:10px;">
+            <md-icon>info_outline</md-icon>Show Ship Info</h4>
+        <p>
+            Click on the label with the ship's name; for example "F7C Hornet".
+        </p>
+
+        <h2 style="margin:30px;">Recording</h2>
+        <p style="margin:10px;">
+            Have a selected ship(s) and click on
+            <md-icon>fiber_manual_record</md-icon> to enable the recording. The length of the scene animation can be set in Settings.
+        </p>
+        <h4 style="margin:10px;">
+            <md-icon>add_location</md-icon>Add ship route</h4>
+        <p>
+            Mouse Right Click to add new points to the ship's route. Maximum limit is 5 points.
+        </p>
+        <h4 style="margin:10px;">
+            <md-icon>edit_location</md-icon>Edit ship route</h4>
+        <p>
+            To move one of the points of the route, use Mouse Left Button. To move the point up or
+            down, get the mouse cursor over the point and use Mouse Scroll Wheel
+            <md-icon>mouse</md-icon>. To delete the point, use Mouse Right Button.
+        </p>
+
     </md-dialog-content>
     <md-dialog-actions>
         <button md-button md-dialog-close="Close">Close</button>
