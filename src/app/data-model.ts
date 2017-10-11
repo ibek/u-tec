@@ -170,6 +170,7 @@ export class ShipInstance {
     pilot: string;
     crewmen: string[] = [];
     enemy: boolean = false;
+    visible: boolean = true;
     animation: AnimationFrame[];
     squadron: number;
 }
@@ -186,6 +187,7 @@ export class Ship {
 
 export class AnimationFrame {
     position: Vector3;
+    visible: Boolean = true;
 }
 
 export class Settings {

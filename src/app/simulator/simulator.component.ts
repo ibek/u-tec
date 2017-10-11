@@ -276,6 +276,7 @@ export class SimulatorComponent implements AfterViewInit {
                 });
                 this.showAids(res.settings.showVisualAids);
                 this.shipService.updateTacticalPlan(); // to update generated positions
+                this.resetAnimation();
                 this.render();
             } else {
                 setTimeout(() => {

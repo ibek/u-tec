@@ -477,6 +477,7 @@ export class Controller {
                     if (intersectsMap.length > 0) {
                         dpoint = intersectsMap[0].point;
                         var animFrame = new AnimationFrame();
+                        animFrame.visible = true;
                         animFrame.position = dpoint;
                         animation.push(animFrame);
                         this.updateAnimationCurveFor(aobj);
@@ -572,7 +573,35 @@ export class Controller {
                     this.updateAnimationCurveFor(o);
                 }
             });
-        } else {
+        } else if (this.recording && e.ctrlKey) {
+            var pos = this._getPosition(e);
+            var raycaster = this._rayGet(pos.x, pos.y);
+            var intersects = raycaster.intersectObjects(ShipModel3D.points, true);
+            if (intersects.length > 0) {
+                var p = intersects[0].object;
+                var selected = this.getAllSelected();
+                var shipInstance = selected[0].parent.userData.shipInstance;
+                var i = ShipModel3D.points.indexOf(p);
+                if (i > 0) {
+                    var animFrame = shipInstance.animation[i - 1];
+                    animFrame.visible = !animFrame.visible;
+                    var isVisible = this._isShipOnceVisible(shipInstance);
+                    if (!isVisible) {
+                        animFrame.visible = !animFrame.visible; // rollback the change
+                        return;
+                    }
+                } else {
+                    shipInstance.visible = !shipInstance.visible;
+                    var isVisible = this._isShipOnceVisible(shipInstance);
+                    if (!isVisible) {
+                        shipInstance.visible = !shipInstance.visible; // rollback the change
+                        return;
+                    }
+                }
+                this.updateAnimationCurveFor(selected[0]);
+                this._needTacticalPlanUpdate = true;
+            }
+        } else if (this.recording && e.shiftKey) {
             var pos = this._getPosition(e);
             var raycaster = this._rayGet(pos.x, pos.y);
             var intersects = raycaster.intersectObjects(ShipModel3D.points, true);
@@ -590,7 +619,7 @@ export class Controller {
                 this._needTacticalPlanUpdate = true;
             }
         }
-        if (this._needTacticalPlanUpdate) {
+        if (this._needTacticalPlanUpdate || this.recording) {
             return;
         }
 
@@ -672,6 +701,19 @@ export class Controller {
         this._keymap.delete("leftclick");
         this._keymap.delete("rightclick");
         this._keymap.delete("zoom");
+    }
+
+    private _isShipOnceVisible(shipInstance): boolean {
+        var visible = shipInstance.visible;
+        if (visible) {
+            return true;
+        } else {
+            for (var i = 0; i < shipInstance.animation.length; i++) {
+                if (shipInstance.animation[i].visible) {
+                    return true;
+                }
+            }
+        }
     }
 
 }

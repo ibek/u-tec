@@ -127,17 +127,26 @@ export class ShipModel3D {
                 aids[1] = path;
                 scene.add(path);
             }
-            if (recording) {
-                this._removePoints(scene);
-                for (var i = 0; i < points.length; i++) {
-                    geometry = new THREE.SphereGeometry(2.5, 16, 16);
-                    var pointMat = new THREE.MeshStandardMaterial({ color: color, roughness: 0.7, metalness: 0.3 });
-                    var sphere = new THREE.Mesh(geometry, pointMat);
-                    var p = points[i];
-                    sphere.position.set(p.x, p.y, p.z);
-                    ShipModel3D.points.push(sphere);
-                    scene.add(sphere);
+        } else {
+            if (aids.length > 1) {
+                scene.remove(aids[1]);
+            }
+        }
+        if (recording) {
+            this._removePoints(scene);
+            for (var i = 0; i < points.length; i++) {
+                geometry = new THREE.SphereGeometry(2.5, 16, 16);
+                if ((i == 0 && !shipInstance.visible) || (i > 0 && !shipInstance.animation[i - 1].visible)) {
+                    color = 0x000000;
+                } else {
+                    color = (shipInstance.enemy) ? 0xdd0000 : 0x00dddd;
                 }
+                var pointMat = new THREE.MeshStandardMaterial({ color: color, roughness: 0.7, metalness: 0.3 });
+                var sphere = new THREE.Mesh(geometry, pointMat);
+                var p = points[i];
+                sphere.position.set(p.x, p.y, p.z);
+                ShipModel3D.points.push(sphere);
+                scene.add(sphere);
             }
         }
         return aids;
@@ -208,6 +217,19 @@ export class ShipModel3D {
         var newpos, newrot = null, nextpos;
         var points = [];
         var shipInstance = obj.parent.userData.shipInstance;
+
+        if ((frame == 0 && !shipInstance.visible) ||
+            (frame > 0 && frame - 1 < shipInstance.animation.length && !shipInstance.animation[frame - 1].visible)) {
+            obj.parent.visible = false;
+            return;
+        } else {
+            obj.parent.visible = true;
+        }
+
+        if (shipInstance.animation.length == 0) {
+            return;
+        }
+
         points.push(new Vector3(shipInstance.position.x, shipInstance.position.y, shipInstance.position.z));
         shipInstance.animation.forEach(animFrame => {
             points.push(new Vector3(animFrame.position.x, animFrame.position.y, animFrame.position.z));
@@ -259,7 +281,7 @@ export class ShipModel3D {
 
     static updateSquadron(shipInstance, object) {
         if (shipInstance.squadron && shipInstance.squadron >= 1) {
-            for (var o=object.children.length-1; o>=0; o--) {
+            for (var o = object.children.length - 1; o >= 0; o--) {
                 var obj = object.children[o];
                 if (obj.name == "squadron") {
                     object.children.splice(o, 1);
