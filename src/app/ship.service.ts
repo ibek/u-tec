@@ -115,6 +115,7 @@ export class ShipService {
         if (this.id) {
             this.tacticalPlan.updated = this._getToday();
             this.plan.set(this.tacticalPlan);
+            this.tacticalPlan.verify(this);
         }
     }
 

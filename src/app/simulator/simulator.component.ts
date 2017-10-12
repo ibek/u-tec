@@ -105,7 +105,7 @@ export class SimulatorComponent implements AfterViewInit {
         if (bgUrl) {
             background = bgUrl;
         }
-        if (background === "black") {
+        if (background === "dark") {
             material = new THREE.MeshBasicMaterial({ color: 0x090909 });
         } else {
             var loader = new THREE.TextureLoader();
@@ -271,6 +271,7 @@ export class SimulatorComponent implements AfterViewInit {
                 scope.controller.reset();
                 scope.sceneService.shipModels3d.forEach((model: ShipModel3D, type: string) => {
                     model.clear();
+                    console.log("clear");
                     model.addShipsToScene(scope.scene);
                     model.objects.forEach(o => scope.controller.actionableObjects.push(o));
                 });
@@ -445,7 +446,7 @@ export class SimulatorComponent implements AfterViewInit {
         }
         if (shipInstance.squadron + num <= 8 && shipInstance.squadron + num >= 1) {
             shipInstance.squadron = shipInstance.squadron + num;
-            ShipModel3D.updateSquadron(shipInstance, obj);
+            ShipModel3D.updateSquadron(shipInstance, obj.parent);
             this.shipService.updateTacticalPlan();
         }
     }

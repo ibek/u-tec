@@ -38,6 +38,9 @@ export class TacticalPlan {
             while (s.instances.length < s.amount) {
                 s.instances.push(new ShipInstance());
             }
+            if (s.instances.length > s.amount) {
+                s.instances.splice(s.amount, s.instances.length - s.amount);
+            }
             s.instances.forEach(i => {
                 if (!i.position) {
                     i.position = ShipModel3D.getNextPosition();
@@ -199,4 +202,4 @@ export class Settings {
 export const BACKGROUNDS: Map<string, string> = new Map([["Starfarer (default)", "assets/images/background/starfarer-cockpit.png"],
 ["Freelancer", "assets/images/background/freelancer-cockpit.png"],
 ["Galaxy", "assets/images/background/galaxy.png"],
-["Black", "black"]]);
+["Dark", "dark"]]);

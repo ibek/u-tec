@@ -1,6 +1,7 @@
 <div class="border">
     <md-card class="container">
         <div class="content">
+            <div style="position:absolute;top:5px;right:5px;">2.0.Beta1 2017/10/15</div>
             <h1 style="font: 32px/36px Electrolize;">WELCOME CITIZEN</h1>
             <p>
                 UEE Tactical Communications Interface is a tool and fan project for tactical planning in <a href="https://robertsspaceindustries.com/"
@@ -16,21 +17,24 @@
                         Every category is visualized in a separate row
                     </li>
                     <li style="line-height: 20px;">
-                        <div style="float:left;">
-                            To add a ship from the specific category click on the button:
-                        </div>
-                        <div class="add-button"></div>
+                        Once your list of ships in the Inventory is ready, click on the Simulate button.
                     </li>
                 </ul>
                 <div class="inventory"></div>
                 <h4 style="margin: 10px; margin-top: 20px;">2. Simulate and Make a Tactical Plan</h4>
-                <p>
-                    Once your list of ships in the Inventory is ready, click on the Simulate button.
-                </p>
+                <ul style="margin-left: 20px;">
+                    <li style="line-height: 20px;">
+                        See <a href="javascript:void(0)" (click)="openControls()" class="link">Controls</a> to learn camera orientation, scene editing, and animation recording.
+                    </li>
+                    <li style="line-height: 20px;">
+                        Play your tactical plan animation.
+                    </li>
+                </ul>
+                TODO: GIF
                 <div class="simulation"></div>
                 <h4 style="margin: 10px; margin-top: 20px;">3. Share the Tactical Plan with your friends</h4>
                 <p>
-                    Copy &amp; Paste the URL. Be aware that a tactical plan which has not been viewed for more than 3 months will be removed.
+                    Copy &amp; Paste the URL. Be aware that a tactical plan which has not been viewed for more than 2 months will be removed.
                 </p>
                 <h4 style="margin: 10px; margin-top: 20px;">4. Love the tool? Do you want to contribute?</h4>
                 <ul style="margin-left: 20px;">
@@ -56,6 +60,41 @@
             <div style="width: auto;margin: 0 auto;padding: 20px;">
                 <button md-button style="background-color: #80CADC; color: rgba(6, 70, 102, 1.0); width: 250px; height: 60px; font: 32px/36px Electrolize;"
                     (click)="getStarted()">GET STARTED</button>
+            </div>
+            <div style="text-align: left;">
+                <h4 style="margin: 20px;" name="lastUpdate">2.0.Beta1 update on 15 Oct 2947</h4>
+                <ul style="margin-left: 20px;">
+                    <li style="line-height: 20px;">
+                        Ship route animation.
+                    </li>
+                    <li style="line-height: 20px;">
+                        Improved camera controls.
+                    </li>
+                    <li style="line-height: 20px;">
+                        Extended the scene.
+                    </li>
+                    <li style="line-height: 20px;">
+                        Mobile and Table support for viewing.
+                    </li>
+                    <li style="line-height: 20px;">
+                        Improved experience of ship controls
+                    </li>
+                    <li style="line-height: 20px;">
+                        Added <a href="javascript:void(0)" (click)="openControls()" class="link">keyboard shortcuts</a>
+                    </li>
+                    <li style="line-height: 20px;">
+                        4 Backgrounds to choose from = Starfarer and Freelancer cockpits, Galaxy stars, and solid Dark screen
+                    </li>
+                    <li style="line-height: 20px;">
+                        Squadrons of small ships (1 to 8 ship squadron in automatic formation)
+                    </li>
+                    <li style="line-height: 20px;">
+                        New grid with custom mipmapping
+                    </li>
+                    <li style="line-height: 20px;">
+                        New ships - Freelancer, Terrapin, 325a, 600i
+                    </li>
+                </ul>
             </div>
         </div>
         <div class="card-corner card-corner-top"></div>

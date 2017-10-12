@@ -9,7 +9,7 @@ UEE Tactical Communications Interface is a tool and fan project for tactical pla
 
 "Take time to deliberate, but when the time for action comes, stop thinking and go in." Napoléon Bonaparte
 
-The first project configuration:
+The first-time project configuration:
 
 * Clone this repository
 * Copy the assets from gh-pages to src to add the ship models

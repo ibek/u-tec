@@ -31,15 +31,6 @@
     margin: 20px;
 }
 
-.add-button {
-    background-image: url("~/assets/images/add-button.png");
-    width: 35px;
-    height: 35px;
-    float: left;
-    margin-top: -5px;
-    margin-left: 10px;
-}
-
 .card-corner {
     position: absolute;
     width: 100%;

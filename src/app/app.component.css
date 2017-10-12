@@ -236,7 +236,7 @@
 }
 
 /deep/ .mat-dialog-container {
-    background: rgba(6, 70, 102, 0.8);
+    background: rgba(6, 70, 102, 1.0);
     color: #99e3f5;
 }
 

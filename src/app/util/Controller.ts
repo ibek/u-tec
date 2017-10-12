@@ -168,7 +168,8 @@ export class Controller {
                                 animFrame.position.y = newpos.y;
                                 animFrame.position.z = newpos.z;
                             } else {
-                                ShipModel3D.updateObjectPosition(selected[0], newpos.x, newpos.y, newpos.z)
+                                ShipModel3D.updateObjectPosition(selected[0], newpos.x, newpos.y, newpos.z);
+                                this._updateShipInstance();
                             }
                             this.updateAnimationCurveFor(selected[0]);
                             this._focusedObject = ShipModel3D.points[i]; // refresh point
@@ -403,10 +404,18 @@ export class Controller {
                 } else if (!obj.parent.userData.selected && e.ctrlKey) {
                     this.selectObject(obj);
                 } else {
+                    if (this._needTacticalPlanUpdate) {
+                        this._updateTacticalPlan();
+                        this._needTacticalPlanUpdate = false;
+                    }
                     this.deselectAll();
                     this.selectObject(obj);
                 }
             } else {
+                if (this._needTacticalPlanUpdate) {
+                    this._updateTacticalPlan();
+                    this._needTacticalPlanUpdate = false;
+                }
                 this.deselectAll();
                 var intersectsMap = raycaster.intersectObject(this.projectionMap);
                 if (intersectsMap.length > 0) {
@@ -667,26 +676,28 @@ export class Controller {
     private _updateShipInstance() {
         this.actionableObjects.forEach(o => {
             var userData = o.parent.userData;
-            // position
-            var x = Math.round(o.parent.position.x * 10) / 10;
-            o.parent.position.x = x;
-            userData.shipInstance.position.x = x;
-            var y = Math.round(o.parent.position.y * 10) / 10;
-            o.parent.position.y = y;
-            userData.shipInstance.position.y = y;
-            var z = Math.round(o.parent.position.z * 10) / 10;
-            o.parent.position.z = z;
-            userData.shipInstance.position.z = z;
-            // rotation
-            x = Math.round(o.parent.rotation.x * 1000) / 1000;
-            o.parent.rotation.x = x;
-            userData.shipInstance.rotation.x = x;
-            y = Math.round(o.parent.rotation.y * 1000) / 1000;
-            o.parent.rotation.y = y;
-            userData.shipInstance.rotation.y = y;
-            z = Math.round(o.parent.rotation.z * 1000) / 1000;
-            o.parent.rotation.z = z;
-            userData.shipInstance.rotation.z = z;
+            if (userData.selected) {
+                // position
+                var x = Math.round(o.parent.position.x * 10) / 10;
+                o.parent.position.x = x;
+                userData.shipInstance.position.x = x;
+                var y = Math.round(o.parent.position.y * 10) / 10;
+                o.parent.position.y = y;
+                userData.shipInstance.position.y = y;
+                var z = Math.round(o.parent.position.z * 10) / 10;
+                o.parent.position.z = z;
+                userData.shipInstance.position.z = z;
+                // rotation
+                x = Math.round(o.parent.rotation.x * 1000) / 1000;
+                o.parent.rotation.x = x;
+                userData.shipInstance.rotation.x = x;
+                y = Math.round(o.parent.rotation.y * 1000) / 1000;
+                o.parent.rotation.y = y;
+                userData.shipInstance.rotation.y = y;
+                z = Math.round(o.parent.rotation.z * 1000) / 1000;
+                o.parent.rotation.z = z;
+                userData.shipInstance.rotation.z = z;
+            }
         });
     }
 
