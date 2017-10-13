@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { ShipService } from '../ship.service'
 import { Router } from '@angular/router'
-import { Input } from '@angular/core'
+import { Input, ViewChild } from '@angular/core'
 import { OrbitCamera } from './OrbitCamera'
 import { Joystick } from './Joystick'
 import { AnimationFrame } from '../data-model';
@@ -35,7 +35,7 @@ export class Controller {
     private _mouseCursorObj;
 
     constructor(private scene: THREE.Scene, private shipService: ShipService, private projectionMap: THREE.Mesh,
-        private camera: OrbitCamera, private joystick: Joystick, private marqueeBox) {
+        private camera: OrbitCamera, private joystick: Joystick, private marqueeBox, private addToCurrentTime) {
     }
 
     enable(container) {
@@ -255,6 +255,12 @@ export class Controller {
             }
             if (this._keymap.get("down-v")) {
                 this.rotateSelectedShipsBy(this.getAllSelected(), -5 * dt);
+            }
+            if (this._keymap.get("down-1")) {
+                this.addToCurrentTime(-2*dt);
+            }
+            if (this._keymap.get("down-2")) {
+                this.addToCurrentTime(2*dt);
             }
         }
 
@@ -649,9 +655,9 @@ export class Controller {
         var x = 0;
         var z = 0;
         var rect = this.container.getBoundingClientRect();
-        if (e.offsetX !== undefined || e.layerX !== undefined) {
-            x = e.offsetX == undefined ? e.layerX : e.offsetX;
-            z = e.offsetY == undefined ? e.layerY : e.offsetY;
+        if (e.layerX !== undefined) {
+            x = e.layerX;
+            z = e.layerY;
         } else if (e.targetTouches) {
             x = e.targetTouches[0].pageX - rect.left;
             z = e.targetTouches[0].pageY - rect.top;

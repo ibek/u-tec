@@ -215,7 +215,11 @@ export class SimulatorComponent implements AfterViewInit {
         this.joystick.added = false;
         this.joystick.show();
 
-        this.controller = new Controller(this.scene, this.shipService, this.virtualGrid, this.camera, this.joystick, this.marqueeBox);
+        var addToCurrentTime = function (delta) {
+            scope.currentTime += delta;
+            scope.changeCurrentTime(scope.currentTime);
+        }
+        this.controller = new Controller(this.scene, this.shipService, this.virtualGrid, this.camera, this.joystick, this.marqueeBox, addToCurrentTime);
         this.controller.enable(this.renderer.domElement);
 
     }
@@ -227,18 +231,7 @@ export class SimulatorComponent implements AfterViewInit {
 
         if (this.play) {
             this.currentTime += delta;
-            this.timeSec = Math.floor(this.currentTime);
-            if (this.timeSec > this.maxTime) {
-                this.timeSec = this.maxTime;
-            }
-            if (this.currentTime >= this.maxTime) {
-                this.currentTime = this.maxTime;
-                this.play = false;
-            }
-            this.controller.currentAnimationFrame = Math.floor(this.currentTime / (this.maxTime / 5));
-            this.controller.actionableObjects.forEach(o => {
-                ShipModel3D.updateAnimatedPosition(o, this.currentTime / this.maxTime, this.controller.currentAnimationFrame);
-            });
+            this.changeCurrentTime(this.currentTime);
         }
 
         if (this.cameraLockedTo) {
@@ -271,7 +264,6 @@ export class SimulatorComponent implements AfterViewInit {
                 scope.controller.reset();
                 scope.sceneService.shipModels3d.forEach((model: ShipModel3D, type: string) => {
                     model.clear();
-                    console.log("clear");
                     model.addShipsToScene(scope.scene);
                     model.objects.forEach(o => scope.controller.actionableObjects.push(o));
                 });
@@ -397,17 +389,24 @@ export class SimulatorComponent implements AfterViewInit {
     }
 
     resetAnimation() {
-        this.currentTime = 0;
-        this.timeSec = 0;
-        this.controller.currentAnimationFrame = 0;
-        this.controller.actionableObjects.forEach(o => {
-            ShipModel3D.updateAnimatedPosition(o, 0, this.controller.currentAnimationFrame);
-        });
+        this.changeCurrentTime(0);
     }
 
     onChangeAnimation(e) {
-        this.currentTime = (e.layerX / e.target.offsetWidth) * 15;
+        var newTime = (e.layerX / e.target.offsetWidth) * this.maxTime;
+        this.changeCurrentTime(newTime);
+    }
+
+    changeCurrentTime(newTime) {
+        this.currentTime = newTime;
         this.timeSec = Math.floor(this.currentTime);
+        if (this.timeSec > this.maxTime) {
+            this.timeSec = this.maxTime;
+        }
+        if (this.currentTime >= this.maxTime) {
+            this.currentTime = this.maxTime;
+            this.play = false;
+        }
         this.controller.currentAnimationFrame = Math.floor(this.currentTime / (this.maxTime / 5));
         this.controller.actionableObjects.forEach(o => {
             ShipModel3D.updateAnimatedPosition(o, this.currentTime / this.maxTime, this.controller.currentAnimationFrame);
