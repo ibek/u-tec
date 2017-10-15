@@ -30,6 +30,7 @@ export class TacticalPlan {
         }
         if (this.settings == undefined) {
             this.settings = new Settings();
+            this.settings.background = "Starfarer (default)";
             this.settings.animationLength = 30;
             this.settings.showVisualAids = true;
         }

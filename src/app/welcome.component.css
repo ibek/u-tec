@@ -25,9 +25,9 @@
 }
 
 .simulation {
-    background-image: url("~/assets/images/simulation.png");
-    width: 600px;
-    height: 117px;
+    background-image: url("~/assets/images/simulation.gif");
+    width: 476px;
+    height: 108px;
     margin: 20px;
 }
 

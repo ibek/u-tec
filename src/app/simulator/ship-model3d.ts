@@ -153,16 +153,18 @@ export class ShipModel3D {
     }
 
     static deselect(obj, scene) {
-        var id = obj.parent.name + "" + obj.parent.userData.id;
-        var aids = this.selectedAids.get(id);
-        if (aids) {
-            aids.forEach(a => {
-                scene.remove(a);
-            });
-            this.selectedAids.delete(id);
+        if (obj.parent.userData.selected) {
+            var id = obj.parent.name + "" + obj.parent.userData.id;
+            var aids = this.selectedAids.get(id);
+            if (aids) {
+                aids.forEach(a => {
+                    scene.remove(a);
+                });
+                this.selectedAids.delete(id);
+            }
+            this._removePoints(scene);
+            obj.parent.userData.selected = false;
         }
-        this._removePoints(scene);
-        obj.parent.userData.selected = false;
     }
 
     static deselectAll(objects, scene) {

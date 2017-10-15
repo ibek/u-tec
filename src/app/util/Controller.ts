@@ -191,9 +191,14 @@ export class Controller {
                             this._mbox.setFromCenterAndSize(this.marqueeBox.position, new THREE.Vector3(this.marqueeBox.scale.x, ShipModel3DNS.MAX_HEIGHT * 2, this.marqueeBox.scale.y));
                             var i = 0;
                             var selected;
+                            var b = new THREE.Box3();
+                            var size = new THREE.Vector3();
                             this.actionableObjects.forEach(o => {
-                                var obox = new THREE.Box3().setFromObject(o);
-                                if (this._mbox.intersectsBox(obox)) {
+                                o.geometry.boundingBox.getSize(size);
+                                var scale = o.parent.scale.x;
+                                size.set(size.x * scale, size.y * scale, size.z * scale);
+                                b = b.setFromCenterAndSize(o.parent.position, size);
+                                if (this._mbox.intersectsBox(b)) {
                                     ShipModel3D.select(o, this.scene);
                                     selected = o;
                                     i++;
@@ -447,10 +452,10 @@ export class Controller {
                         return;
                     }
                 }
-                var rotate2d = !e.ctrlKey;
+                //var rotate2d = !e.ctrlKey;
 
                 var dir = new THREE.Vector3().copy(dpoint);
-                this.rotateSelectedShipsTo(selectedShips, dir, rotate2d);
+                this.rotateSelectedShipsTo(selectedShips, dir, true);
             }
         }
 
