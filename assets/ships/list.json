@@ -11,8 +11,8 @@
         {
             "name": "Caterpillar",
             "role": "Cargo",
-            "size": "M",
-            "scale": 0.003,
+            "size": "L",
+            "scale": 0.0035,
             "maxcrew": 5,
             "cargo": 512
         },
@@ -164,7 +164,7 @@
             "name": "Genesis",
             "role": "Passenger Transport",
             "size": "L",
-            "scale": 0.65,
+            "scale": 0.7,
             "maxcrew": 8,
             "cargo": 403
         },
@@ -180,7 +180,7 @@
             "name": "Buccaneer",
             "role": "Interdiction",
             "size": "S",
-            "scale": 0.006,
+            "scale": 0.005,
             "maxcrew": 1,
             "cargo": 0
         },
@@ -271,6 +271,38 @@
             "scale": 0.005,
             "maxcrew": 1,
             "cargo": 0
+        },
+        {
+            "name": "Terrapin",
+            "role": "Explorer",
+            "size": "S",
+            "scale": 0.005,
+            "maxcrew": 2,
+            "cargo": 13
+        },
+        {
+            "name": "Freelancer",
+            "role": "Mercantile",
+            "size": "M",
+            "scale": 0.005,
+            "maxcrew": 2,
+            "cargo": 52
+        },
+        {
+            "name": "325a",
+            "role": "Fighter",
+            "size": "S",
+            "scale": 0.004,
+            "maxcrew": 1,
+            "cargo": 4
+        },
+        {
+            "name": "600i",
+            "role": "Explorer",
+            "size": "M",
+            "scale": 0.0025,
+            "maxcrew": 5,
+            "cargo": 36
         }
     ]
 }
