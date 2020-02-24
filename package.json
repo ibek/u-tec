@@ -36,7 +36,7 @@
     "uglify-js": "git://github.com/mishoo/UglifyJS2#harmony-v2.8.22",
     "uglifyjs-webpack-plugin": "^0.4.6",
     "webpack": "^3.5.2",
-    "webpack-dev-server": "^2.3.0",
+    "webpack-dev-server": "^3.10.3",
     "webpack-merge": "^4.1.0"
   },
   "dependencies": {
